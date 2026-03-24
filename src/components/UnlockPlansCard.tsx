@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PAYMENT_PLAN_ORDER, type PaymentStage, type PlanType } from "@/lib/paymentPlans";
+import { trackEvent } from "@/lib/analytics";
 
 type UnlockPlansCardProps = {
   context: "palmistry" | "horoscope";
