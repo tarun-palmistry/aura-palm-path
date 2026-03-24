@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type AdminRow = Tables<"admin_reading_overview">;
 type ReportRow = Tables<"reports">;
 
 export const AdminPanel = () => {
+  const { t } = useLanguage();
   const [rows, setRows] = useState<AdminRow[]>([]);
   const [reports, setReports] = useState<Record<string, ReportRow>>({});
   const [selectedReportId, setSelectedReportId] = useState<string>("");
@@ -24,7 +26,7 @@ export const AdminPanel = () => {
     ]);
 
     if (overviewError || reportError) {
-      toast.error(overviewError?.message || reportError?.message || "Failed to load admin data.");
+      toast.error(overviewError?.message || reportError?.message || t("admin.toasts.loadFailed"));
       setLoading(false);
       return;
     }
@@ -63,7 +65,7 @@ export const AdminPanel = () => {
       return;
     }
 
-    toast.success("Report updated.");
+    toast.success(t("admin.toasts.updated"));
     setSelectedReportId("");
     setEditingText("");
     await loadData();
@@ -84,7 +86,7 @@ export const AdminPanel = () => {
       <div className="mystic-glass flex flex-col gap-3 rounded-xl p-5 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-3xl font-semibold">Admin Panel</h2>
         <Input
-          placeholder="Search by user/reading/payment"
+          placeholder={t("admin.searchPlaceholder")}
           className="max-w-sm focus-mystic"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -93,17 +95,17 @@ export const AdminPanel = () => {
 
       <div className="mystic-glass overflow-x-auto rounded-xl p-4">
         {loading ? (
-          <p className="text-muted-foreground">Loading submissions...</p>
+          <p className="text-muted-foreground">{t("common.loading.submissions")}</p>
         ) : (
           <table className="w-full min-w-[840px] text-sm">
             <thead>
               <tr className="border-b border-border/80 text-left">
-                <th className="px-2 py-3">Reading</th>
-                <th className="px-2 py-3">User</th>
-                <th className="px-2 py-3">Status</th>
-                <th className="px-2 py-3">Payment</th>
-                <th className="px-2 py-3">Unlocked</th>
-                <th className="px-2 py-3">Action</th>
+                <th className="px-2 py-3">{t("admin.headers.reading")}</th>
+                <th className="px-2 py-3">{t("admin.headers.user")}</th>
+                <th className="px-2 py-3">{t("admin.headers.status")}</th>
+                <th className="px-2 py-3">{t("admin.headers.payment")}</th>
+                <th className="px-2 py-3">{t("admin.headers.unlocked")}</th>
+                <th className="px-2 py-3">{t("admin.headers.action")}</th>
               </tr>
             </thead>
             <tbody>
@@ -112,11 +114,11 @@ export const AdminPanel = () => {
                   <td className="px-2 py-3 font-mono text-xs">{row.reading_id}</td>
                   <td className="px-2 py-3 font-mono text-xs">{row.user_id}</td>
                   <td className="px-2 py-3">{row.analysis_status}</td>
-                  <td className="px-2 py-3">{row.payment_status ?? "pending"}</td>
-                  <td className="px-2 py-3">{row.is_unlocked ? "Yes" : "No"}</td>
+                  <td className="px-2 py-3">{row.payment_status ?? t("admin.pending")}</td>
+                  <td className="px-2 py-3">{row.is_unlocked ? t("admin.yes") : t("admin.no")}</td>
                   <td className="px-2 py-3">
                     <Button size="sm" variant="mystic" onClick={() => openEdit(row.report_id)}>
-                      Edit report
+                      {t("common.actions.editReport")}
                     </Button>
                   </td>
                 </tr>
@@ -128,7 +130,7 @@ export const AdminPanel = () => {
 
       {selectedReportId && (
         <div className="mystic-glass space-y-3 rounded-xl p-5">
-          <h3 className="text-xl font-semibold">Edit Report</h3>
+          <h3 className="text-xl font-semibold">{t("admin.editTitle")}</h3>
           <textarea
             className="focus-mystic min-h-60 w-full rounded-md border border-input bg-background/80 p-3 text-sm"
             value={editingText}
@@ -136,10 +138,10 @@ export const AdminPanel = () => {
           />
           <div className="flex gap-2">
             <Button variant="hero" onClick={saveReport}>
-              Save
+              {t("common.actions.save")}
             </Button>
             <Button variant="ghost" onClick={() => setSelectedReportId("")}>
-              Cancel
+              {t("common.actions.cancel")}
             </Button>
           </div>
         </div>
