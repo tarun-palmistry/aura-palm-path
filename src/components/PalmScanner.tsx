@@ -28,7 +28,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageSource, setImageSource] = useState<"camera" | "upload">("upload");
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingStage, setLoadingStage] = useState<"uploading" | "extracting" | "generating" | "finalizing">("uploading");
+  const [loadingStage, setLoadingStage] = useState<"uploading" | "extracting" | "finalizing">("uploading");
   const [cameraOn, setCameraOn] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -53,7 +53,6 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const loadingStageText = {
     uploading: t("common.loading.uploadingPalm"),
     extracting: t("common.loading.extractingLines"),
-    generating: t("common.loading.generatingPalmReport"),
     finalizing: t("common.loading.finalizingPalmReport"),
   } as const;
 
