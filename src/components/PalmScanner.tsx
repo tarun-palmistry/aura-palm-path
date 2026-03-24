@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trackEvent } from "@/lib/analytics";
 
 type ReportRow = Tables<"reports">;
 
@@ -140,6 +141,18 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       toast.error(parsed.error.issues[0]?.message ?? t("palm.toasts.invalidMetadata"));
       return;
     }
+
+    void trackEvent({
+      eventName: "palm_submit_click",
+      userId,
+      metadata: {
+        handSide: parsed.data.handSide,
+        dominantHand: parsed.data.dominantHand,
+        hasAge: Boolean(parsed.data.age),
+        hasGender: Boolean(parsed.data.gender),
+        imageSource,
+      },
+    });
 
     setIsLoading(true);
     setLoadingStage("uploading");

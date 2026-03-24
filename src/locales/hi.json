@@ -476,7 +476,7 @@
   },
   "admin": {
     "title": "एडमिन पैनल",
-    "searchPlaceholder": "यूज़र/रीडिंग/पेमेंट से खोजें",
+    "searchPlaceholder": "यूज़र/रीडिंग/पेमेंट/इवेंट से खोजें",
     "headers": {
       "reading": "रीडिंग",
       "user": "यूज़र",
@@ -484,6 +484,19 @@
       "payment": "पेमेंट",
       "unlocked": "अनलॉक",
       "action": "कार्य"
+    },
+    "analyticsTitle": "एनालिटिक्स इवेंट्स",
+    "analyticsDescription": "यूज़र के सभी प्रमुख प्रोडक्ट एक्शन्स को ट्रैक और रिव्यू करें।",
+    "totalEvents": "कुल इवेंट्स",
+    "uniqueUsers": "अद्वितीय यूज़र्स",
+    "trackedActions": "ट्रैक किए गए एक्शन्स",
+    "noEvents": "इस फ़िल्टर के लिए कोई एनालिटिक्स इवेंट नहीं मिला।",
+    "analyticsHeaders": {
+      "time": "समय",
+      "event": "इवेंट",
+      "user": "यूज़र",
+      "page": "पेज",
+      "metadata": "मेटाडेटा"
     },
     "pending": "लंबित",
     "yes": "हाँ",

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
 import { useReportUnlocks } from "@/hooks/useReportUnlocks";
 import { downloadReportPdf } from "@/lib/pdf";
 import type { PlanType } from "@/lib/paymentPlans";
+import { trackEvent } from "@/lib/analytics";
 
 type HoroscopeRequestRow = {
   id: string;
@@ -57,6 +58,7 @@ const Astrology = () => {
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [gender, setGender] = useState("");
   const [dailySign, setDailySign] = useState("Aries");
+  const trackedReportIdRef = useRef<string | null>(null);
 
   const db = supabase as any;
   const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
@@ -154,6 +156,20 @@ const Astrology = () => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!report?.id || trackedReportIdRef.current === report.id) return;
+
+    trackedReportIdRef.current = report.id;
+    void trackEvent({
+      eventName: "horoscope_report_view",
+      userId: session?.user.id,
+      metadata: {
+        reportId: report.id,
+        unlocked: Boolean(report.is_unlocked || unlocks.horoscopeUnlocked),
+      },
+    });
+  }, [report?.id, report?.is_unlocked, session?.user.id, unlocks.horoscopeUnlocked]);
+
   const submitBirthChart = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -162,6 +178,15 @@ const Astrology = () => {
       toast.error(parsed.error.issues[0]?.message ?? t("astrology.validation.checkForm"));
       return;
     }
+
+    void trackEvent({
+      eventName: "horoscope_submit_click",
+      userId: session?.user.id,
+      metadata: {
+        hasGender: Boolean(parsed.data.gender),
+        zodiacSelected: dailySign,
+      },
+    });
 
     setIsSubmitting(true);
 

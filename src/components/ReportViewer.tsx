@@ -1,11 +1,12 @@
 import { Download } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { UnlockPlansCard } from "@/components/UnlockPlansCard";
 import { Button } from "@/components/ui/button";
 import { downloadReportPdf } from "@/lib/pdf";
 import type { PaymentStage, PlanType } from "@/lib/paymentPlans";
+import { trackEvent } from "@/lib/analytics";
 
 type ReportRow = Tables<"reports">;
 
@@ -54,6 +55,7 @@ const deriveKeyAdvice = (futureGuidance: string) => {
 
 export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onUnlock }: ReportViewerProps) => {
   const { t } = useLanguage();
+  const trackedReadingRef = useRef<string | null>(null);
   const sections = useMemo(() => parseReportSections(report.full_report), [report.full_report]);
 
   const personalityOverview =
@@ -100,6 +102,19 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
     { label: t("report.highlights.heartLine"), value: String((report.generated_from_features as Record<string, unknown>)?.heart_line ?? "") },
     { label: t("report.highlights.headLine"), value: String((report.generated_from_features as Record<string, unknown>)?.head_line ?? "") },
   ].filter((item) => item.value && item.value !== "null" && item.value !== "undefined");
+
+  useEffect(() => {
+    if (!report.reading_id || trackedReadingRef.current === report.reading_id) return;
+
+    trackedReadingRef.current = report.reading_id;
+    void trackEvent({
+      eventName: "palm_report_view",
+      metadata: {
+        readingId: report.reading_id,
+        unlocked: isUnlocked,
+      },
+    });
+  }, [report.reading_id, isUnlocked]);
 
   const handleDownloadPdf = () => {
     const pdfSections = [

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PAYMENT_PLAN_ORDER, type PaymentStage, type PlanType } from "@/lib/paymentPlans";
+import { trackEvent } from "@/lib/analytics";
 
 type UnlockPlansCardProps = {
   context: "palmistry" | "horoscope";
@@ -85,7 +86,22 @@ export const UnlockPlansCard = ({ context, activePlan, stage, onPay }: UnlockPla
       </div>
 
       <div className="space-y-3">
-        <Button type="button" variant="hero" className="w-full" onClick={() => onPay(selectedPlan)} disabled={isBusy}>
+        <Button
+          type="button"
+          variant="hero"
+          className="w-full"
+          onClick={() => {
+            void trackEvent({
+              eventName: "payment_unlock_click",
+              metadata: {
+                context,
+                selectedPlan,
+              },
+            });
+            onPay(selectedPlan);
+          }}
+          disabled={isBusy}
+        >
           {isBusy
             ? activePlan === selectedPlan
               ? (

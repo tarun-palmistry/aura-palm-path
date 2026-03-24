@@ -476,7 +476,7 @@
   },
   "admin": {
     "title": "Admin Panel",
-    "searchPlaceholder": "Search by user/reading/payment",
+    "searchPlaceholder": "Search by user/reading/payment/event",
     "headers": {
       "reading": "Reading",
       "user": "User",
@@ -484,6 +484,19 @@
       "payment": "Payment",
       "unlocked": "Unlocked",
       "action": "Action"
+    },
+    "analyticsTitle": "Analytics Events",
+    "analyticsDescription": "Track and review all key product actions across users.",
+    "totalEvents": "Total events",
+    "uniqueUsers": "Unique users",
+    "trackedActions": "Tracked actions",
+    "noEvents": "No analytics events found for this filter.",
+    "analyticsHeaders": {
+      "time": "Time",
+      "event": "Event",
+      "user": "User",
+      "page": "Page",
+      "metadata": "Metadata"
     },
     "pending": "pending",
     "yes": "Yes",

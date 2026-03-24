@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trackEvent } from "@/lib/analytics";
 
 type MarketingHomepageProps = {
   conversionSection: ReactNode;
@@ -39,6 +40,23 @@ type FaqItem = { question: string; answer: string };
 
 export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onStartPalm, session }: MarketingHomepageProps) => {
   const { t, tm } = useLanguage();
+
+  const handleHeroCta = (cta: string, callback?: () => void) => {
+    void trackEvent({
+      eventName: "hero_cta_click",
+      userId: session?.user.id,
+      metadata: { cta },
+    });
+    callback?.();
+  };
+
+  const handleWhatsappCta = () => {
+    void trackEvent({
+      eventName: "whatsapp_signup_click",
+      userId: session?.user.id,
+      metadata: { placement: "homepage_whatsapp" },
+    });
+  };
 
   const navLinks = tm<NavLinkItem[]>("homepage.navLinks");
   const trustPoints = tm<CopyItem[]>("homepage.trust.items");
@@ -83,7 +101,7 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
                 {t("common.actions.signOut")}
               </Button>
             )}
-            <Button variant="hero" size="sm" onClick={onStartPalm}>
+            <Button variant="hero" size="sm" onClick={() => handleHeroCta("header_start_reading", onStartPalm)}>
               {t("common.actions.startReading")}
             </Button>
           </div>
@@ -105,7 +123,7 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
                 ))}
                 <div className="mt-4 grid gap-2 border-t border-border/70 pt-4">
                   <SheetClose asChild>
-                    <Button variant="hero" onClick={onStartPalm}>
+                    <Button variant="hero" onClick={() => handleHeroCta("mobile_scan_palm", onStartPalm)}>
                       {t("common.actions.scanPalm")}
                     </Button>
                   </SheetClose>
@@ -132,11 +150,11 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
               <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("homepage.subtitle")}</p>
 
               <div className="flex flex-wrap gap-3">
-                <Button variant="hero" size="lg" onClick={onStartPalm}>
+                <Button variant="hero" size="lg" onClick={() => handleHeroCta("hero_scan_palm", onStartPalm)}>
                   {t("common.actions.scanPalm")}
                 </Button>
                 <Button asChild variant="mystic" size="lg">
-                  <Link to="/astrology">{t("common.actions.getHoroscopeReading")}</Link>
+                  <Link to="/astrology" onClick={() => handleHeroCta("hero_horoscope")}>{t("common.actions.getHoroscopeReading")}</Link>
                 </Button>
                 <Button asChild variant="link" className="text-primary">
                   <Link to="/astrology#daily">{t("homepage.dailyWhatsappLink")}</Link>
@@ -188,7 +206,7 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
                 <Camera className="h-5 w-5 text-primary" aria-hidden="true" />
                 <h3 className="mt-4 text-2xl font-semibold">{t("homepage.featureSection.cards.palm.title")}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{t("homepage.featureSection.cards.palm.description")}</p>
-                <Button className="mt-5" variant="hero" onClick={onStartPalm}>
+                <Button className="mt-5" variant="hero" onClick={() => handleHeroCta("feature_palm_card", onStartPalm)}>
                   {t("homepage.featureSection.cards.palm.cta")}
                 </Button>
               </article>
@@ -270,7 +288,7 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.services.palmLabel")}</p>
               <h2 className="mt-3 text-3xl font-semibold">{t("homepage.services.palmTitle")}</h2>
               <p className="mt-3 text-sm text-muted-foreground">{t("homepage.services.palmDescription")}</p>
-              <Button className="mt-6" variant="hero" onClick={onStartPalm}>
+              <Button className="mt-6" variant="hero" onClick={() => handleHeroCta("services_palm", onStartPalm)}>
                 {t("homepage.services.palmCta")}
               </Button>
             </article>
@@ -315,7 +333,7 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
               <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">{t("homepage.whatsapp.description")}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button asChild variant="hero">
-                  <Link to="/astrology#daily">
+                  <Link to="/astrology#daily" onClick={handleWhatsappCta}>
                     <MessageCircle className="h-4 w-4" aria-hidden="true" />
                     {t("common.actions.joinWhatsappUpdates")}
                   </Link>
