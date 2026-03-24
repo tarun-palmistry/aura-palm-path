@@ -90,6 +90,26 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (paymentRow.status === "successful") {
+      const { data: existingUnlockRow } = await supabaseAdmin
+        .from("report_unlocks")
+        .select("palmistry_unlocked, horoscope_unlocked, unlocked_via_combo")
+        .eq("user_id", authData.user.id)
+        .maybeSingle();
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          unlocks: {
+            palmistry: Boolean(existingUnlockRow?.palmistry_unlocked),
+            horoscope: Boolean(existingUnlockRow?.horoscope_unlocked),
+            combo: Boolean(existingUnlockRow?.unlocked_via_combo),
+          },
+        }),
+        { status: 200, headers: jsonHeaders },
+      );
+    }
+
     if (paymentRow.plan_type !== planType) {
       return new Response(JSON.stringify({ error: "Plan mismatch for this payment order." }), {
         status: 400,
@@ -136,10 +156,12 @@ Deno.serve(async (req) => {
               receivedSignature: signature,
               orderId,
               paymentId,
+              attemptedAt: new Date().toISOString(),
             },
           },
         })
-        .eq("id", paymentRow.id);
+        .eq("id", paymentRow.id)
+        .neq("status", "successful");
 
       return new Response(JSON.stringify({ error: "Payment signature verification failed." }), {
         status: 400,
@@ -193,10 +215,12 @@ Deno.serve(async (req) => {
             receivedSignature: signature,
             orderId,
             paymentId,
+            verifiedAt: new Date().toISOString(),
           },
         },
       })
-      .eq("id", paymentRow.id);
+      .eq("id", paymentRow.id)
+      .neq("status", "successful");
 
     const { data: unlockRow } = await supabaseAdmin
       .from("report_unlocks")

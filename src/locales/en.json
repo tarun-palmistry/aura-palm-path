@@ -486,14 +486,21 @@
     "unlocked": "Unlocked",
     "lockedNote": "Unlock to reveal this premium section.",
     "status": {
+      "processing": "Processing",
       "creatingOrder": "Preparing secure checkout...",
       "openingCheckout": "Opening Razorpay checkout...",
-      "verifyingPayment": "Verifying payment..."
+      "verifyingPayment": "Verifying payment...",
+      "processingAnother": "Payment in progress on selected plan..."
     },
     "messages": {
       "success": "Payment successful. Your full report is now unlocked.",
+      "successOtherPlan": "Payment successful. Your selected plan is active.",
       "cancelled": "Payment was not completed. Your report is still locked.",
       "failed": "Payment failed. Please try again.",
+      "verificationFailed": "Payment could not be verified. Please try again.",
+      "authRequired": "Please sign in again to continue payment.",
+      "ownershipError": "This report does not belong to your account.",
+      "inProgress": "A payment is already in progress.",
       "selectReportFirst": "Please open a report first to unlock it."
     },
     "palmistry": {

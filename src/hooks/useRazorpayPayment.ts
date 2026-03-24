@@ -16,6 +16,11 @@ type StartPaymentArgs = {
 type PaymentResult = {
   ok: boolean;
   cancelled?: boolean;
+  unlocks?: {
+    palmistry: boolean;
+    horoscope: boolean;
+    combo: boolean;
+  };
   error?: string;
 };
 
@@ -29,7 +34,21 @@ export const useRazorpayPayment = () => {
   const [activePlan, setActivePlan] = useState<PlanType | null>(null);
   const [stage, setStage] = useState<PaymentStage>("idle");
 
+  const normalizePaymentError = (message: string) => {
+    if (message === "payment_cancelled") return "payment_cancelled";
+    if (message === "payment_failed") return "payment_failed";
+    if (message === "payment_busy") return "payment_busy";
+    if (message.includes("signature")) return "verification_failed";
+    if (message.includes("Unauthorized") || message.includes("authorization token")) return "auth_required";
+    if (message.includes("not found for this user") || message.includes("mismatch")) return "ownership_error";
+    return "payment_failed";
+  };
+
   const startPayment = async ({ planType, readingId, horoscopeRequestId, prefill }: StartPaymentArgs): Promise<PaymentResult> => {
+    if (stage !== "idle") {
+      return { ok: false, error: "payment_busy" };
+    }
+
     setActivePlan(planType);
     setStage("creating");
 
@@ -54,7 +73,15 @@ export const useRazorpayPayment = () => {
 
       if (orderData?.alreadyUnlocked) {
         setStage("idle");
-        return { ok: true };
+        setActivePlan(null);
+        return {
+          ok: true,
+          unlocks: {
+            palmistry: true,
+            horoscope: true,
+            combo: true,
+          },
+        };
       }
 
       setStage("checkout");
@@ -102,7 +129,14 @@ export const useRazorpayPayment = () => {
 
       setStage("idle");
       setActivePlan(null);
-      return { ok: true };
+      return {
+        ok: true,
+        unlocks: {
+          palmistry: Boolean(verifyData?.unlocks?.palmistry),
+          horoscope: Boolean(verifyData?.unlocks?.horoscope),
+          combo: Boolean(verifyData?.unlocks?.combo),
+        },
+      };
     } catch (error) {
       setStage("idle");
       setActivePlan(null);
@@ -113,7 +147,7 @@ export const useRazorpayPayment = () => {
         return { ok: false, cancelled: true };
       }
 
-      return { ok: false, error: message };
+      return { ok: false, error: normalizePaymentError(message) };
     }
   };
 
