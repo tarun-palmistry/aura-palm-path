@@ -36,6 +36,13 @@
       "admin": "Checking admin access...",
       "submissions": "Loading submissions...",
       "analyzingPalm": "Analyzing your palm...",
+      "uploadingPalm": "Uploading your palm image...",
+      "extractingLines": "Extracting your palm line patterns...",
+      "generatingPalmReport": "Composing your palmistry report...",
+      "finalizingPalmReport": "Finalizing your reading...",
+      "palmProcessingHint": "This can take a few moments. Please keep this window open.",
+      "fetchingSavedReports": "Loading your latest palm report...",
+      "savedPalmHint": "We found your saved readings and are restoring them.",
       "generatingReport": "Generating astrology report...",
       "processingPayment": "Processing payment..."
     }
@@ -343,7 +350,21 @@
     "subtitle": "Based on extracted palm shape, lines, and mounts from your scan.",
     "freePreview": "Free Preview",
     "fullReading": "Full Reading",
-    "locked": "Premium sections are locked"
+    "locked": "Premium sections are locked",
+    "lockedSectionNote": "Unlock to reveal this premium section.",
+    "sections": {
+      "personalityOverview": "Personality Overview",
+      "loveRelationships": "Love and Relationships",
+      "careerStrengths": "Career and Strengths",
+      "futureGuidance": "Future Guidance",
+      "keyAdvice": "Key Advice"
+    },
+    "highlights": {
+      "palmShape": "Palm Shape",
+      "lifeLine": "Life Line",
+      "heartLine": "Heart Line",
+      "headLine": "Head Line"
+    }
   },
   "astrology": {
     "badge": "Horoscope & Astrology",
