@@ -35,6 +35,7 @@ const textWrapClassMap: Record<CosmicLoaderVariant, string> = {
 
 const orbitDurations = ["5.6s", "4.8s", "6.4s", "7.2s", "5.1s", "6.9s", "8.1s", "4.4s", "7.7s"];
 const orbitDelays = ["0s", "-0.7s", "-1.4s", "-2.2s", "-2.8s", "-3.3s", "-4s", "-4.4s", "-5.1s"];
+const orbitPlanets = ["moon", "mars", "mercury", "venus", "jupiter", "saturn", "rahu", "ketu", "sun"] as const;
 
 export const CosmicLoader = ({
   size = "medium",
@@ -65,7 +66,7 @@ export const CosmicLoader = ({
               className="cosmic-loader-orbit"
               style={{ animationDuration: duration, animationDelay: orbitDelays[index] } as CSSProperties}
             >
-              <span className={cn("cosmic-loader-planet", `cosmic-loader-planet-${index + 1}`)} />
+              <span className={cn("cosmic-loader-planet", `cosmic-loader-planet-${orbitPlanets[index]}`)} />
             </span>
           ))}
         </div>
