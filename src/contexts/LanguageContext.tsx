@@ -29,6 +29,17 @@ const getByPath = (obj: Dictionary, path: string): unknown => {
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
+const fallbackContext: LanguageContextValue = {
+  language: "en",
+  setLanguage: () => undefined,
+  toggleLanguage: () => undefined,
+  t: (key: string) => {
+    const value = getByPath(dictionaries.en, key);
+    return typeof value === "string" ? value : key;
+  },
+  tm: <T,>(key: string) => getByPath(dictionaries.en, key) as T,
+};
+
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -70,7 +81,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useLanguage must be used within a LanguageProvider");
+    console.warn("useLanguage called outside LanguageProvider; using English fallback context.");
+    return fallbackContext;
   }
   return context;
 };
