@@ -31,9 +31,11 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState<"uploading" | "extracting" | "finalizing">("uploading");
   const [cameraOn, setCameraOn] = useState(false);
+  const [sourcePickerOpen, setSourcePickerOpen] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const metadataSchema = useMemo(
     () =>
@@ -283,26 +285,68 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Button type="button" variant="mystic" onClick={startCamera} className="gap-2" disabled={isLoading}>
-            <Camera className="h-4 w-4" aria-hidden="true" />
-            {t("common.actions.useCamera")}
-          </Button>
-          <label className="focus-mystic inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium">
+        <div className="space-y-3">
+          <Button
+            type="button"
+            variant="mystic"
+            onClick={() => setSourcePickerOpen((prev) => !prev)}
+            className="w-full gap-2"
+            disabled={isLoading}
+          >
             <Upload className="h-4 w-4" aria-hidden="true" />
-            {t("common.actions.uploadImage")}
-            <input
-              type="file"
-              className="hidden"
-              accept="image/png,image/jpeg,image/webp"
-              disabled={isLoading}
-              onChange={(e) => {
-                const file = e.target.files?.[0] ?? null;
-                setImageFile(file);
-                if (file) setImageSource("upload");
-              }}
-            />
-          </label>
+            {t("common.actions.addPalmImage")}
+          </Button>
+
+          {sourcePickerOpen && (
+            <div className="space-y-3 rounded-xl border border-border/70 bg-background/30 p-3">
+              <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                {t("common.actions.chooseCaptureOrUpload")}
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Button
+                  type="button"
+                  variant="mystic"
+                  onClick={() => {
+                    setSourcePickerOpen(false);
+                    void startCamera();
+                  }}
+                  className="gap-2"
+                  disabled={isLoading}
+                >
+                  <Camera className="h-4 w-4" aria-hidden="true" />
+                  {t("common.actions.useCamera")}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="mystic"
+                  onClick={() => {
+                    setSourcePickerOpen(false);
+                    stopCamera();
+                    fileInputRef.current?.click();
+                  }}
+                  className="gap-2"
+                  disabled={isLoading}
+                >
+                  <Upload className="h-4 w-4" aria-hidden="true" />
+                  {t("common.actions.uploadImage")}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            accept="image/png,image/jpeg,image/webp"
+            disabled={isLoading}
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              setImageFile(file);
+              if (file) setImageSource("upload");
+            }}
+          />
         </div>
 
         {cameraOn && (
