@@ -67,35 +67,39 @@ const Index = () => {
 
   return (
     <>
-      <MarketingHomepage isAdmin={isAdmin} onSignOut={signOut} onStartPalm={startPalmFlow} session={session} />
-
-      <section id="auth-section" className="scroll-mt-28 border-t border-border/70 py-14">
-        <div className="container space-y-8">
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Start your experience</p>
-            <h2 className="text-3xl font-semibold md:text-4xl">Your next personalized reading is a few steps away</h2>
-            <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
-              Complete your account access and begin with palm reading online, then continue with astrology birth chart and daily horoscope
-              guidance whenever you return.
-            </p>
-          </div>
-
-          {!session ? (
-            <AuthPanel onAuthenticated={() => undefined} />
-          ) : (
-            <div className="space-y-8" id="scan-section">
-              <PalmScanner
-                userId={session.user.id}
-                onReportReady={(_nextReadingId, nextReport) => {
-                  setReport(nextReport);
-                }}
-              />
-
-              {report && <ReportViewer report={report} />}
+      <MarketingHomepage
+        conversionSection={
+          <div className="container space-y-8">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Start your experience</p>
+              <h2 className="text-3xl font-semibold md:text-4xl">Start Your Reading in Less Than 60 Seconds</h2>
+              <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
+                Complete your account access and begin with palmistry reading online, then continue with astrology birth chart and daily
+                horoscope guidance whenever you return.
+              </p>
             </div>
-          )}
-        </div>
-      </section>
+
+            {!session ? (
+              <AuthPanel onAuthenticated={() => undefined} />
+            ) : (
+              <div className="space-y-8" id="scan-section">
+                <PalmScanner
+                  userId={session.user.id}
+                  onReportReady={(_nextReadingId, nextReport) => {
+                    setReport(nextReport);
+                  }}
+                />
+
+                {report && <ReportViewer report={report} />}
+              </div>
+            )}
+          </div>
+        }
+        isAdmin={isAdmin}
+        onSignOut={signOut}
+        onStartPalm={startPalmFlow}
+        session={session}
+      />
     </>
   );
 };
