@@ -19,7 +19,7 @@ type PalmScannerProps = {
 const isImageFile = (file: File) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
 
 export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
-  const { t, tm } = useLanguage();
+  const { language, t, tm } = useLanguage();
   const [handSide, setHandSide] = useState<"left" | "right">("left");
   const [dominantHand, setDominantHand] = useState<"left" | "right">("right");
   const [age, setAge] = useState("");
@@ -169,7 +169,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       if (imageInsertError) throw imageInsertError;
 
       const { error: analyzeError } = await supabase.functions.invoke("analyze-palm", {
-        body: { readingId: reading.id },
+        body: { readingId: reading.id, language },
       });
 
       if (analyzeError) throw new Error(analyzeError.message);
