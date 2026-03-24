@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, Loader2, LockKeyhole } from "lucide-react";
+import { CheckCircle2, LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PAYMENT_PLAN_ORDER, type PaymentStage, type PlanType } from "@/lib/paymentPlans";
 
@@ -66,7 +67,7 @@ export const UnlockPlansCard = ({ context, activePlan, stage, onPay }: UnlockPla
             >
               {isBusy && isActive && (
                 <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/20 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-primary">
-                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  <CosmicLoader size="small" variant="button" className="scale-[0.5] -mx-1" />
                   {t("payments.status.processing")}
                 </span>
               )}
@@ -87,14 +88,19 @@ export const UnlockPlansCard = ({ context, activePlan, stage, onPay }: UnlockPla
         <Button type="button" variant="hero" className="w-full" onClick={() => onPay(selectedPlan)} disabled={isBusy}>
           {isBusy
             ? activePlan === selectedPlan
-              ? stageLabel ?? t("common.loading.processingPayment")
+              ? (
+                <>
+                  <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
+                  {stageLabel ?? t("common.loading.processingPayment")}
+                </>
+              )
               : t("payments.status.processingAnother")
             : t("payments.payAndUnlock")}
         </Button>
 
         {isBusy && (
           <p className="inline-flex items-center gap-2 text-xs text-primary/90">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            <CosmicLoader size="small" variant="inline" className="scale-[0.56] -mx-2" />
             {stageLabel ?? t("common.loading.processingPayment")}
           </p>
         )}

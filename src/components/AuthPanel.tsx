@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Sparkles, ScanLine, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
@@ -101,7 +102,16 @@ export const AuthPanel = ({ onAuthenticated }: AuthPanelProps) => {
         </div>
 
         <Button disabled={loading} type="submit" variant="hero" className="w-full">
-          {loading ? t("auth.loading") : isSignup ? t("common.actions.createAccount") : t("common.actions.signIn")}
+          {loading ? (
+            <>
+              <CosmicLoader size="small" variant="button" className="scale-[0.65]" />
+              {t("auth.loading")}
+            </>
+          ) : isSignup ? (
+            t("common.actions.createAccount")
+          ) : (
+            t("common.actions.signIn")
+          )}
         </Button>
 
         <p className="text-center text-xs text-muted-foreground">
