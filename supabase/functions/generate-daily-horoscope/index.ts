@@ -11,6 +11,7 @@ const jsonHeaders = { ...corsHeaders, "Content-Type": "application/json" };
 
 const requestSchema = z.object({
   zodiacSign: z.string().trim().min(3).max(20).optional(),
+  language: z.enum(["en", "hi"]).optional(),
 });
 
 const parseJsonResponse = <T>(value: string): T => {
@@ -95,6 +96,7 @@ Deno.serve(async (req) => {
     }
 
     const today = new Date().toISOString().slice(0, 10);
+    const responseLanguage = parsed.data.language === "hi" ? "Hindi" : "English";
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -109,7 +111,7 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "Return ONLY strict JSON with keys: today_prediction, lucky_number, lucky_color, advice, focus_areas(array), energy_level(1-10).",
+              `Return ONLY strict JSON with keys: today_prediction, lucky_number, lucky_color, advice, focus_areas(array), energy_level(1-10). Write all text fields in ${responseLanguage}.`,
           },
           {
             role: "user",
