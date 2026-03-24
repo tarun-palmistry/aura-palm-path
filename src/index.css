@@ -123,11 +123,114 @@ All colors MUST be HSL.
     @apply border border-border/80 bg-card/70 backdrop-blur-xl;
   }
 
+  .cosmic-loader-scene {
+    width: var(--loader-size);
+    height: var(--loader-size);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+  }
+
+  .cosmic-loader-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--border) / 0.55);
+    box-shadow: 0 0 16px hsl(var(--primary) / 0.12) inset;
+  }
+
+  .cosmic-loader-ring-inner {
+    inset: 18%;
+    border-color: hsl(var(--accent) / 0.45);
+  }
+
+  .cosmic-loader-core {
+    position: absolute;
+    width: 20%;
+    height: 20%;
+    border-radius: 9999px;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.96) 0%, hsl(var(--secondary) / 0.78) 72%);
+    box-shadow:
+      0 0 20px hsl(var(--primary) / 0.55),
+      0 0 42px hsl(var(--accent) / 0.28);
+    animation: cosmic-core-pulse 2.4s ease-in-out infinite;
+    z-index: 2;
+  }
+
+  .cosmic-loader-orbit {
+    position: absolute;
+    inset: 0;
+    display: block;
+    animation: cosmic-orbit-spin linear infinite;
+    transform-origin: center;
+  }
+
+  .cosmic-loader-planet {
+    position: absolute;
+    left: 50%;
+    top: -2px;
+    transform: translateX(-50%);
+    width: 14%;
+    height: 14%;
+    border-radius: 9999px;
+    box-shadow: 0 0 14px currentColor;
+  }
+
+  .cosmic-loader-planet-1 {
+    background: hsl(var(--primary) / 0.98);
+    color: hsl(var(--primary) / 0.7);
+  }
+
+  .cosmic-loader-planet-2 {
+    background: hsl(var(--accent) / 0.94);
+    color: hsl(var(--accent) / 0.62);
+  }
+
+  .cosmic-loader-planet-3 {
+    background: hsl(var(--secondary-foreground) / 0.92);
+    color: hsl(var(--secondary-foreground) / 0.44);
+  }
+
+  .cosmic-loader-planet-4 {
+    background: hsl(var(--muted-foreground) / 0.9);
+    color: hsl(var(--muted-foreground) / 0.42);
+  }
+
   .starlight-field {
     background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(var(--primary) / 0.26) 0%, transparent 45%);
   }
 
   .focus-mystic {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}
+
+@keyframes cosmic-orbit-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cosmic-core-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.84;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-loader-core,
+  .cosmic-loader-orbit {
+    animation: none !important;
   }
 }
