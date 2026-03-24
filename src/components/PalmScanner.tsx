@@ -22,7 +22,6 @@ const isImageFile = (file: File) => ["image/jpeg", "image/jpg", "image/png", "im
 
 export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const { language, t, tm } = useLanguage();
-  const [handSide, setHandSide] = useState<"left" | "right">("left");
   const [dominantHand, setDominantHand] = useState<"left" | "right">("right");
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
@@ -138,7 +137,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       return;
     }
 
-    const parsed = metadataSchema.safeParse({ handSide, dominantHand, age, gender });
+    const parsed = metadataSchema.safeParse({ handSide: dominantHand, dominantHand, age, gender });
     if (!parsed.success) {
       toast.error(parsed.error.issues[0]?.message ?? t("palm.toasts.invalidMetadata"));
       return;
@@ -232,21 +231,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="hand-side">{t("palm.handSide")}</Label>
-            <select
-              id="hand-side"
-              className="focus-mystic flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              value={handSide}
-              onChange={(e) => setHandSide(e.target.value as "left" | "right")}
-            >
-              <option value="left">{t("palm.left")}</option>
-              <option value="right">{t("palm.right")}</option>
-            </select>
-          </div>
-
-          <div className="space-y-2">
+        <div className="space-y-2">
             <Label htmlFor="dominant">{t("palm.dominantHand")}</Label>
             <select
               id="dominant"
@@ -257,7 +242,6 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
               <option value="left">{t("palm.left")}</option>
               <option value="right">{t("palm.right")}</option>
             </select>
-          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
