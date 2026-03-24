@@ -189,35 +189,35 @@ All colors MUST be HSL.
     filter: saturate(0.9);
   }
 
-  .cosmic-loader-planet-1 {
+  .cosmic-loader-planet-moon {
     --planet-bg: hsl(0 0% 90% / 0.95);
     --planet-glow: hsl(0 0% 86% / 0.38);
     --planet-opacity: 0.9;
     --planet-size: 13.5%;
   }
 
-  .cosmic-loader-planet-2 {
+  .cosmic-loader-planet-mars {
     --planet-bg: hsl(10 58% 45% / 0.94);
     --planet-glow: hsl(12 66% 40% / 0.32);
     --planet-opacity: 0.86;
     --planet-size: 12.8%;
   }
 
-  .cosmic-loader-planet-3 {
+  .cosmic-loader-planet-mercury {
     --planet-bg: hsl(220 7% 62% / 0.9);
     --planet-glow: hsl(220 8% 52% / 0.22);
     --planet-opacity: 0.68;
     --planet-size: 11.8%;
   }
 
-  .cosmic-loader-planet-4 {
+  .cosmic-loader-planet-venus {
     --planet-bg: hsl(47 66% 76% / 0.92);
     --planet-glow: hsl(46 64% 68% / 0.28);
     --planet-opacity: 0.84;
     --planet-size: 12.2%;
   }
 
-  .cosmic-loader-planet-5 {
+  .cosmic-loader-planet-jupiter {
     --planet-bg: hsl(32 60% 55% / 0.9);
     --planet-glow: hsl(32 66% 50% / 0.3);
     --planet-opacity: 0.82;
@@ -227,7 +227,7 @@ All colors MUST be HSL.
       repeating-linear-gradient(10deg, hsl(36 48% 62% / 0.14) 0 2px, transparent 2px 4px);
   }
 
-  .cosmic-loader-planet-6 {
+  .cosmic-loader-planet-saturn {
     --planet-bg: hsl(42 66% 61% / 0.9);
     --planet-glow: hsl(44 72% 60% / 0.34);
     --planet-opacity: 0.8;
@@ -235,7 +235,7 @@ All colors MUST be HSL.
     --planet-shadow-extra: 0 0 0 1px hsl(44 52% 74% / 0.3);
   }
 
-  .cosmic-loader-planet-6::after {
+  .cosmic-loader-planet-saturn::after {
     content: "";
     position: absolute;
     inset: 32% -24%;
@@ -245,14 +245,14 @@ All colors MUST be HSL.
     pointer-events: none;
   }
 
-  .cosmic-loader-planet-7 {
+  .cosmic-loader-planet-rahu {
     --planet-bg: hsl(228 52% 40% / 0.92);
     --planet-glow: hsl(228 66% 46% / 0.3);
     --planet-opacity: 0.7;
     --planet-size: 13%;
   }
 
-  .cosmic-loader-planet-8 {
+  .cosmic-loader-planet-ketu {
     --planet-bg: hsl(270 34% 62% / 0.85);
     --planet-glow: hsl(270 42% 62% / 0.22);
     --planet-opacity: 0.62;
@@ -260,10 +260,10 @@ All colors MUST be HSL.
     filter: saturate(0.8) blur(0.18px);
   }
 
-  .cosmic-loader-planet-9 {
-    --planet-bg: hsl(15 58% 44% / 0.9);
-    --planet-glow: hsl(15 66% 40% / 0.3);
-    --planet-opacity: 0.74;
+  .cosmic-loader-planet-sun {
+    --planet-bg: hsl(36 76% 55% / 0.92);
+    --planet-glow: hsl(40 82% 60% / 0.38);
+    --planet-opacity: 0.84;
     --planet-size: 13.8%;
   }
 
