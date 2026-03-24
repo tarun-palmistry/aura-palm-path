@@ -259,13 +259,17 @@ export type Database = {
           amount_inr: number
           created_at: string
           currency: string
+          failure_reason: string | null
+          horoscope_request_id: string | null
           id: string
           paid_at: string | null
+          plan_type: Database["public"]["Enums"]["report_type"]
           provider: string
           provider_order_id: string | null
           provider_payment_id: string | null
           provider_signature: string | null
-          reading_id: string
+          raw_response: Json
+          reading_id: string | null
           status: Database["public"]["Enums"]["payment_status"]
           updated_at: string
           user_id: string
@@ -274,13 +278,17 @@ export type Database = {
           amount_inr: number
           created_at?: string
           currency?: string
+          failure_reason?: string | null
+          horoscope_request_id?: string | null
           id?: string
           paid_at?: string | null
+          plan_type?: Database["public"]["Enums"]["report_type"]
           provider?: string
           provider_order_id?: string | null
           provider_payment_id?: string | null
           provider_signature?: string | null
-          reading_id: string
+          raw_response?: Json
+          reading_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string
           user_id: string
@@ -289,18 +297,29 @@ export type Database = {
           amount_inr?: number
           created_at?: string
           currency?: string
+          failure_reason?: string | null
+          horoscope_request_id?: string | null
           id?: string
           paid_at?: string | null
+          plan_type?: Database["public"]["Enums"]["report_type"]
           provider?: string
           provider_order_id?: string | null
           provider_payment_id?: string | null
           provider_signature?: string | null
-          reading_id?: string
+          raw_response?: Json
+          reading_id?: string | null
           status?: Database["public"]["Enums"]["payment_status"]
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "payments_horoscope_request_id_fkey"
+            columns: ["horoscope_request_id"]
+            isOneToOne: false
+            referencedRelation: "horoscope_requests"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "payments_reading_id_fkey"
             columns: ["reading_id"]
@@ -346,6 +365,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      report_unlocks: {
+        Row: {
+          created_at: string
+          horoscope_unlocked: boolean
+          id: string
+          last_payment_id: string | null
+          palmistry_unlocked: boolean
+          unlocked_via_combo: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          horoscope_unlocked?: boolean
+          id?: string
+          last_payment_id?: string | null
+          palmistry_unlocked?: boolean
+          unlocked_via_combo?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          horoscope_unlocked?: boolean
+          id?: string
+          last_payment_id?: string | null
+          palmistry_unlocked?: boolean
+          unlocked_via_combo?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_unlocks_last_payment_id_fkey"
+            columns: ["last_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reports: {
         Row: {
@@ -449,6 +509,7 @@ export type Database = {
       app_role: "admin" | "user"
       hand_side: "left" | "right"
       payment_status: "pending" | "successful" | "failed"
+      report_type: "palmistry" | "horoscope" | "combo"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -579,6 +640,7 @@ export const Constants = {
       app_role: ["admin", "user"],
       hand_side: ["left", "right"],
       payment_status: ["pending", "successful", "failed"],
+      report_type: ["palmistry", "horoscope", "combo"],
     },
   },
 } as const
