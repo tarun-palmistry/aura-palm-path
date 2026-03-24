@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AuthPanel } from "@/components/AuthPanel";
 import { PalmScanner } from "@/components/PalmScanner";
 import { ReportViewer } from "@/components/ReportViewer";
@@ -7,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
+import { useReportUnlocks } from "@/hooks/useReportUnlocks";
+import type { PlanType } from "@/lib/paymentPlans";
 
 type ReportRow = Tables<"reports">;
 
@@ -16,6 +20,8 @@ const Index = () => {
   const [loadingSession, setLoadingSession] = useState(true);
   const [report, setReport] = useState<ReportRow | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
+  const { activePlan, stage, startPayment } = useRazorpayPayment();
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -63,6 +69,35 @@ const Index = () => {
     scrollToSection(session ? "scan-section" : "auth-section");
   };
 
+  const handleUnlock = async (planType: PlanType) => {
+    if (!report || !session?.user.id) {
+      toast.error(t("payments.messages.selectReportFirst"));
+      return;
+    }
+
+    const result = await startPayment({
+      planType,
+      readingId: report.reading_id,
+      prefill: {
+        email: session.user.email,
+      },
+    });
+
+    if (result.ok) {
+      await refreshUnlocks();
+      setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
+      toast.success(t("payments.messages.success"));
+      return;
+    }
+
+    if (result.cancelled) {
+      toast.error(t("payments.messages.cancelled"));
+      return;
+    }
+
+    toast.error(result.error ?? t("payments.messages.failed"));
+  };
+
   if (loadingSession) {
     return <main className="container py-16">{t("common.loading.oracle")}</main>;
   }
@@ -91,7 +126,15 @@ const Index = () => {
                   }}
                 />
 
-                {report && <ReportViewer report={report} />}
+                {report && (
+                  <ReportViewer
+                    report={report}
+                    isUnlocked={Boolean(report.is_unlocked || unlocks.palmistryUnlocked)}
+                    activePlan={activePlan}
+                    paymentStage={stage}
+                    onUnlock={handleUnlock}
+                  />
+                )}
               </div>
             )}
           </div>
