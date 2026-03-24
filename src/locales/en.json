@@ -16,6 +16,8 @@
       "signIn": "Sign in",
       "createAccount": "Create account",
       "signOut": "Sign out",
+      "addPalmImage": "Add Palm Image",
+      "chooseCaptureOrUpload": "Choose upload or capture",
       "useCamera": "Use Camera",
       "uploadImage": "Upload Image",
       "capturePalm": "Capture Palm",
