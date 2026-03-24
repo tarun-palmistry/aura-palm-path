@@ -227,7 +227,7 @@ Deno.serve(async (req) => {
         interpretation,
         free_summary: freeSummary,
         full_report: fullReport,
-        is_unlocked: true,
+        is_unlocked: false,
       })
       .select("*")
       .single();

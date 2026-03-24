@@ -1,7 +1,10 @@
 {
   "common": {
     "brand": "AstraPalm",
-    "language": { "english": "EN", "hindi": "हिंदी" },
+    "language": {
+      "english": "EN",
+      "hindi": "हिंदी"
+    },
     "actions": {
       "startReading": "Start Your Reading",
       "scanPalm": "Scan My Palm",
@@ -32,7 +35,8 @@
       "admin": "Checking admin access...",
       "submissions": "Loading submissions...",
       "analyzingPalm": "Analyzing your palm...",
-      "generatingReport": "Generating astrology report..."
+      "generatingReport": "Generating astrology report...",
+      "processingPayment": "Processing payment..."
     }
   },
   "auth": {
@@ -57,12 +61,30 @@
   },
   "homepage": {
     "navLinks": [
-      { "label": "Home", "href": "#home" },
-      { "label": "Palmistry", "href": "#features" },
-      { "label": "Horoscope", "href": "#services" },
-      { "label": "Daily Horoscope", "href": "#daily-whatsapp" },
-      { "label": "Blog", "href": "#blog" },
-      { "label": "FAQ", "href": "#faq" }
+      {
+        "label": "Home",
+        "href": "#home"
+      },
+      {
+        "label": "Palmistry",
+        "href": "#features"
+      },
+      {
+        "label": "Horoscope",
+        "href": "#services"
+      },
+      {
+        "label": "Daily Horoscope",
+        "href": "#daily-whatsapp"
+      },
+      {
+        "label": "Blog",
+        "href": "#blog"
+      },
+      {
+        "label": "FAQ",
+        "href": "#faq"
+      }
     ],
     "badge": "Premium AI Guidance Platform",
     "title": "Unlock Your Future with Palmistry & Astrology",
@@ -75,13 +97,22 @@
         "label": "Palmistry Preview",
         "title": "AI palm reading from image",
         "description": "Structured palm features first, then personalized insight for relationships, career, and life direction.",
-        "chips": ["Life line: strong", "Heart line: deep", "Head line: clear", "Palm shape: earth"]
+        "chips": [
+          "Life line: strong",
+          "Heart line: deep",
+          "Head line: clear",
+          "Palm shape: earth"
+        ]
       },
       "horoscope": {
         "label": "Horoscope Preview",
         "title": "Personal astrology birth chart",
         "description": "Zodiac sign, moon sign, rising sign, and chart patterns translated into premium practical guidance.",
-        "chips": ["Sun: Leo", "Moon: Taurus", "Rising: Libra"]
+        "chips": [
+          "Sun: Leo",
+          "Moon: Taurus",
+          "Rising: Libra"
+        ]
       }
     },
     "featureSection": {
@@ -310,7 +341,8 @@
     "title": "Your Palm Reading",
     "subtitle": "Based on extracted palm shape, lines, and mounts from your scan.",
     "freePreview": "Free Preview",
-    "fullReading": "Full Reading"
+    "fullReading": "Full Reading",
+    "locked": "Premium sections are locked"
   },
   "astrology": {
     "badge": "Horoscope & Astrology",
@@ -351,18 +383,54 @@
       "yearly": "Yearly prediction"
     },
     "zodiacOptions": [
-      { "value": "Aries", "label": "Aries" },
-      { "value": "Taurus", "label": "Taurus" },
-      { "value": "Gemini", "label": "Gemini" },
-      { "value": "Cancer", "label": "Cancer" },
-      { "value": "Leo", "label": "Leo" },
-      { "value": "Virgo", "label": "Virgo" },
-      { "value": "Libra", "label": "Libra" },
-      { "value": "Scorpio", "label": "Scorpio" },
-      { "value": "Sagittarius", "label": "Sagittarius" },
-      { "value": "Capricorn", "label": "Capricorn" },
-      { "value": "Aquarius", "label": "Aquarius" },
-      { "value": "Pisces", "label": "Pisces" }
+      {
+        "value": "Aries",
+        "label": "Aries"
+      },
+      {
+        "value": "Taurus",
+        "label": "Taurus"
+      },
+      {
+        "value": "Gemini",
+        "label": "Gemini"
+      },
+      {
+        "value": "Cancer",
+        "label": "Cancer"
+      },
+      {
+        "value": "Leo",
+        "label": "Leo"
+      },
+      {
+        "value": "Virgo",
+        "label": "Virgo"
+      },
+      {
+        "value": "Libra",
+        "label": "Libra"
+      },
+      {
+        "value": "Scorpio",
+        "label": "Scorpio"
+      },
+      {
+        "value": "Sagittarius",
+        "label": "Sagittarius"
+      },
+      {
+        "value": "Capricorn",
+        "label": "Capricorn"
+      },
+      {
+        "value": "Aquarius",
+        "label": "Aquarius"
+      },
+      {
+        "value": "Pisces",
+        "label": "Pisces"
+      }
     ],
     "validation": {
       "fullNameRequired": "Full name is required",
@@ -381,7 +449,8 @@
       "dailyFailed": "Could not fetch daily horoscope.",
       "noReport": "No report returned.",
       "noHoroscope": "No horoscope returned."
-    }
+    },
+    "fullReport": "Full Report"
   },
   "admin": {
     "title": "Admin Panel",
@@ -405,5 +474,65 @@
   },
   "notFound": {
     "oops": "Oops! Page not found"
+  },
+  "payments": {
+    "unlockBadge": "Premium unlock",
+    "payAndUnlock": "Pay and Unlock",
+    "oneTime": "One-time payment only",
+    "instantAccess": "Instant access after success",
+    "secure": "Secure payment with Razorpay",
+    "testMode": "Razorpay test mode enabled",
+    "locked": "Locked",
+    "unlocked": "Unlocked",
+    "lockedNote": "Unlock to reveal this premium section.",
+    "status": {
+      "creatingOrder": "Preparing secure checkout...",
+      "openingCheckout": "Opening Razorpay checkout...",
+      "verifyingPayment": "Verifying payment..."
+    },
+    "messages": {
+      "success": "Payment successful. Your full report is now unlocked.",
+      "cancelled": "Payment was not completed. Your report is still locked.",
+      "failed": "Payment failed. Please try again.",
+      "selectReportFirst": "Please open a report first to unlock it."
+    },
+    "palmistry": {
+      "title": "Unlock Your Palmistry Premium Report",
+      "description": "Choose a plan to unlock deeper palm insights instantly."
+    },
+    "horoscope": {
+      "title": "Unlock Your Horoscope Premium Report",
+      "description": "Choose a plan to unlock full astrology interpretation instantly."
+    },
+    "plans": {
+      "palmistry": {
+        "title": "Palmistry Report",
+        "price": "₹99",
+        "description": "Unlock full palmistry interpretation."
+      },
+      "horoscope": {
+        "title": "Horoscope Report",
+        "price": "₹99",
+        "description": "Unlock complete birth chart insights."
+      },
+      "combo": {
+        "title": "Palm + Horoscope Combo",
+        "price": "₹149",
+        "description": "Unlock both reports at best value.",
+        "badge": "Most Popular"
+      }
+    },
+    "lockedPalmSections": {
+      "love": "Love and Relationships",
+      "career": "Career and Strengths",
+      "future": "Future Guidance",
+      "advice": "Key Advice"
+    },
+    "lockedHoroscopeSections": {
+      "love": "Love Compatibility",
+      "career": "Career Direction",
+      "yearly": "Yearly Outlook",
+      "deep": "Deeper Interpretation"
+    }
   }
 }

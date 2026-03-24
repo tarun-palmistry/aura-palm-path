@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { z } from "https://esm.sh/zod@3.25.76";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,6 +8,26 @@ const corsHeaders = {
 };
 
 const jsonHeaders = { ...corsHeaders, "Content-Type": "application/json" };
+
+const planSchema = z.enum(["palmistry", "horoscope", "combo"]);
+
+const requestSchema = z.object({
+  planType: planSchema,
+  readingId: z.string().uuid().optional(),
+  horoscopeRequestId: z.string().uuid().optional(),
+});
+
+const PLAN_PRICES: Record<z.infer<typeof planSchema>, number> = {
+  palmistry: 99,
+  horoscope: 99,
+  combo: 149,
+};
+
+const PLAN_LABELS: Record<z.infer<typeof planSchema>, string> = {
+  palmistry: "Palmistry Full Report",
+  horoscope: "Horoscope Full Report",
+  combo: "Palmistry + Horoscope Combo",
+};
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -18,7 +39,7 @@ Deno.serve(async (req) => {
   const RAZORPAY_KEY_SECRET = Deno.env.get("RAZORPAY_KEY_SECRET");
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_PUBLISHABLE_KEY) {
-    return new Response(JSON.stringify({ error: "Supabase environment variables are missing." }), {
+    return new Response(JSON.stringify({ error: "Backend environment variables are missing." }), {
       status: 500,
       headers: jsonHeaders,
     });
@@ -46,28 +67,96 @@ Deno.serve(async (req) => {
   const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
-    const { data: authData } = await supabaseAuth.auth.getUser();
-    if (!authData.user) {
+    const { data: authData, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !authData.user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: jsonHeaders });
     }
 
-    const { readingId } = await req.json();
-    if (!readingId || typeof readingId !== "string") {
-      return new Response(JSON.stringify({ error: "readingId is required." }), { status: 400, headers: jsonHeaders });
+    const parsed = requestSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: parsed.error.issues[0]?.message ?? "Invalid request" }), {
+        status: 400,
+        headers: jsonHeaders,
+      });
     }
 
-    const { data: reading } = await supabaseAdmin
-      .from("palm_readings")
-      .select("id, user_id")
-      .eq("id", readingId)
-      .single();
+    const { planType, readingId, horoscopeRequestId } = parsed.data;
 
-    if (!reading || reading.user_id !== authData.user.id) {
-      return new Response(JSON.stringify({ error: "Reading not found." }), { status: 404, headers: jsonHeaders });
+    if (planType === "palmistry" && !readingId) {
+      return new Response(JSON.stringify({ error: "readingId is required for palmistry plan." }), {
+        status: 400,
+        headers: jsonHeaders,
+      });
     }
 
-    const amountInr = 299;
-    const receipt = `reading_${readingId.slice(0, 10)}_${Date.now()}`;
+    if (planType === "horoscope" && !horoscopeRequestId) {
+      return new Response(JSON.stringify({ error: "horoscopeRequestId is required for horoscope plan." }), {
+        status: 400,
+        headers: jsonHeaders,
+      });
+    }
+
+    if (readingId) {
+      const { data: reading } = await supabaseAdmin
+        .from("palm_readings")
+        .select("id, user_id")
+        .eq("id", readingId)
+        .single();
+
+      if (!reading || reading.user_id !== authData.user.id) {
+        return new Response(JSON.stringify({ error: "Palm reading not found for this user." }), {
+          status: 404,
+          headers: jsonHeaders,
+        });
+      }
+    }
+
+    if (horoscopeRequestId) {
+      const { data: horoscopeRequest } = await supabaseAdmin
+        .from("horoscope_requests")
+        .select("id, user_id")
+        .eq("id", horoscopeRequestId)
+        .single();
+
+      if (!horoscopeRequest || horoscopeRequest.user_id !== authData.user.id) {
+        return new Response(JSON.stringify({ error: "Horoscope request not found for this user." }), {
+          status: 404,
+          headers: jsonHeaders,
+        });
+      }
+    }
+
+    const { data: unlockRow } = await supabaseAdmin
+      .from("report_unlocks")
+      .select("palmistry_unlocked, horoscope_unlocked")
+      .eq("user_id", authData.user.id)
+      .maybeSingle();
+
+    const palmUnlocked = Boolean(unlockRow?.palmistry_unlocked);
+    const horoscopeUnlocked = Boolean(unlockRow?.horoscope_unlocked);
+
+    const alreadyUnlocked =
+      planType === "palmistry"
+        ? palmUnlocked
+        : planType === "horoscope"
+          ? horoscopeUnlocked
+          : palmUnlocked && horoscopeUnlocked;
+
+    if (alreadyUnlocked) {
+      return new Response(
+        JSON.stringify({
+          alreadyUnlocked: true,
+          message: "Selected report is already unlocked.",
+        }),
+        {
+          status: 200,
+          headers: jsonHeaders,
+        },
+      );
+    }
+
+    const amountInr = PLAN_PRICES[planType];
+    const receipt = `${planType}_${Date.now()}`;
 
     const razorpayResponse = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
@@ -84,20 +173,26 @@ Deno.serve(async (req) => {
 
     const orderData = await razorpayResponse.json();
     if (!razorpayResponse.ok) {
-      return new Response(JSON.stringify({ error: `Razorpay order creation failed: ${JSON.stringify(orderData)}` }), {
-        status: razorpayResponse.status,
-        headers: jsonHeaders,
-      });
+      return new Response(
+        JSON.stringify({ error: `Razorpay order creation failed: ${JSON.stringify(orderData)}` }),
+        {
+          status: razorpayResponse.status,
+          headers: jsonHeaders,
+        },
+      );
     }
 
     const { error: insertError } = await supabaseAdmin.from("payments").insert({
       user_id: authData.user.id,
-      reading_id: readingId,
+      reading_id: readingId ?? null,
+      horoscope_request_id: horoscopeRequestId ?? null,
+      plan_type: planType,
       provider: "razorpay",
       provider_order_id: orderData.id,
       amount_inr: amountInr,
       status: "pending",
       currency: "INR",
+      raw_response: { order: orderData },
     });
 
     if (insertError) throw insertError;
@@ -108,6 +203,8 @@ Deno.serve(async (req) => {
         orderId: orderData.id,
         amount: orderData.amount,
         currency: orderData.currency,
+        planType,
+        planLabel: PLAN_LABELS[planType],
       }),
       { status: 200, headers: jsonHeaders },
     );
