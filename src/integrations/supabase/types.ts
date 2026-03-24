@@ -14,6 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_horoscopes: {
+        Row: {
+          advice: string
+          created_at: string
+          horoscope_date: string
+          id: string
+          lucky_color: string
+          lucky_number: string
+          raw_data: Json
+          today_prediction: string
+          updated_at: string
+          user_id: string
+          zodiac_sign: string
+        }
+        Insert: {
+          advice: string
+          created_at?: string
+          horoscope_date?: string
+          id?: string
+          lucky_color: string
+          lucky_number: string
+          raw_data?: Json
+          today_prediction: string
+          updated_at?: string
+          user_id: string
+          zodiac_sign: string
+        }
+        Update: {
+          advice?: string
+          created_at?: string
+          horoscope_date?: string
+          id?: string
+          lucky_color?: string
+          lucky_number?: string
+          raw_data?: Json
+          today_prediction?: string
+          updated_at?: string
+          user_id?: string
+          zodiac_sign?: string
+        }
+        Relationships: []
+      }
+      horoscope_requests: {
+        Row: {
+          astrology_data: Json
+          created_at: string
+          date_of_birth: string
+          free_summary: string
+          full_name: string
+          full_report: string
+          gender: string | null
+          id: string
+          interpretation: Json
+          is_unlocked: boolean
+          moon_sign: string
+          place_of_birth: string
+          planetary_positions: Json
+          rising_sign: string
+          time_of_birth: string
+          updated_at: string
+          user_id: string
+          zodiac_sign: string
+        }
+        Insert: {
+          astrology_data?: Json
+          created_at?: string
+          date_of_birth: string
+          free_summary: string
+          full_name: string
+          full_report: string
+          gender?: string | null
+          id?: string
+          interpretation?: Json
+          is_unlocked?: boolean
+          moon_sign: string
+          place_of_birth: string
+          planetary_positions?: Json
+          rising_sign: string
+          time_of_birth: string
+          updated_at?: string
+          user_id: string
+          zodiac_sign: string
+        }
+        Update: {
+          astrology_data?: Json
+          created_at?: string
+          date_of_birth?: string
+          free_summary?: string
+          full_name?: string
+          full_report?: string
+          gender?: string | null
+          id?: string
+          interpretation?: Json
+          is_unlocked?: boolean
+          moon_sign?: string
+          place_of_birth?: string
+          planetary_positions?: Json
+          rising_sign?: string
+          time_of_birth?: string
+          updated_at?: string
+          user_id?: string
+          zodiac_sign?: string
+        }
+        Relationships: []
+      }
       images: {
         Row: {
           created_at: string
