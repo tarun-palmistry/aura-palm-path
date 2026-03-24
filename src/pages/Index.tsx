@@ -114,7 +114,7 @@ const Index = () => {
           <div className="space-y-8" id="scan-section">
             <PalmScanner
               userId={session.user.id}
-              onReportReady={(nextReadingId, nextReport) => {
+              onReportReady={(_nextReadingId, nextReport) => {
                 setReport(nextReport);
               }}
             />
