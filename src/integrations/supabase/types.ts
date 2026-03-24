@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_name: Database["public"]["Enums"]["analytics_event_name"]
+          id: string
+          metadata: Json
+          page_path: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: Database["public"]["Enums"]["analytics_event_name"]
+          id?: string
+          metadata?: Json
+          page_path?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: Database["public"]["Enums"]["analytics_event_name"]
+          id?: string
+          metadata?: Json
+          page_path?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       daily_horoscopes: {
         Row: {
           advice: string
@@ -506,6 +533,16 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      analytics_event_name:
+        | "hero_cta_click"
+        | "palm_submit_click"
+        | "horoscope_submit_click"
+        | "payment_unlock_click"
+        | "payment_success"
+        | "whatsapp_signup_click"
+        | "language_toggle"
+        | "palm_report_view"
+        | "horoscope_report_view"
       app_role: "admin" | "user"
       hand_side: "left" | "right"
       payment_status: "pending" | "successful" | "failed"
@@ -637,6 +674,17 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      analytics_event_name: [
+        "hero_cta_click",
+        "palm_submit_click",
+        "horoscope_submit_click",
+        "payment_unlock_click",
+        "payment_success",
+        "whatsapp_signup_click",
+        "language_toggle",
+        "palm_report_view",
+        "horoscope_report_view",
+      ],
       app_role: ["admin", "user"],
       hand_side: ["left", "right"],
       payment_status: ["pending", "successful", "failed"],
