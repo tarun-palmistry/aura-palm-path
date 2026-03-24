@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Stars, Sun, Sparkles, CalendarDays } from "lucide-react";
+import { Stars, Sun, Sparkles, CalendarDays, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { UnlockPlansCard } from "@/components/UnlockPlansCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
 import { useReportUnlocks } from "@/hooks/useReportUnlocks";
+import { downloadReportPdf } from "@/lib/pdf";
 import type { PlanType } from "@/lib/paymentPlans";
 
 type HoroscopeRequestRow = {
@@ -256,6 +257,23 @@ const Astrology = () => {
     toast.error(resolvePaymentErrorMessage(result.error));
   };
 
+  const handleDownloadPdf = () => {
+    if (!report) return;
+
+    const pdfSections = [
+      { heading: t("astrology.summary"), body: report.free_summary },
+      ...interpretationCards.map((card) => ({ heading: card.title, body: card.body ?? "" })),
+      { heading: t("astrology.fullReport"), body: report.full_report },
+    ];
+
+    downloadReportPdf({
+      title: t("astrology.title"),
+      subtitle: `${report.full_name} • ${report.zodiac_sign} / ${report.moon_sign} / ${report.rising_sign}`,
+      fileName: `astrology-report-${report.full_name}-${report.id.slice(0, 8)}`,
+      sections: pdfSections,
+    });
+  };
+
   if (loadingSession) {
     return (
       <main className="container py-16">
@@ -372,6 +390,12 @@ const Astrology = () => {
 
                     {isCurrentReportUnlocked ? (
                       <>
+                        <div className="flex justify-end">
+                          <Button type="button" variant="mystic" size="sm" className="gap-2" onClick={handleDownloadPdf}>
+                            <Download className="h-4 w-4" aria-hidden="true" />
+                            {t("common.actions.downloadPdf")}
+                          </Button>
+                        </div>
                         <div className="grid gap-3 md:grid-cols-2">
                           {interpretationCards.map((card) => (
                             <article key={card.title} className="space-y-2 rounded-lg border border-border/70 bg-background/30 p-4">

@@ -1,6 +1,9 @@
+import { Download } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { UnlockPlansCard } from "@/components/UnlockPlansCard";
+import { Button } from "@/components/ui/button";
+import { downloadReportPdf } from "@/lib/pdf";
 import type { PaymentStage, PlanType } from "@/lib/paymentPlans";
 
 type ReportRow = Tables<"reports">;
@@ -40,6 +43,20 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
     t("payments.lockedPalmSections.advice"),
   ];
 
+  const handleDownloadPdf = () => {
+    const pdfSections = [
+      { heading: t("report.freePreview"), body: report.free_preview },
+      ...sections.map((section) => ({ heading: section.heading, body: section.body })),
+    ];
+
+    downloadReportPdf({
+      title: t("report.title"),
+      subtitle: t("report.subtitle"),
+      fileName: `palm-reading-${report.reading_id}`,
+      sections: pdfSections,
+    });
+  };
+
   return (
     <section className="mystic-glass space-y-4 rounded-xl p-6">
       <div className="space-y-1">
@@ -64,7 +81,13 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
 
       {isUnlocked ? (
         <article className="space-y-4 rounded-lg border border-border/80 bg-background/30 p-4">
-          <h3 className="text-xl font-semibold">{t("report.fullReading")}</h3>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="text-xl font-semibold">{t("report.fullReading")}</h3>
+            <Button type="button" variant="mystic" size="sm" className="gap-2" onClick={handleDownloadPdf}>
+              <Download className="h-4 w-4" aria-hidden="true" />
+              {t("common.actions.downloadPdf")}
+            </Button>
+          </div>
           <p className="whitespace-pre-line leading-relaxed text-foreground/95">{report.full_report}</p>
         </article>
       ) : (
