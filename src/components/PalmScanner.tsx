@@ -26,7 +26,9 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageSource, setImageSource] = useState<"camera" | "upload">("upload");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState<"uploading" | "extracting" | "generating" | "finalizing">("uploading");
   const [cameraOn, setCameraOn] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -48,6 +50,12 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   );
 
   const scanSteps = tm<string[]>("palm.steps");
+  const loadingStageText = {
+    uploading: t("common.loading.uploadingPalm"),
+    extracting: t("common.loading.extractingLines"),
+    generating: t("common.loading.generatingPalmReport"),
+    finalizing: t("common.loading.finalizingPalmReport"),
+  } as const;
 
   const previewUrl = useMemo(() => (imageFile ? URL.createObjectURL(imageFile) : ""), [imageFile]);
 
@@ -95,6 +103,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
     const file = new File([blob], `palm-${Date.now()}.jpg`, { type: "image/jpeg" });
     setImageFile(file);
+    setImageSource("camera");
     stopCamera();
   };
 
@@ -134,6 +143,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
     }
 
     setIsLoading(true);
+    setLoadingStage("uploading");
 
     try {
       const { data: reading, error: readingError } = await supabase
@@ -164,10 +174,12 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         user_id: userId,
         reading_id: reading.id,
         storage_path: storagePath,
-        source: cameraOn ? "camera" : "upload",
+        source: imageSource,
       });
 
       if (imageInsertError) throw imageInsertError;
+
+      setLoadingStage("extracting");
 
       const { error: analyzeError } = await supabase.functions.invoke("analyze-palm", {
         body: { readingId: reading.id, language },
@@ -175,6 +187,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
       if (analyzeError) throw new Error(analyzeError.message);
 
+      setLoadingStage("finalizing");
       const report = await waitForReport(reading.id);
       onReportReady(reading.id, report);
       toast.success(t("palm.toasts.analyzed"));
@@ -183,6 +196,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       toast.error(message);
     } finally {
       setIsLoading(false);
+      setLoadingStage("uploading");
     }
   };
 
@@ -258,14 +272,24 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <Button type="button" variant="mystic" onClick={startCamera} className="gap-2">
+          <Button type="button" variant="mystic" onClick={startCamera} className="gap-2" disabled={isLoading}>
             <Camera className="h-4 w-4" aria-hidden="true" />
             {t("common.actions.useCamera")}
           </Button>
           <label className="focus-mystic inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium">
             <Upload className="h-4 w-4" aria-hidden="true" />
             {t("common.actions.uploadImage")}
-            <input type="file" className="hidden" accept="image/png,image/jpeg,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
+            <input
+              type="file"
+              className="hidden"
+              accept="image/png,image/jpeg,image/webp"
+              disabled={isLoading}
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setImageFile(file);
+                if (file) setImageSource("upload");
+              }}
+            />
           </label>
         </div>
 
@@ -273,11 +297,11 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
           <div className="space-y-3 rounded-xl border border-border/70 bg-background/30 p-3">
             <video ref={videoRef} autoPlay playsInline className="w-full rounded-xl border border-border/80" />
             <div className="flex gap-2">
-              <Button type="button" variant="hero" onClick={capturePalm} className="gap-2">
+              <Button type="button" variant="hero" onClick={capturePalm} className="gap-2" disabled={isLoading}>
                 <WandSparkles className="h-4 w-4" aria-hidden="true" />
                 {t("common.actions.capturePalm")}
               </Button>
-              <Button type="button" variant="mystic" onClick={stopCamera}>
+              <Button type="button" variant="mystic" onClick={stopCamera} disabled={isLoading}>
                 {t("common.actions.cancel")}
               </Button>
             </div>
@@ -298,11 +322,22 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
           </div>
         )}
 
+        {isLoading && (
+          <div className="rounded-xl border border-border/70 bg-background/30 px-4 py-5">
+            <CosmicLoader
+              variant="section"
+              size="medium"
+              label={loadingStageText[loadingStage]}
+              sublabel={t("common.loading.palmProcessingHint")}
+            />
+          </div>
+        )}
+
         <Button type="submit" variant="hero" disabled={isLoading} className="w-full gap-2">
           {isLoading ? (
             <>
               <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
-              {t("common.loading.analyzingPalm")}
+              {loadingStageText[loadingStage]}
             </>
           ) : (
             <>
