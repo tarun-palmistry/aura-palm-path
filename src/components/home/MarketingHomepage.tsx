@@ -43,22 +43,22 @@ const featureEntries = [
   {
     title: "Palmistry Reading",
     description:
-      "Upload or capture your palm image and receive AI palm reading online insights for love, career, personality, and future guidance.",
-    cta: "Scan My Palm",
+      "Upload or capture your palm image to receive a premium AI palm reading with clear insights on personality, relationships, career direction, and life patterns.",
+    cta: "Start Palm Reading",
     icon: Camera,
   },
   {
     title: "Horoscope & Astrology",
     description:
-      "Enter your birth details to generate an astrology birth chart with zodiac profile, moon and rising insights, and spiritual direction.",
-    cta: "Create Birth Chart",
+      "Enter your birth details to generate an astrology birth chart with zodiac, moon, and rising insights translated into practical personal guidance.",
+    cta: "Create My Birth Chart",
     icon: MoonStar,
   },
   {
     title: "Daily Horoscope",
     description:
-      "Check your daily horoscope with lucky color, lucky number, and a personalized zodiac energy forecast you can act on.",
-    cta: "View Daily Horoscope",
+      "Check your daily horoscope for focused zodiac guidance, lucky color, lucky number, and daily energy direction you can actually use.",
+    cta: "Get Today’s Horoscope",
     icon: Sun,
   },
 ];
@@ -66,32 +66,32 @@ const featureEntries = [
 const trustPoints = [
   {
     title: "Palmistry + Astrology in one place",
-    detail: "A complete guidance platform that combines palm reading from image and horoscope reading online.",
+    detail: "One refined platform for AI palm reading, astrology birth chart insights, and daily zodiac guidance.",
     icon: Sparkles,
   },
   {
-    title: "Structured analysis first",
-    detail: "We extract features and chart signals before interpretation, for more consistent and reliable output.",
+    title: "Structured analysis before interpretation",
+    detail: "We process visible palm and chart signals first, then generate guidance for consistency and credibility.",
     icon: BarChart3,
   },
   {
-    title: "Secure report history",
-    detail: "Your reports stay linked to your account for easy return visits and long-term guidance tracking.",
+    title: "Private report history",
+    detail: "Your readings are account-linked and easy to revisit whenever you want to track your journey.",
     icon: ShieldCheck,
   },
   {
-    title: "Fast, mobile-ready flow",
-    detail: "From camera capture to full reading in minutes, designed for seamless use on desktop and mobile.",
+    title: "Fast and mobile-ready",
+    detail: "From upload or camera capture to full reading in minutes, with a smooth flow across devices.",
     icon: Zap,
   },
   {
-    title: "Built for returning users",
-    detail: "Continue your journey with saved readings, daily updates, and evolving insights over time.",
+    title: "Built for returning members",
+    detail: "Come back anytime to review saved reports and continue with fresh daily guidance.",
     icon: UserCheck,
   },
   {
     title: "Premium yet effortless",
-    detail: "A polished, conversion-focused experience with clear guidance and no unnecessary complexity.",
+    detail: "An elegant experience that feels premium while staying clear, calm, and easy to use.",
     icon: Compass,
   },
 ];
@@ -99,19 +99,19 @@ const trustPoints = [
 const testimonials = [
   {
     quote:
-      "The palm reading from image upload was surprisingly smooth. The report design feels premium and the guidance on relationships was genuinely useful.",
+      "The palm reading flow felt effortless, and the report was beautifully structured. It gave me practical clarity on relationships and work decisions.",
     name: "Rhea M.",
     role: "Product Designer",
   },
   {
     quote:
-      "I used both the astrology birth chart and palmistry reading online in one evening. It felt private, fast, and beautifully presented.",
+      "I used both the birth chart and palmistry tools in one session. Everything felt private, polished, and genuinely trustworthy.",
     name: "Aarav K.",
     role: "Founder",
   },
   {
     quote:
-      "Daily horoscope has become part of my routine. The lucky color and advice snippets are concise, practical, and easy to revisit anytime.",
+      "Daily horoscope is now part of my morning routine. The guidance is concise, grounded, and easy to apply during the day.",
     name: "Naina S.",
     role: "Marketing Lead",
   },
@@ -120,25 +120,25 @@ const testimonials = [
 const blogPosts = [
   {
     category: "Palmistry",
-    title: "How Palm Reading Works From an Uploaded Image",
+    title: "How AI Palm Reading Works From a Single Hand Image",
     excerpt:
       "Learn how AI palm reading transforms a clear hand photo into structured palm features and a personalized interpretation.",
   },
   {
     category: "Astrology",
-    title: "Birth Chart Basics: Sun, Moon, and Rising Signs",
+    title: "Birth Chart Essentials: Sun, Moon, and Rising Explained",
     excerpt:
       "Understand the three core pillars of an astrology birth chart and how they shape personality and emotional style.",
   },
   {
     category: "Palm Insights",
-    title: "Left Palm vs Right Palm in Palmistry",
+    title: "Left Palm vs Right Palm: What Changes in a Reading",
     excerpt:
       "Explore what left and right hand analysis may indicate about potential, expression, and life direction.",
   },
   {
     category: "Daily Guidance",
-    title: "Daily Horoscope: What Your Zodiac Energy Means Today",
+    title: "Daily Horoscope Guide: Reading Your Zodiac Energy Clearly",
     excerpt:
       "Decode daily zodiac guidance and turn short predictions into practical choices for work, relationships, and wellbeing.",
   },
@@ -148,37 +148,37 @@ const faqs = [
   {
     question: "How does online palm reading work?",
     answer:
-      "You upload or capture a palm image, we extract visible palm features first, then generate your AI palm reading report from that structured analysis.",
+      "You upload or capture a clear palm image. We first extract visible line and shape features, then generate your report from that structured analysis.",
   },
   {
     question: "Can I upload a hand image from my phone?",
     answer:
-      "Yes. The flow is mobile-friendly, so you can upload an existing photo or capture a fresh image directly from your device.",
+      "Yes. You can upload a hand photo from your gallery or capture one live with your phone camera in a mobile-friendly flow.",
   },
   {
     question: "Do I need exact birth time for horoscope readings?",
     answer:
-      "Exact time improves precision for rising-sign and house-level interpretation, but you can still generate useful horoscope guidance without it.",
+      "Exact birth time improves rising-sign precision. If you don’t have it, you can still receive meaningful horoscope guidance based on available details.",
   },
   {
     question: "Can I use both palmistry and horoscope features?",
     answer:
-      "Absolutely. The platform is designed to combine palmistry reading online with horoscope reading online for a richer perspective.",
+      "Absolutely. Many users combine palmistry and astrology to get a fuller view of personality, patterns, and timing.",
   },
   {
     question: "Are my palm images and birth details private?",
     answer:
-      "Yes. Data is account-scoped and handled with private-by-default storage policies so your personal reports stay protected.",
+      "Yes. Your data is private by default and scoped to your account, so your images, birth details, and reports stay protected.",
   },
   {
     question: "Can I receive daily horoscope notifications on WhatsApp?",
     answer:
-      "Yes. You can join daily horoscope updates on WhatsApp for short zodiac guidance, lucky cues, and quick spiritual advice.",
+      "Yes. You can subscribe to WhatsApp updates for daily zodiac guidance, lucky number, lucky color, and short spiritual advice.",
   },
   {
     question: "Will my reports be saved to my account?",
     answer:
-      "Yes. Both palmistry and astrology reports can be revisited anytime through your account history.",
+      "Yes. Your palmistry and astrology reports are saved to your account so you can revisit them anytime.",
   },
 ];
 
@@ -266,22 +266,22 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
                 Premium AI Guidance Platform
               </p>
               <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] md:text-6xl">
-                Palmistry, Horoscope &amp; Daily Guidance — All in One Mystical Platform
+                Reveal Your Path Through Palmistry, Astrology &amp; Daily Horoscope
               </h1>
               <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-                Get premium AI palm reading by image upload or camera capture, or generate an astrology birth chart from your birth details.
-                Private by default, crafted fast, and designed for thoughtful, personalized guidance.
+                Upload your palm image or enter your birth details to receive premium, structured guidance in minutes.
+                Private by default, easy to use, and designed for people who value clarity over noise.
               </p>
 
               <div className="flex flex-wrap gap-3">
                 <Button variant="hero" size="lg" onClick={onStartPalm}>
-                  Scan My Palm
+                  Start Palm Reading
                 </Button>
                 <Button asChild variant="mystic" size="lg">
-                  <Link to="/astrology">Get Horoscope Reading</Link>
+                  <Link to="/astrology">Create My Birth Chart</Link>
                 </Button>
                 <Button asChild variant="link" className="text-primary">
-                  <Link to="/astrology#daily">Get Daily Horoscope on WhatsApp</Link>
+                  <Link to="/astrology#daily">Get Daily Guidance on WhatsApp</Link>
                 </Button>
               </div>
 
@@ -295,7 +295,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
             <div className="grid gap-4">
               <article className="mystic-glass rounded-2xl p-5 transition-transform duration-300 hover:-translate-y-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">Palmistry Preview</p>
-                <h2 className="mt-2 text-2xl font-semibold">Palm reading from image</h2>
+                  <h2 className="mt-2 text-2xl font-semibold">AI palm reading from image</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Line clarity, palm shape, and mount visibility extracted into structured insight before interpretation.
                 </p>
@@ -309,7 +309,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
 
               <article className="mystic-glass rounded-2xl p-5 transition-transform duration-300 hover:-translate-y-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">Horoscope Preview</p>
-                <h2 className="mt-2 text-2xl font-semibold">Astrology birth chart</h2>
+                  <h2 className="mt-2 text-2xl font-semibold">Personal astrology birth chart</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Sun, moon, rising, and planetary positions translated into premium love, career, and yearly direction.
                 </p>
@@ -327,7 +327,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Choose your starting point</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Begin with Palmistry, Horoscope, or Daily Zodiac Guidance</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Choose the Guidance You Need Right Now</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {featureEntries.map((entry) => (
@@ -357,7 +357,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">How it works</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Two elegant journeys, one unified experience</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Two Clear Paths, One Premium Experience</h2>
             </div>
             <div className="grid gap-4 lg:grid-cols-2">
               <article className="mystic-glass rounded-2xl p-6">
@@ -433,8 +433,8 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Daily conversion offer</p>
               <h2 className="mt-3 text-3xl font-semibold md:text-4xl">Receive Daily Horoscope Updates on WhatsApp</h2>
               <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
-                Subscribe for concise zodiac guidance delivered to WhatsApp, including your daily energy forecast, lucky number, lucky color,
-                and spiritual advice—with optional premium detailed updates added later.
+                Subscribe to receive concise zodiac guidance on WhatsApp, including your daily energy forecast, lucky number, lucky color,
+                and short spiritual advice—delivered in a format you can read in seconds.
               </p>
               <ul className="mt-6 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
                 <li className="flex items-center gap-2">
@@ -469,7 +469,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Why users trust this platform</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Built for clarity, security, and repeat value</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Trusted for Clarity, Privacy, and Consistency</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {trustPoints.map((item) => (
@@ -487,7 +487,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Social proof</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Trusted by users seeking meaningful daily guidance</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Loved by Users Seeking Meaningful Guidance</h2>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -521,7 +521,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">SEO blog preview</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Learn Palmistry &amp; Astrology Through Clear, Practical Guides</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Explore Practical Guides on Palmistry and Astrology</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {blogPosts.map((post) => (
@@ -549,7 +549,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">FAQ</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Everything you need before you begin</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Clear Answers Before You Begin</h2>
             </div>
             <div className="mystic-glass rounded-2xl p-6">
               <Accordion type="single" collapsible className="w-full">
@@ -574,10 +574,10 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Button variant="hero" size="lg" onClick={onStartPalm}>
-                  Scan My Palm
+                  Start Palm Reading
                 </Button>
                 <Button asChild variant="mystic" size="lg">
-                  <Link to="/astrology">Get Horoscope Reading</Link>
+                  <Link to="/astrology">Create My Birth Chart</Link>
                 </Button>
               </div>
             </article>
