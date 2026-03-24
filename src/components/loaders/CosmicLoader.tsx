@@ -33,9 +33,9 @@ const textWrapClassMap: Record<CosmicLoaderVariant, string> = {
   inline: "ml-3 text-left",
 };
 
-const orbitDurations = ["5.6s", "4.8s", "6.4s", "7.2s", "5.1s", "6.9s", "8.1s", "4.4s", "7.7s"];
-const orbitDelays = ["0s", "-0.7s", "-1.4s", "-2.2s", "-2.8s", "-3.3s", "-4s", "-4.4s", "-5.1s"];
-const orbitPlanets = ["moon", "mars", "mercury", "venus", "jupiter", "saturn", "rahu", "ketu", "sun"] as const;
+const orbitDurations = ["5.8s", "7.1s", "6.2s", "8.4s", "9s"];
+const orbitDelays = ["0s", "-0.9s", "-1.8s", "-2.7s", "-3.6s"];
+const orbitPlanets = ["moon", "mars", "jupiter", "saturn", "rahu"] as const;
 
 export const CosmicLoader = ({
   size = "medium",

@@ -165,11 +165,34 @@ All colors MUST be HSL.
     display: block;
     animation: cosmic-orbit-spin linear infinite;
     transform-origin: center;
+    --orbit-scale-x: 1;
+    --orbit-scale-y: 0.8;
     --planet-bg: hsl(var(--secondary-foreground) / 0.92);
     --planet-glow: hsl(var(--secondary-foreground) / 0.34);
     --planet-opacity: 0.95;
     --planet-size: 14%;
     --planet-shadow-extra: none;
+    transform: scale(var(--orbit-scale-x), var(--orbit-scale-y));
+  }
+
+  .cosmic-loader-orbit:nth-of-type(4) {
+    --orbit-scale-x: 0.9;
+    --orbit-scale-y: 1;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(5) {
+    --orbit-scale-x: 1.1;
+    --orbit-scale-y: 0.72;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(6) {
+    --orbit-scale-x: 0.78;
+    --orbit-scale-y: 1.06;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(7) {
+    --orbit-scale-x: 1.18;
+    --orbit-scale-y: 0.86;
   }
 
   .cosmic-loader-planet {
