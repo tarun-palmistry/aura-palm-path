@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CosmicLoaderShowcase } from "@/components/loaders/CosmicLoaderShowcase";
 
 type MarketingHomepageProps = {
   conversionSection: ReactNode;
@@ -213,6 +214,8 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
             </div>
           </div>
         </section>
+
+        <CosmicLoaderShowcase />
 
         <section id="auth-section" className="scroll-mt-28 border-b border-border/70 py-14">
           {conversionSection}
