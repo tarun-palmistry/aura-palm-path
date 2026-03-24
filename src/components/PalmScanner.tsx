@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
+import { Camera, Upload, Sparkles, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +27,8 @@ const metadataSchema = z.object({
 });
 
 const isImageFile = (file: File) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
+
+const scanSteps = ["Capture or upload your palm", "Provide hand metadata", "Get your full reading in minutes"];
 
 export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
   const [handSide, setHandSide] = useState<"left" | "right">("left");
@@ -178,9 +181,19 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
   return (
     <section className="mystic-glass space-y-6 rounded-xl p-6">
-      <div className="space-y-1">
+      <div className="space-y-3">
+        <p className="inline-flex rounded-full border border-border/70 bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-primary">
+          Palm scanner
+        </p>
         <h2 className="text-3xl font-semibold">Scan My Palm</h2>
-        <p className="text-sm text-muted-foreground">Upload or capture your palm. Keep your full hand centered and well-lit.</p>
+        <p className="text-sm text-muted-foreground">Upload or capture your palm with clear lighting, then submit for feature extraction and interpretation.</p>
+        <div className="grid gap-2 md:grid-cols-3">
+          {scanSteps.map((step, index) => (
+            <div key={step} className="rounded-lg border border-border/70 bg-background/30 px-3 py-2 text-xs text-muted-foreground">
+              <span className="font-semibold text-primary">0{index + 1}</span> {step}
+            </div>
+          ))}
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -238,25 +251,23 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <Button type="button" variant="mystic" onClick={startCamera}>
+          <Button type="button" variant="mystic" onClick={startCamera} className="gap-2">
+            <Camera className="h-4 w-4" aria-hidden="true" />
             Use Camera
           </Button>
-          <label className="focus-mystic inline-flex h-10 cursor-pointer items-center justify-center rounded-md border border-input bg-background px-4 text-sm font-medium">
+          <label className="focus-mystic inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium">
+            <Upload className="h-4 w-4" aria-hidden="true" />
             Upload Image
-            <input
-              type="file"
-              className="hidden"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-            />
+            <input type="file" className="hidden" accept="image/png,image/jpeg,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
           </label>
         </div>
 
         {cameraOn && (
-          <div className="space-y-3">
+          <div className="space-y-3 rounded-xl border border-border/70 bg-background/30 p-3">
             <video ref={videoRef} autoPlay playsInline className="w-full rounded-xl border border-border/80" />
             <div className="flex gap-2">
-              <Button type="button" variant="hero" onClick={capturePalm}>
+              <Button type="button" variant="hero" onClick={capturePalm} className="gap-2">
+                <WandSparkles className="h-4 w-4" aria-hidden="true" />
                 Capture Palm
               </Button>
               <Button type="button" variant="mystic" onClick={stopCamera}>
@@ -267,20 +278,21 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         )}
 
         {previewUrl && (
-          <div className="space-y-3">
+          <div className="space-y-3 rounded-xl border border-border/70 bg-background/30 p-3">
             <img
               src={previewUrl}
               alt="Palm preview"
               className="max-h-[420px] w-full rounded-xl border border-border/80 object-cover"
               loading="lazy"
             />
-            <Button type="button" variant="ghost" onClick={() => setImageFile(null)}>
+            <Button type="button" variant="ghost" onClick={() => setImageFile(null)} className="w-fit">
               Retake / Replace
             </Button>
           </div>
         )}
 
-        <Button type="submit" variant="hero" disabled={isLoading} className="w-full">
+        <Button type="submit" variant="hero" disabled={isLoading} className="w-full gap-2">
+          <Sparkles className="h-4 w-4" aria-hidden="true" />
           {isLoading ? "Analyzing your palm..." : "Submit for Reading"}
         </Button>
       </form>
