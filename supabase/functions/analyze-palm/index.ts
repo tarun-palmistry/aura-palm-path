@@ -194,7 +194,7 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              `You are an AI palmistry interpreter. Use ONLY provided extracted features. Return strict JSON: personality_traits, love_relationships, career_insights, strengths_weaknesses, future_guidance. Write all values in ${responseLanguage}.`,
+              `You are an AI palmistry interpreter. Use ONLY provided extracted features. Return strict JSON: personality_overview, love_relationships, career_strengths, future_guidance, key_advice. Write all values in ${responseLanguage}. Keep key_advice concise and practical.`,
           },
           {
             role: "user",
@@ -220,36 +220,47 @@ Deno.serve(async (req) => {
     }
 
     const reportJson = parseJsonResponse<{
-      personality_traits: string;
-      love_relationships: string;
-      career_insights: string;
-      strengths_weaknesses: string;
-      future_guidance: string;
+      personality_overview?: string;
+      personality_traits?: string;
+      love_relationships?: string;
+      career_strengths?: string;
+      career_insights?: string;
+      strengths_weaknesses?: string;
+      future_guidance?: string;
+      key_advice?: string;
     }>(reportText);
+
+    const personalityOverview = reportJson.personality_overview ?? reportJson.personality_traits ?? "";
+    const loveRelationships = reportJson.love_relationships ?? "";
+    const careerStrengths =
+      reportJson.career_strengths ??
+      [reportJson.career_insights, reportJson.strengths_weaknesses].filter(Boolean).join("\n\n");
+    const futureGuidance = reportJson.future_guidance ?? "";
+    const keyAdvice = reportJson.key_advice ?? futureGuidance;
 
     const headings =
       language === "hi"
         ? {
-            personality: "व्यक्तित्व गुण",
+            personality: "व्यक्तित्व अवलोकन",
             love: "प्रेम और रिश्ते",
-            career: "करियर अंतर्दृष्टि",
-            strengths: "ताकत और कमजोरियाँ",
+            career: "करियर और ताकत",
             future: "भविष्य मार्गदर्शन",
+            advice: "मुख्य सलाह",
           }
         : {
-            personality: "Personality Traits",
+            personality: "Personality Overview",
             love: "Love & Relationships",
-            career: "Career Insights",
-            strengths: "Strengths & Weaknesses",
+            career: "Career & Strengths",
             future: "Future Guidance",
+            advice: "Key Advice",
           };
 
     const fullReport = [
-      `${headings.personality}\n${reportJson.personality_traits}`,
-      `${headings.love}\n${reportJson.love_relationships}`,
-      `${headings.career}\n${reportJson.career_insights}`,
-      `${headings.strengths}\n${reportJson.strengths_weaknesses}`,
-      `${headings.future}\n${reportJson.future_guidance}`,
+      `${headings.personality}\n${personalityOverview}`,
+      `${headings.love}\n${loveRelationships}`,
+      `${headings.career}\n${careerStrengths}`,
+      `${headings.future}\n${futureGuidance}`,
+      `${headings.advice}\n${keyAdvice}`,
     ].join("\n\n");
 
     const freePreview = buildPreview(fullReport);

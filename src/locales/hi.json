@@ -36,6 +36,13 @@
       "admin": "एडमिन एक्सेस जांचा जा रहा है...",
       "submissions": "सबमिशन लोड हो रहे हैं...",
       "analyzingPalm": "आपकी हथेली का विश्लेषण हो रहा है...",
+      "uploadingPalm": "आपकी हथेली की छवि अपलोड हो रही है...",
+      "extractingLines": "हथेली की रेखाओं के पैटर्न निकाले जा रहे हैं...",
+      "generatingPalmReport": "आपकी पामिस्ट्री रिपोर्ट तैयार की जा रही है...",
+      "finalizingPalmReport": "आपकी रीडिंग अंतिम रूप ले रही है...",
+      "palmProcessingHint": "इसमें थोड़ा समय लग सकता है। कृपया यह विंडो खुली रखें।",
+      "fetchingSavedReports": "आपकी नवीनतम पाम रिपोर्ट लोड हो रही है...",
+      "savedPalmHint": "आपकी सेव की हुई रीडिंग्स पुनः लोड की जा रही हैं।",
       "generatingReport": "ज्योतिष रिपोर्ट बनाई जा रही है...",
       "processingPayment": "पेमेंट प्रोसेस हो रहा है..."
     }
@@ -343,7 +350,21 @@
     "subtitle": "आपकी स्कैन की गई हथेली के आकार, रेखाओं और पर्वतों के आधार पर।",
     "freePreview": "मुफ़्त प्रीव्यू",
     "fullReading": "पूर्ण रीडिंग",
-    "locked": "प्रीमियम सेक्शन लॉक हैं"
+    "locked": "प्रीमियम सेक्शन लॉक हैं",
+    "lockedSectionNote": "यह प्रीमियम सेक्शन देखने के लिए अनलॉक करें।",
+    "sections": {
+      "personalityOverview": "व्यक्तित्व अवलोकन",
+      "loveRelationships": "प्रेम और रिश्ते",
+      "careerStrengths": "करियर और ताकत",
+      "futureGuidance": "भविष्य मार्गदर्शन",
+      "keyAdvice": "मुख्य सलाह"
+    },
+    "highlights": {
+      "palmShape": "हथेली का आकार",
+      "lifeLine": "जीवन रेखा",
+      "heartLine": "हृदय रेखा",
+      "headLine": "मस्तिष्क रेखा"
+    }
   },
   "astrology": {
     "badge": "राशिफल और ज्योतिष",
