@@ -151,10 +151,10 @@ All colors MUST be HSL.
     width: 20%;
     height: 20%;
     border-radius: 9999px;
-    background: radial-gradient(circle, hsl(var(--primary) / 0.96) 0%, hsl(var(--secondary) / 0.78) 72%);
+    background: radial-gradient(circle, hsl(46 90% 80% / 0.98) 0%, hsl(42 82% 62% / 0.95) 54%, hsl(28 58% 44% / 0.88) 100%);
     box-shadow:
-      0 0 20px hsl(var(--primary) / 0.55),
-      0 0 42px hsl(var(--accent) / 0.28);
+      0 0 18px hsl(44 84% 66% / 0.62),
+      0 0 42px hsl(36 84% 58% / 0.34);
     animation: cosmic-core-pulse 2.4s ease-in-out infinite;
     z-index: 2;
   }
@@ -165,6 +165,17 @@ All colors MUST be HSL.
     display: block;
     animation: cosmic-orbit-spin linear infinite;
     transform-origin: center;
+    --planet-1-bg: hsl(var(--secondary-foreground) / 0.92);
+    --planet-1-glow: hsl(var(--secondary-foreground) / 0.34);
+    --planet-1-opacity: 0.95;
+    --planet-2-bg: hsl(var(--muted-foreground) / 0.88);
+    --planet-2-glow: hsl(var(--muted-foreground) / 0.28);
+    --planet-2-opacity: 0.8;
+    --planet-2-size: 78%;
+    --planet-2-top: 78%;
+    --planet-2-left: 62%;
+    --planet-2-blur: 0px;
+    --planet-2-shadow: none;
   }
 
   .cosmic-loader-planet {
@@ -175,27 +186,112 @@ All colors MUST be HSL.
     width: 14%;
     height: 14%;
     border-radius: 9999px;
-    box-shadow: 0 0 14px currentColor;
+    background: radial-gradient(circle at 35% 32%, hsl(var(--foreground) / 0.95) 0%, var(--planet-1-bg) 58%, hsl(0 0% 0% / 0) 100%);
+    box-shadow:
+      0 0 12px var(--planet-1-glow),
+      0 0 24px var(--planet-1-glow);
+    opacity: var(--planet-1-opacity);
+    filter: saturate(0.9);
+  }
+
+  .cosmic-loader-orbit::after {
+    content: "";
+    position: absolute;
+    width: calc(14% * var(--planet-2-size));
+    height: calc(14% * var(--planet-2-size));
+    left: var(--planet-2-left);
+    top: var(--planet-2-top);
+    border-radius: 9999px;
+    background: radial-gradient(circle at 38% 32%, hsl(var(--foreground) / 0.85) 0%, var(--planet-2-bg) 62%, hsl(0 0% 0% / 0) 100%);
+    box-shadow:
+      0 0 10px var(--planet-2-glow),
+      0 0 20px var(--planet-2-glow),
+      var(--planet-2-shadow);
+    opacity: var(--planet-2-opacity);
+    filter: blur(var(--planet-2-blur));
+    transform: translate(-50%, -50%);
   }
 
   .cosmic-loader-planet-1 {
-    background: hsl(var(--primary) / 0.98);
-    color: hsl(var(--primary) / 0.7);
+    --planet-1-bg: hsl(0 0% 92% / 0.95);
+    --planet-1-glow: hsl(0 0% 86% / 0.45);
+    --planet-1-opacity: 0.92;
   }
 
   .cosmic-loader-planet-2 {
-    background: hsl(var(--accent) / 0.94);
-    color: hsl(var(--accent) / 0.62);
+    --planet-1-bg: hsl(12 62% 45% / 0.95);
+    --planet-1-glow: hsl(12 70% 40% / 0.42);
+    --planet-1-opacity: 0.94;
   }
 
   .cosmic-loader-planet-3 {
-    background: hsl(var(--secondary-foreground) / 0.92);
-    color: hsl(var(--secondary-foreground) / 0.44);
+    --planet-1-bg: hsl(48 56% 78% / 0.93);
+    --planet-1-glow: hsl(48 64% 72% / 0.36);
+    --planet-1-opacity: 0.88;
   }
 
   .cosmic-loader-planet-4 {
-    background: hsl(var(--muted-foreground) / 0.9);
-    color: hsl(var(--muted-foreground) / 0.42);
+    --planet-1-bg: hsl(234 42% 36% / 0.95);
+    --planet-1-glow: hsl(234 54% 46% / 0.4);
+    --planet-1-opacity: 0.86;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(4) {
+    --planet-2-bg: hsl(215 10% 60% / 0.9);
+    --planet-2-glow: hsl(215 12% 54% / 0.28);
+    --planet-2-opacity: 0.68;
+    --planet-2-size: 72%;
+    --planet-2-top: 76%;
+    --planet-2-left: 36%;
+    --planet-2-blur: 0.2px;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(5) {
+    --planet-2-bg: hsl(34 70% 57% / 0.9);
+    --planet-2-glow: hsl(34 66% 50% / 0.3);
+    --planet-2-opacity: 0.76;
+    --planet-2-size: 104%;
+    --planet-2-top: 84%;
+    --planet-2-left: 66%;
+    --planet-2-blur: 0px;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(6) {
+    --planet-2-bg: hsl(44 72% 64% / 0.9);
+    --planet-2-glow: hsl(44 74% 60% / 0.32);
+    --planet-2-opacity: 0.72;
+    --planet-2-size: 96%;
+    --planet-2-top: 80%;
+    --planet-2-left: 32%;
+    --planet-2-shadow: 0 0 0 1px hsl(44 58% 72% / 0.35);
+  }
+
+  .cosmic-loader-orbit:nth-of-type(7) {
+    --planet-2-bg: hsl(230 54% 42% / 0.9);
+    --planet-2-glow: hsl(230 66% 48% / 0.34);
+    --planet-2-opacity: 0.62;
+    --planet-2-size: 86%;
+    --planet-2-top: 82%;
+    --planet-2-left: 68%;
+    --planet-2-blur: 0.4px;
+  }
+
+  .cosmic-loader-orbit:nth-of-type(7)::after {
+    background: radial-gradient(circle at 30% 34%, hsl(268 44% 75% / 0.78) 0%, hsl(268 30% 60% / 0.62) 60%, hsl(0 0% 0% / 0) 100%);
+  }
+
+  .cosmic-loader-orbit::before {
+    content: "";
+    position: absolute;
+    width: 20%;
+    height: 8%;
+    left: 50%;
+    top: -3%;
+    transform: translateX(-50%);
+    border-radius: 9999px;
+    background: linear-gradient(90deg, hsl(0 0% 100% / 0), hsl(var(--foreground) / 0.1), hsl(0 0% 100% / 0));
+    filter: blur(0.4px);
+    opacity: 0.24;
   }
 
   .starlight-field {
