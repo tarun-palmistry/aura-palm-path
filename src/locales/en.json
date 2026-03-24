@@ -136,6 +136,26 @@
         }
       }
     },
+    "loaderPreview": {
+      "label": "Branded loading preview",
+      "title": "Custom Cosmic Loading System",
+      "description": "A premium orbit-based loader preview in your existing visual language; approve this style and I’ll roll it out across every meaningful loading state.",
+      "sublabel": "Elegant motion in your existing mystical theme",
+      "variants": {
+        "fullPage": "Full page loader",
+        "section": "Section / card loader",
+        "button": "Button loader",
+        "inline": "Inline processing loader"
+      },
+      "messages": {
+        "reading": "Reading the signs",
+        "chart": "Aligning your chart",
+        "analyzing": "Analyzing your palm",
+        "verifying": "Verifying payment",
+        "unlocking": "Unlocking your report",
+        "path": "Interpreting your path"
+      }
+    },
     "howItWorks": {
       "label": "How it works",
       "title": "Two Clear Paths, One Premium Experience",
