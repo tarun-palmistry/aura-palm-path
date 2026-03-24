@@ -463,15 +463,16 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
             </p>
           </div>
 
-          <nav className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-muted-foreground" aria-label="Footer navigation">
+          <nav className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm text-muted-foreground md:grid-cols-3" aria-label="Footer navigation">
             <a href="#features" className="hover:text-foreground">{t("homepage.footer.links.palmistry")}</a>
             <a href="#services" className="hover:text-foreground">{t("homepage.footer.links.horoscope")}</a>
             <a href="#daily-whatsapp" className="hover:text-foreground">{t("homepage.footer.links.daily")}</a>
             <a href="#blog" className="hover:text-foreground">{t("homepage.footer.links.blog")}</a>
             <a href="#faq" className="hover:text-foreground">{t("homepage.footer.links.faq")}</a>
-            <a href="#" className="hover:text-foreground">{t("homepage.footer.links.privacy")}</a>
-            <a href="#" className="hover:text-foreground">{t("homepage.footer.links.terms")}</a>
-            <a href="#" className="hover:text-foreground">{t("homepage.footer.links.social")}</a>
+            <Link to="/privacy" className="hover:text-foreground">{t("homepage.footer.links.privacy")}</Link>
+            <Link to="/terms" className="hover:text-foreground">{t("homepage.footer.links.terms")}</Link>
+            <Link to="/contact" className="hover:text-foreground">{t("homepage.footer.links.contact")}</Link>
+            <Link to="/guidance-disclaimer" className="hover:text-foreground">{t("homepage.footer.links.disclaimer")}</Link>
           </nav>
         </div>
       </footer>
