@@ -13,7 +13,6 @@ type ReportRow = Tables<"reports">;
 const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
-  const [readingId, setReadingId] = useState<string>("");
   const [report, setReport] = useState<ReportRow | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -53,7 +52,6 @@ const Index = () => {
   const signOut = async () => {
     await supabase.auth.signOut();
     setReport(null);
-    setReadingId("");
   };
 
   if (loadingSession) {
@@ -102,7 +100,7 @@ const Index = () => {
                 <li>1) Capture or upload a clear palm image.</li>
                 <li>2) AI extracts palm shape, lines, and mounts into JSON.</li>
                 <li>3) Report is generated from extracted features only.</li>
-                <li>4) Preview first 20%, unlock full reading after payment.</li>
+                <li>4) Get both preview and full reading instantly for free.</li>
               </ul>
             </div>
           </div>
@@ -116,19 +114,14 @@ const Index = () => {
           <div className="space-y-8" id="scan-section">
             <PalmScanner
               userId={session.user.id}
-              onReportReady={(nextReadingId, nextReport) => {
-                setReadingId(nextReadingId);
+              onReportReady={(_nextReadingId, nextReport) => {
                 setReport(nextReport);
               }}
             />
 
             {report && (
               <ReportViewer
-                readingId={readingId}
                 report={report}
-                onUnlocked={(next) => {
-                  setReport(next);
-                }}
               />
             )}
           </div>
