@@ -3,8 +3,10 @@ import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPanel } from "@/components/AdminPanel";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Admin = () => {
+  const { t } = useLanguage();
   const [checking, setChecking] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -32,7 +34,7 @@ const Admin = () => {
   }, []);
 
   if (checking) {
-    return <main className="container py-16">Checking admin access...</main>;
+    return <main className="container py-16">{t("common.loading.admin")}</main>;
   }
 
   if (!isAdmin) {
@@ -43,7 +45,7 @@ const Admin = () => {
     <main className="container py-10">
       <div className="mb-6">
         <Button asChild variant="mystic">
-          <Link to="/">← Back to Home</Link>
+          <Link to="/">{t("common.actions.backToHome")}</Link>
         </Button>
       </div>
       <AdminPanel />

@@ -6,10 +6,12 @@ import { MarketingHomepage } from "@/components/home/MarketingHomepage";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import type { Tables } from "@/integrations/supabase/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type ReportRow = Tables<"reports">;
 
 const Index = () => {
+  const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
   const [report, setReport] = useState<ReportRow | null>(null);
@@ -62,7 +64,7 @@ const Index = () => {
   };
 
   if (loadingSession) {
-    return <main className="container py-16">Loading oracle chamber...</main>;
+    return <main className="container py-16">{t("common.loading.oracle")}</main>;
   }
 
   return (
@@ -71,11 +73,10 @@ const Index = () => {
         conversionSection={
           <div className="container space-y-8">
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">Start your experience</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Start Your Reading in Less Than 60 Seconds</h2>
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("common.actions.startReading")}</p>
+              <h2 className="text-3xl font-semibold md:text-4xl">{t("homepage.quickLine")}</h2>
               <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
-                Complete your account access and begin with palmistry reading online, then continue with astrology birth chart and daily
-                horoscope guidance whenever you return.
+                {t("homepage.subtitle")}
               </p>
             </div>
 
