@@ -228,7 +228,7 @@ const Astrology = () => {
               <form onSubmit={submitBirthChart} className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="full-name">Full Name</Label>
+                    <Label htmlFor="full-name">{t("astrology.fullName")}</Label>
                     <Input id="full-name" className="focus-mystic" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={t("astrology.fullNamePlaceholder")} />
                   </div>
                   <div className="space-y-2">
