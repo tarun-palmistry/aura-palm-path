@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Sparkles, ScanLine, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,51 +47,65 @@ export const AuthPanel = ({ onAuthenticated }: AuthPanelProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mystic-glass space-y-4 rounded-xl p-6">
-      <div className="space-y-1">
+    <section className="mystic-glass grid gap-6 rounded-xl p-6 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+      <aside className="space-y-4 rounded-xl border border-border/70 bg-background/30 p-5">
+        <p className="inline-flex rounded-full border border-border/70 bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-primary">
+          Start your journey
+        </p>
         <h2 className="text-3xl font-semibold">Enter the Oracle Chamber</h2>
-        <p className="text-sm text-muted-foreground">Sign in to unlock your AI palm readings.</p>
-      </div>
+        <p className="text-sm text-muted-foreground">Sign in once and keep your readings securely available whenever you return.</p>
+        <ul className="space-y-3 text-sm text-muted-foreground">
+          <li className="flex items-center gap-2"><ScanLine className="h-4 w-4 text-primary" aria-hidden="true" /> Camera + upload supported</li>
+          <li className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" aria-hidden="true" /> Structured AI interpretation</li>
+          <li className="flex items-center gap-2"><Shield className="h-4 w-4 text-primary" aria-hidden="true" /> Private account-based access</li>
+        </ul>
+      </aside>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="focus-mystic"
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-border/70 bg-background/30 p-5">
+        <div className="grid grid-cols-2 rounded-lg border border-border/70 bg-card/60 p-1">
+          <Button type="button" variant={isSignup ? "ghost" : "mystic"} className="w-full" onClick={() => setIsSignup(false)}>
+            Sign in
+          </Button>
+          <Button type="button" variant={isSignup ? "mystic" : "ghost"} className="w-full" onClick={() => setIsSignup(true)}>
+            Create account
+          </Button>
+        </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="focus-mystic"
-          minLength={6}
-          required
-        />
-      </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="focus-mystic"
+            required
+          />
+        </div>
 
-      <Button disabled={loading} type="submit" variant="hero" className="w-full">
-        {loading ? "Please wait..." : isSignup ? "Create account" : "Sign in"}
-      </Button>
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="focus-mystic"
+            minLength={6}
+            required
+          />
+        </div>
 
-      <Button
-        type="button"
-        variant="ghost"
-        className="w-full"
-        onClick={() => setIsSignup((v) => !v)}
-      >
-        {isSignup ? "Already have an account? Sign in" : "Need an account? Create one"}
-      </Button>
-    </form>
+        <Button disabled={loading} type="submit" variant="hero" className="w-full">
+          {loading ? "Please wait..." : isSignup ? "Create account" : "Sign in"}
+        </Button>
+
+        <p className="text-center text-xs text-muted-foreground">
+          {isSignup ? "Please verify your email before signing in." : "New here? Switch to Create account."}
+        </p>
+      </form>
+    </section>
   );
 };
