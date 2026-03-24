@@ -74,14 +74,14 @@ const Astrology = () => {
     if (!report?.interpretation) return [];
     const value = report.interpretation;
     return [
-      { title: "Personality", body: value.personality_analysis },
-      { title: "Love life", body: value.love_life_insights },
-      { title: "Career path", body: value.career_path },
-      { title: "Financial outlook", body: value.financial_outlook },
-      { title: "Health guidance", body: value.health_guidance },
-      { title: "Yearly prediction", body: value.yearly_prediction },
+      { title: t("astrology.sections.personality"), body: value.personality_analysis },
+      { title: t("astrology.sections.love"), body: value.love_life_insights },
+      { title: t("astrology.sections.career"), body: value.career_path },
+      { title: t("astrology.sections.finance"), body: value.financial_outlook },
+      { title: t("astrology.sections.health"), body: value.health_guidance },
+      { title: t("astrology.sections.yearly"), body: value.yearly_prediction },
     ].filter((item) => item.body);
-  }, [report]);
+  }, [report, t]);
 
   const loadHistory = async (userId: string) => {
     const [reportsResp, dailyResp] = await Promise.all([
