@@ -246,7 +246,7 @@ Deno.serve(async (req) => {
       free_preview: freePreview,
       full_report: fullReport,
       generated_from_features: features,
-      is_unlocked: false,
+      is_unlocked: true,
     });
 
     if (reportUpsertError) throw reportUpsertError;
