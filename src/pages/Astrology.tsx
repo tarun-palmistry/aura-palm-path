@@ -39,7 +39,7 @@ type DailyHoroscopeRow = {
 };
 
 const Astrology = () => {
-  const { t, tm } = useLanguage();
+  const { language, t, tm } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -165,7 +165,7 @@ const Astrology = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke("generate-astrology-report", {
-        body: parsed.data,
+        body: { ...parsed.data, language },
       });
 
       if (error) throw new Error(error.message);
@@ -196,7 +196,7 @@ const Astrology = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke("generate-daily-horoscope", {
-        body: { zodiacSign: dailySign },
+        body: { zodiacSign: dailySign, language },
       });
 
       if (error) throw new Error(error.message);

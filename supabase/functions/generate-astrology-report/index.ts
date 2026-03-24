@@ -15,6 +15,7 @@ const requestSchema = z.object({
   timeOfBirth: z.string().min(1),
   placeOfBirth: z.string().trim().min(2).max(150),
   gender: z.string().trim().max(40).optional(),
+  language: z.enum(["en", "hi"]).optional(),
 });
 
 const parseJsonResponse = <T>(value: string): T => {
@@ -99,6 +100,7 @@ Deno.serve(async (req) => {
     }
 
     const zodiacSign = getSunSignFromDate(parsed.data.dateOfBirth);
+    const responseLanguage = parsed.data.language === "hi" ? "Hindi" : "English";
 
     const structuredResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -113,7 +115,7 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "Return ONLY strict JSON. Build a structured astrology profile object with keys: zodiac_sign, moon_sign, rising_sign, planetary_positions(object of planet-> {sign,house}), raw_astrology_data(object), confidence_notes.",
+              "Return ONLY strict JSON. Build a structured astrology profile object with keys: zodiac_sign, moon_sign, rising_sign, planetary_positions(object of planet-> {sign,house}), raw_astrology_data(object), confidence_notes. IMPORTANT: Keep zodiac_sign, moon_sign and rising_sign in English zodiac naming only.",
           },
           {
             role: "user",
@@ -166,7 +168,7 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "You are an astrologer assistant. Use ONLY provided structured astrology data. Return ONLY JSON with keys: personality_analysis, love_life_insights, career_path, financial_outlook, health_guidance, yearly_prediction.",
+              `You are an astrologer assistant. Use ONLY provided structured astrology data. Return ONLY JSON with keys: personality_analysis, love_life_insights, career_path, financial_outlook, health_guidance, yearly_prediction. Write all values in ${responseLanguage}.`,
           },
           {
             role: "user",
@@ -199,13 +201,32 @@ Deno.serve(async (req) => {
       yearly_prediction: string;
     }>(interpretationText);
 
+    const headings =
+      parsed.data.language === "hi"
+        ? {
+            personality: "व्यक्तित्व विश्लेषण",
+            love: "प्रेम जीवन अंतर्दृष्टि",
+            career: "करियर मार्ग",
+            finance: "वित्तीय दृष्टिकोण",
+            health: "स्वास्थ्य मार्गदर्शन",
+            yearly: "वार्षिक भविष्यफल",
+          }
+        : {
+            personality: "Personality Analysis",
+            love: "Love Life Insights",
+            career: "Career Path",
+            finance: "Financial Outlook",
+            health: "Health Guidance",
+            yearly: "Yearly Prediction",
+          };
+
     const fullReport = [
-      `Personality Analysis\n${interpretation.personality_analysis}`,
-      `Love Life Insights\n${interpretation.love_life_insights}`,
-      `Career Path\n${interpretation.career_path}`,
-      `Financial Outlook\n${interpretation.financial_outlook}`,
-      `Health Guidance\n${interpretation.health_guidance}`,
-      `Yearly Prediction\n${interpretation.yearly_prediction}`,
+      `${headings.personality}\n${interpretation.personality_analysis}`,
+      `${headings.love}\n${interpretation.love_life_insights}`,
+      `${headings.career}\n${interpretation.career_path}`,
+      `${headings.finance}\n${interpretation.financial_outlook}`,
+      `${headings.health}\n${interpretation.health_guidance}`,
+      `${headings.yearly}\n${interpretation.yearly_prediction}`,
     ].join("\n\n");
 
     const freeSummary = fullReport.slice(0, Math.max(220, Math.floor(fullReport.length * 0.2)));

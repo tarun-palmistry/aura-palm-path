@@ -18,6 +18,10 @@ const buildPreview = (text: string) => {
   return text.slice(0, limit);
 };
 
+const normalizeLanguage = (value: unknown): "en" | "hi" => {
+  return value === "hi" ? "hi" : "en";
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -66,13 +70,17 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { readingId } = await req.json();
+    const payload = await req.json();
+    const readingId = payload?.readingId as string | undefined;
+    const language = normalizeLanguage(payload?.language);
     if (!readingId || typeof readingId !== "string") {
       return new Response(JSON.stringify({ error: "readingId is required." }), {
         status: 400,
         headers: jsonHeaders,
       });
     }
+
+    const responseLanguage = language === "hi" ? "Hindi" : "English";
 
     const { data: reading, error: readingError } = await supabaseAdmin
       .from("palm_readings")
@@ -186,7 +194,7 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "You are an AI palmistry interpreter. Use ONLY provided extracted features. Return strict JSON: personality_traits, love_relationships, career_insights, strengths_weaknesses, future_guidance.",
+              `You are an AI palmistry interpreter. Use ONLY provided extracted features. Return strict JSON: personality_traits, love_relationships, career_insights, strengths_weaknesses, future_guidance. Write all values in ${responseLanguage}.`,
           },
           {
             role: "user",
@@ -219,12 +227,29 @@ Deno.serve(async (req) => {
       future_guidance: string;
     }>(reportText);
 
+    const headings =
+      language === "hi"
+        ? {
+            personality: "व्यक्तित्व गुण",
+            love: "प्रेम और रिश्ते",
+            career: "करियर अंतर्दृष्टि",
+            strengths: "ताकत और कमजोरियाँ",
+            future: "भविष्य मार्गदर्शन",
+          }
+        : {
+            personality: "Personality Traits",
+            love: "Love & Relationships",
+            career: "Career Insights",
+            strengths: "Strengths & Weaknesses",
+            future: "Future Guidance",
+          };
+
     const fullReport = [
-      `Personality Traits\n${reportJson.personality_traits}`,
-      `Love & Relationships\n${reportJson.love_relationships}`,
-      `Career Insights\n${reportJson.career_insights}`,
-      `Strengths & Weaknesses\n${reportJson.strengths_weaknesses}`,
-      `Future Guidance\n${reportJson.future_guidance}`,
+      `${headings.personality}\n${reportJson.personality_traits}`,
+      `${headings.love}\n${reportJson.love_relationships}`,
+      `${headings.career}\n${reportJson.career_insights}`,
+      `${headings.strengths}\n${reportJson.strengths_weaknesses}`,
+      `${headings.future}\n${reportJson.future_guidance}`,
     ].join("\n\n");
 
     const freePreview = buildPreview(fullReport);
