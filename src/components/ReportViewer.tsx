@@ -29,7 +29,10 @@ const parseReportSections = (fullReport: string) => {
 export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onUnlock }: ReportViewerProps) => {
   const { t } = useLanguage();
   const sections = parseReportSections(report.full_report);
-  const freeSection = sections.find((section) => section.heading.toLowerCase().includes("personality"));
+  const freeSection = sections.find((section) => {
+    const heading = section.heading.toLowerCase();
+    return heading.includes("personality") || heading.includes("व्यक्तित्व");
+  });
   const lockedSectionLabels = [
     t("payments.lockedPalmSections.love"),
     t("payments.lockedPalmSections.career"),
