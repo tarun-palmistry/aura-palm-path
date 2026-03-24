@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type ReportRow = Tables<"reports">;
 
@@ -15,22 +16,10 @@ type PalmScannerProps = {
   onReportReady: (readingId: string, report: ReportRow) => void;
 };
 
-const metadataSchema = z.object({
-  handSide: z.enum(["left", "right"]),
-  dominantHand: z.enum(["left", "right"]),
-  age: z
-    .string()
-    .optional()
-    .transform((v) => (v ? Number(v) : null))
-    .refine((v) => v === null || (Number.isFinite(v) && v > 0 && v < 120), "Age must be 1-119"),
-  gender: z.string().max(40).optional(),
-});
-
 const isImageFile = (file: File) => ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
 
-const scanSteps = ["Capture or upload your palm", "Provide hand metadata", "Get your full reading in minutes"];
-
 export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
+  const { t, tm } = useLanguage();
   const [handSide, setHandSide] = useState<"left" | "right">("left");
   const [dominantHand, setDominantHand] = useState<"left" | "right">("right");
   const [age, setAge] = useState("");
@@ -41,6 +30,23 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+
+  const metadataSchema = useMemo(
+    () =>
+      z.object({
+        handSide: z.enum(["left", "right"]),
+        dominantHand: z.enum(["left", "right"]),
+        age: z
+          .string()
+          .optional()
+          .transform((v) => (v ? Number(v) : null))
+          .refine((v) => v === null || (Number.isFinite(v) && v > 0 && v < 120), "Age must be 1-119"),
+        gender: z.string().max(40).optional(),
+      }),
+    [],
+  );
+
+  const scanSteps = tm<string[]>("palm.steps");
 
   const previewUrl = useMemo(() => (imageFile ? URL.createObjectURL(imageFile) : ""), [imageFile]);
 
@@ -60,7 +66,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       }
       setCameraOn(true);
     } catch {
-      toast.error("Camera access is blocked. Please use upload instead.");
+      toast.error(t("palm.toasts.cameraBlocked"));
     }
   };
 
@@ -82,7 +88,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.95));
     if (!blob) {
-      toast.error("Could not capture image. Try again.");
+      toast.error(t("palm.toasts.captureFailed"));
       return;
     }
 
@@ -104,25 +110,25 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       await new Promise((resolve) => setTimeout(resolve, 1400));
     }
 
-    throw new Error("Analysis is taking longer than expected. Please refresh in a moment.");
+    throw new Error(t("palm.toasts.analysisSlow"));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!imageFile) {
-      toast.error("Please upload or capture a palm image first.");
+      toast.error(t("palm.toasts.uploadFirst"));
       return;
     }
 
     if (!isImageFile(imageFile) || imageFile.size > 12 * 1024 * 1024) {
-      toast.error("Use a clear JPG/PNG/WEBP image under 12MB.");
+      toast.error(t("palm.toasts.invalidImage"));
       return;
     }
 
     const parsed = metadataSchema.safeParse({ handSide, dominantHand, age, gender });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Invalid metadata.");
+      toast.error(parsed.error.issues[0]?.message ?? t("palm.toasts.invalidMetadata"));
       return;
     }
 
@@ -170,9 +176,9 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
       const report = await waitForReport(reading.id);
       onReportReady(reading.id, report);
-      toast.success("Your palm has been analyzed.");
+      toast.success(t("palm.toasts.analyzed"));
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not complete scan.";
+      const message = error instanceof Error ? error.message : t("palm.toasts.scanFailed");
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -183,10 +189,10 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
     <section className="mystic-glass space-y-6 rounded-xl p-6">
       <div className="space-y-3">
         <p className="inline-flex rounded-full border border-border/70 bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-primary">
-          Palm scanner
+          {t("palm.badge")}
         </p>
-        <h2 className="text-3xl font-semibold">Scan My Palm</h2>
-        <p className="text-sm text-muted-foreground">Upload or capture your palm with clear lighting, then submit for feature extraction and interpretation.</p>
+        <h2 className="text-3xl font-semibold">{t("palm.title")}</h2>
+        <p className="text-sm text-muted-foreground">{t("palm.subtitle")}</p>
         <div className="grid gap-2 md:grid-cols-3">
           {scanSteps.map((step, index) => (
             <div key={step} className="rounded-lg border border-border/70 bg-background/30 px-3 py-2 text-xs text-muted-foreground">
@@ -199,39 +205,39 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="hand-side">Left or Right hand</Label>
+            <Label htmlFor="hand-side">{t("palm.handSide")}</Label>
             <select
               id="hand-side"
               className="focus-mystic flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={handSide}
               onChange={(e) => setHandSide(e.target.value as "left" | "right")}
             >
-              <option value="left">Left</option>
-              <option value="right">Right</option>
+              <option value="left">{t("palm.left")}</option>
+              <option value="right">{t("palm.right")}</option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="dominant">Dominant hand</Label>
+            <Label htmlFor="dominant">{t("palm.dominantHand")}</Label>
             <select
               id="dominant"
               className="focus-mystic flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={dominantHand}
               onChange={(e) => setDominantHand(e.target.value as "left" | "right")}
             >
-              <option value="left">Left</option>
-              <option value="right">Right</option>
+              <option value="left">{t("palm.left")}</option>
+              <option value="right">{t("palm.right")}</option>
             </select>
           </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor="age">Age (optional)</Label>
+            <Label htmlFor="age">{t("palm.age")}</Label>
             <Input
               id="age"
               type="number"
-              placeholder="e.g., 29"
+              placeholder={t("palm.agePlaceholder")}
               value={age}
               onChange={(e) => setAge(e.target.value)}
               className="focus-mystic"
@@ -239,10 +245,10 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="gender">Gender (optional)</Label>
+            <Label htmlFor="gender">{t("palm.gender")}</Label>
             <Input
               id="gender"
-              placeholder="e.g., female"
+              placeholder={t("palm.genderPlaceholder")}
               value={gender}
               onChange={(e) => setGender(e.target.value)}
               className="focus-mystic"
@@ -253,11 +259,11 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         <div className="grid gap-3 sm:grid-cols-2">
           <Button type="button" variant="mystic" onClick={startCamera} className="gap-2">
             <Camera className="h-4 w-4" aria-hidden="true" />
-            Use Camera
+            {t("common.actions.useCamera")}
           </Button>
           <label className="focus-mystic inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium">
             <Upload className="h-4 w-4" aria-hidden="true" />
-            Upload Image
+            {t("common.actions.uploadImage")}
             <input type="file" className="hidden" accept="image/png,image/jpeg,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} />
           </label>
         </div>
@@ -268,10 +274,10 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
             <div className="flex gap-2">
               <Button type="button" variant="hero" onClick={capturePalm} className="gap-2">
                 <WandSparkles className="h-4 w-4" aria-hidden="true" />
-                Capture Palm
+                {t("common.actions.capturePalm")}
               </Button>
               <Button type="button" variant="mystic" onClick={stopCamera}>
-                Cancel
+                {t("common.actions.cancel")}
               </Button>
             </div>
           </div>
@@ -281,19 +287,19 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
           <div className="space-y-3 rounded-xl border border-border/70 bg-background/30 p-3">
             <img
               src={previewUrl}
-              alt="Palm preview"
+              alt={t("palm.previewAlt")}
               className="max-h-[420px] w-full rounded-xl border border-border/80 object-cover"
               loading="lazy"
             />
             <Button type="button" variant="ghost" onClick={() => setImageFile(null)} className="w-fit">
-              Retake / Replace
+              {t("common.actions.retakeReplace")}
             </Button>
           </div>
         )}
 
         <Button type="submit" variant="hero" disabled={isLoading} className="w-full gap-2">
           <Sparkles className="h-4 w-4" aria-hidden="true" />
-          {isLoading ? "Analyzing your palm..." : "Submit for Reading"}
+          {isLoading ? t("common.loading.analyzingPalm") : t("common.actions.submitForReading")}
         </Button>
       </form>
     </section>

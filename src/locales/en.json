@@ -1,0 +1,409 @@
+{
+  "common": {
+    "brand": "AstraPalm",
+    "language": { "english": "EN", "hindi": "हिंदी" },
+    "actions": {
+      "startReading": "Start Your Reading",
+      "scanPalm": "Scan My Palm",
+      "getHoroscopeReading": "Get Horoscope Reading",
+      "generateHoroscope": "Generate My Horoscope",
+      "createBirthChart": "Create Birth Chart",
+      "viewDailyHoroscope": "View Daily Horoscope",
+      "joinWhatsappUpdates": "Join WhatsApp Updates",
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "signOut": "Sign out",
+      "useCamera": "Use Camera",
+      "uploadImage": "Upload Image",
+      "capturePalm": "Capture Palm",
+      "cancel": "Cancel",
+      "retakeReplace": "Retake / Replace",
+      "submitForReading": "Submit for Reading",
+      "backToPalmReading": "← Back to Palm Reading",
+      "backToHome": "← Back to Home",
+      "readMore": "Read More",
+      "save": "Save",
+      "editReport": "Edit report",
+      "returnHome": "Return to Home"
+    },
+    "loading": {
+      "oracle": "Loading oracle chamber...",
+      "astrology": "Opening astrology chamber...",
+      "admin": "Checking admin access...",
+      "submissions": "Loading submissions...",
+      "analyzingPalm": "Analyzing your palm...",
+      "generatingReport": "Generating astrology report..."
+    }
+  },
+  "auth": {
+    "badge": "Start your journey",
+    "title": "Enter the Oracle Chamber",
+    "description": "Sign in once and keep your readings securely available whenever you return.",
+    "benefits": {
+      "camera": "Camera + upload supported",
+      "ai": "Structured AI interpretation",
+      "private": "Private account-based access"
+    },
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signupSuccess": "Account created! Check your inbox to verify your email.",
+    "signinSuccess": "Welcome back, mystic seeker.",
+    "authFailed": "Authentication failed",
+    "loading": "Please wait...",
+    "signupHint": "Please verify your email before signing in.",
+    "signinHint": "New here? Switch to Create account."
+  },
+  "homepage": {
+    "navLinks": [
+      { "label": "Home", "href": "#home" },
+      { "label": "Palmistry", "href": "#features" },
+      { "label": "Horoscope", "href": "#services" },
+      { "label": "Daily Horoscope", "href": "#daily-whatsapp" },
+      { "label": "Blog", "href": "#blog" },
+      { "label": "FAQ", "href": "#faq" }
+    ],
+    "badge": "Premium AI Guidance Platform",
+    "title": "Unlock Your Future with Palmistry & Astrology",
+    "subtitle": "Scan your palm or generate your birth chart to discover personalized insights into your love life, career, and future — all in one place.",
+    "dailyWhatsappLink": "Get Daily Horoscope on WhatsApp",
+    "quickLine": "Takes less than 60 seconds",
+    "trustLine": "Private. Instant. Saved to your account.",
+    "heroCards": {
+      "palm": {
+        "label": "Palmistry Preview",
+        "title": "AI palm reading from image",
+        "description": "Structured palm features first, then personalized insight for relationships, career, and life direction.",
+        "chips": ["Life line: strong", "Heart line: deep", "Head line: clear", "Palm shape: earth"]
+      },
+      "horoscope": {
+        "label": "Horoscope Preview",
+        "title": "Personal astrology birth chart",
+        "description": "Zodiac sign, moon sign, rising sign, and chart patterns translated into premium practical guidance.",
+        "chips": ["Sun: Leo", "Moon: Taurus", "Rising: Libra"]
+      }
+    },
+    "featureSection": {
+      "label": "Choose your starting point",
+      "title": "Start With Palmistry, Horoscope, or Daily Guidance",
+      "cards": {
+        "palm": {
+          "title": "Palmistry Reading",
+          "description": "Upload or scan your palm to get insights about your personality, relationships, and future direction.",
+          "cta": "Scan My Palm"
+        },
+        "astro": {
+          "title": "Horoscope & Astrology",
+          "description": "Enter your birth details to generate your complete astrology profile and life insights.",
+          "cta": "Create Birth Chart"
+        },
+        "daily": {
+          "title": "Daily Horoscope",
+          "description": "Get your daily zodiac guidance with lucky numbers, colors, and personalized advice.",
+          "cta": "View Horoscope"
+        }
+      }
+    },
+    "howItWorks": {
+      "label": "How it works",
+      "title": "Two Clear Paths, One Premium Experience",
+      "palmTitle": "Palmistry Flow",
+      "palmSteps": [
+        "Upload or capture your palm image.",
+        "AI extracts line and shape features into structured data.",
+        "Receive your full reading with personality, love, and future guidance."
+      ],
+      "astroTitle": "Horoscope Flow",
+      "astroSteps": [
+        "Enter your date, time, and place of birth.",
+        "Generate zodiac profile, moon/rising signals, and chart structure.",
+        "Unlock daily and long-form guidance for love, career, and yearly direction."
+      ]
+    },
+    "services": {
+      "palmLabel": "Palmistry pillar",
+      "palmTitle": "Premium AI Palm Reading",
+      "palmDescription": "Explore life line clarity, heart line emotion patterns, head line decision style, and overall personality arc with palmistry reading online designed for practical reflection.",
+      "palmCta": "Explore Palmistry",
+      "astroLabel": "Astrology pillar",
+      "astroTitle": "Personal Horoscope & Birth Chart",
+      "astroDescription": "Decode your zodiac sign, moon sign, rising sign, and chart tendencies to get focused guidance for love, career, finances, and yearly movement.",
+      "astroCta": "Explore Horoscope"
+    },
+    "trust": {
+      "label": "Why users trust this platform",
+      "title": "Trusted for Clarity, Privacy, and Consistency",
+      "items": [
+        {
+          "title": "Palmistry + Astrology in one place",
+          "detail": "One refined platform for AI palm reading, astrology birth chart insights, and daily zodiac guidance."
+        },
+        {
+          "title": "Structured analysis before interpretation",
+          "detail": "We process visible palm and chart signals first, then generate guidance for consistency and credibility."
+        },
+        {
+          "title": "Private report history",
+          "detail": "Your readings are account-linked and easy to revisit whenever you want to track your journey."
+        },
+        {
+          "title": "Fast and mobile-ready",
+          "detail": "From upload or camera capture to full reading in minutes, with a smooth flow across devices."
+        },
+        {
+          "title": "Built for returning members",
+          "detail": "Come back anytime to review saved reports and continue with fresh daily guidance."
+        },
+        {
+          "title": "Premium yet effortless",
+          "detail": "An elegant experience that feels premium while staying clear, calm, and easy to use."
+        }
+      ]
+    },
+    "whatsapp": {
+      "label": "Daily conversion offer",
+      "title": "Get Your Daily Horoscope on WhatsApp",
+      "description": "Receive your daily zodiac insights, lucky numbers, and guidance directly on WhatsApp."
+    },
+    "reviews": {
+      "label": "Social proof",
+      "title": "Loved by Users Seeking Meaningful Guidance",
+      "items": [
+        {
+          "quote": "The palm reading flow felt effortless, and the report was beautifully structured. It gave me practical clarity on relationships and work decisions.",
+          "name": "Rhea M.",
+          "role": "Product Designer"
+        },
+        {
+          "quote": "I used both the birth chart and palmistry tools in one session. Everything felt private, polished, and genuinely trustworthy.",
+          "name": "Aarav K.",
+          "role": "Founder"
+        },
+        {
+          "quote": "Daily horoscope is now part of my morning routine. The guidance is concise, grounded, and easy to apply during the day.",
+          "name": "Naina S.",
+          "role": "Marketing Lead"
+        }
+      ],
+      "stats": {
+        "generated": "Readings generated",
+        "returning": "Returning users",
+        "subscribers": "Daily horoscope subscribers"
+      }
+    },
+    "blog": {
+      "label": "SEO blog preview",
+      "title": "Explore Practical Guides on Palmistry and Astrology",
+      "posts": [
+        {
+          "category": "Palmistry",
+          "title": "How Palm Reading Works From an Uploaded Image",
+          "excerpt": "See how a clear hand photo becomes structured palm data and a premium palmistry reading online in minutes."
+        },
+        {
+          "category": "Astrology",
+          "title": "Birth Chart Basics: Sun, Moon, and Rising Signs",
+          "excerpt": "Understand the core pillars behind horoscope reading and astrology birth chart interpretation."
+        },
+        {
+          "category": "Palm Insights",
+          "title": "Left Palm vs Right Palm in Palmistry",
+          "excerpt": "Learn what each hand may reveal in AI palm reading and how analysts interpret line differences."
+        },
+        {
+          "category": "Daily Guidance",
+          "title": "Daily Horoscope: What Your Zodiac Energy Means Today",
+          "excerpt": "Turn your daily horoscope into clear, practical choices for relationships, focus, and personal momentum."
+        }
+      ]
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Clear Answers Before You Begin",
+      "items": [
+        {
+          "question": "How does online palm reading work?",
+          "answer": "You upload or capture a clear palm image. We first extract visible line and shape features, then generate your report from that structured analysis."
+        },
+        {
+          "question": "Can I upload a hand image from my phone?",
+          "answer": "Yes. You can upload a hand photo from your gallery or capture one live with your phone camera in a mobile-friendly flow."
+        },
+        {
+          "question": "Do I need exact birth time for horoscope readings?",
+          "answer": "Exact birth time improves rising-sign precision. If you don’t have it, you can still receive meaningful horoscope guidance based on available details."
+        },
+        {
+          "question": "Can I use both palmistry and horoscope features?",
+          "answer": "Absolutely. Many users combine palmistry and astrology to get a fuller view of personality, patterns, and timing."
+        },
+        {
+          "question": "Are my palm images and birth details private?",
+          "answer": "Yes. Your data is private by default and scoped to your account, so your images, birth details, and reports stay protected."
+        },
+        {
+          "question": "Can I receive daily horoscope notifications on WhatsApp?",
+          "answer": "Yes. You can subscribe to WhatsApp updates for daily zodiac guidance, lucky number, lucky color, and short spiritual advice."
+        },
+        {
+          "question": "Will my reports be saved to my account?",
+          "answer": "Yes. Your palmistry and astrology reports are saved to your account so you can revisit them anytime."
+        }
+      ]
+    },
+    "finalCta": {
+      "label": "Final invitation",
+      "title": "Begin Your Reading Today",
+      "description": "Choose palmistry, horoscope, or daily guidance and discover a more personal way to explore your path."
+    },
+    "seo": {
+      "title": "Palmistry and Astrology, Together in One Platform",
+      "description": "Our platform combines AI palm reading and astrology insights to deliver personalized guidance. Upload your palm image or generate your birth chart to explore insights about love, career, and life direction. Get daily horoscope updates and stay aligned with your zodiac energy."
+    },
+    "footer": {
+      "description": "Premium AI palmistry and astrology guidance for users who want clarity, privacy, and meaningful daily direction.",
+      "rights": "All rights reserved.",
+      "links": {
+        "palmistry": "Palmistry",
+        "horoscope": "Horoscope",
+        "daily": "Daily Horoscope",
+        "blog": "Blog",
+        "faq": "FAQ",
+        "privacy": "Privacy Policy",
+        "terms": "Terms",
+        "social": "Social"
+      }
+    }
+  },
+  "palm": {
+    "badge": "Palm scanner",
+    "title": "Scan My Palm",
+    "subtitle": "Upload or capture your palm with clear lighting, then submit for feature extraction and interpretation.",
+    "steps": [
+      "Capture or upload your palm",
+      "Provide hand metadata",
+      "Get your full reading in minutes"
+    ],
+    "handSide": "Left or Right hand",
+    "dominantHand": "Dominant hand",
+    "left": "Left",
+    "right": "Right",
+    "age": "Age (optional)",
+    "agePlaceholder": "e.g., 29",
+    "gender": "Gender (optional)",
+    "genderPlaceholder": "e.g., female",
+    "previewAlt": "Palm preview",
+    "toasts": {
+      "cameraBlocked": "Camera access is blocked. Please use upload instead.",
+      "captureFailed": "Could not capture image. Try again.",
+      "analysisSlow": "Analysis is taking longer than expected. Please refresh in a moment.",
+      "uploadFirst": "Please upload or capture a palm image first.",
+      "invalidImage": "Use a clear JPG/PNG/WEBP image under 12MB.",
+      "invalidMetadata": "Invalid metadata.",
+      "analyzed": "Your palm has been analyzed.",
+      "scanFailed": "Could not complete scan."
+    }
+  },
+  "report": {
+    "badge": "Reading ready",
+    "title": "Your Palm Reading",
+    "subtitle": "Based on extracted palm shape, lines, and mounts from your scan.",
+    "freePreview": "Free Preview",
+    "fullReading": "Full Reading"
+  },
+  "astrology": {
+    "badge": "Horoscope & Astrology",
+    "title": "Birth Chart & Daily Guidance",
+    "subtitle": "Structured astrology signals first, interpretation second. Every report is saved securely to your account.",
+    "birthBadge": "Birth chart generator",
+    "birthTitle": "Create your astrology profile",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Your full name",
+    "placeOfBirth": "Place of Birth",
+    "placeOfBirthPlaceholder": "City, Country",
+    "dateOfBirth": "Date of Birth",
+    "timeOfBirth": "Time of Birth",
+    "gender": "Gender (optional)",
+    "genderPlaceholder": "Optional",
+    "latestChart": "Latest Birth Chart",
+    "zodiac": "Zodiac",
+    "moon": "Moon",
+    "rising": "Rising",
+    "summary": "Summary",
+    "empty": "Generate a birth chart to view your astrology interpretation.",
+    "dailyTitle": "Daily Horoscope",
+    "zodiacSign": "Zodiac sign",
+    "todaysGuidance": "Fetching today's guidance...",
+    "luckyNumber": "Lucky number",
+    "luckyColor": "Lucky color",
+    "advice": "Advice",
+    "savedReports": "Saved Reports",
+    "noSaved": "No saved birth chart reports yet.",
+    "recentDaily": "Recent daily horoscopes",
+    "noDaily": "No daily snapshots yet.",
+    "sections": {
+      "personality": "Personality",
+      "love": "Love life",
+      "career": "Career path",
+      "finance": "Financial outlook",
+      "health": "Health guidance",
+      "yearly": "Yearly prediction"
+    },
+    "zodiacOptions": [
+      { "value": "Aries", "label": "Aries" },
+      { "value": "Taurus", "label": "Taurus" },
+      { "value": "Gemini", "label": "Gemini" },
+      { "value": "Cancer", "label": "Cancer" },
+      { "value": "Leo", "label": "Leo" },
+      { "value": "Virgo", "label": "Virgo" },
+      { "value": "Libra", "label": "Libra" },
+      { "value": "Scorpio", "label": "Scorpio" },
+      { "value": "Sagittarius", "label": "Sagittarius" },
+      { "value": "Capricorn", "label": "Capricorn" },
+      { "value": "Aquarius", "label": "Aquarius" },
+      { "value": "Pisces", "label": "Pisces" }
+    ],
+    "validation": {
+      "fullNameRequired": "Full name is required",
+      "nameLong": "Name is too long",
+      "dobRequired": "Date of birth is required",
+      "tobRequired": "Time of birth is required",
+      "placeRequired": "Place of birth is required",
+      "placeLong": "Place is too long",
+      "genderShort": "Gender should be shorter",
+      "checkForm": "Please check your form details."
+    },
+    "toasts": {
+      "saved": "Birth chart generated and saved to your account.",
+      "failedReport": "Could not generate astrology report.",
+      "dailyReady": "Daily horoscope ready.",
+      "dailyFailed": "Could not fetch daily horoscope.",
+      "noReport": "No report returned.",
+      "noHoroscope": "No horoscope returned."
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "searchPlaceholder": "Search by user/reading/payment",
+    "headers": {
+      "reading": "Reading",
+      "user": "User",
+      "status": "Status",
+      "payment": "Payment",
+      "unlocked": "Unlocked",
+      "action": "Action"
+    },
+    "pending": "pending",
+    "yes": "Yes",
+    "no": "No",
+    "editTitle": "Edit Report",
+    "toasts": {
+      "loadFailed": "Failed to load admin data.",
+      "updated": "Report updated."
+    }
+  },
+  "notFound": {
+    "oops": "Oops! Page not found"
+  }
+}
