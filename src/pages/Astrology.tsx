@@ -254,7 +254,7 @@ const Astrology = () => {
 
                 <Button type="submit" variant="hero" className="w-full gap-2" disabled={isSubmitting}>
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  {isSubmitting ? t("common.loading.submissions") : t("common.actions.createBirthChart")}
+                  {isSubmitting ? t("common.loading.generatingReport") : t("common.actions.createBirthChart")}
                 </Button>
               </form>
             </section>

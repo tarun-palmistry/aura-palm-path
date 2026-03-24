@@ -84,7 +84,7 @@ export const AdminPanel = () => {
   return (
     <section className="space-y-6">
       <div className="mystic-glass flex flex-col gap-3 rounded-xl p-5 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-3xl font-semibold">Admin Panel</h2>
+        <h2 className="text-3xl font-semibold">{t("admin.title")}</h2>
         <Input
           placeholder={t("admin.searchPlaceholder")}
           className="max-w-sm focus-mystic"

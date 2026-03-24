@@ -30,7 +30,9 @@
       "oracle": "Loading oracle chamber...",
       "astrology": "Opening astrology chamber...",
       "admin": "Checking admin access...",
-      "submissions": "Loading submissions..."
+      "submissions": "Loading submissions...",
+      "analyzingPalm": "Analyzing your palm...",
+      "generatingReport": "Generating astrology report..."
     }
   },
   "auth": {

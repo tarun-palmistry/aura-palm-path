@@ -299,7 +299,7 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
 
         <Button type="submit" variant="hero" disabled={isLoading} className="w-full gap-2">
           <Sparkles className="h-4 w-4" aria-hidden="true" />
-          {isLoading ? t("palm.toasts.analysisSlow") : t("common.actions.submitForReading")}
+          {isLoading ? t("common.loading.analyzingPalm") : t("common.actions.submitForReading")}
         </Button>
       </form>
     </section>
