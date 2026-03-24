@@ -69,6 +69,17 @@ const Index = () => {
     scrollToSection(session ? "scan-section" : "auth-section");
   };
 
+  const resolvePaymentErrorMessage = (code?: string) => {
+    if (!code) return t("payments.messages.failed");
+
+    if (code === "verification_failed") return t("payments.messages.verificationFailed");
+    if (code === "auth_required") return t("payments.messages.authRequired");
+    if (code === "ownership_error") return t("payments.messages.ownershipError");
+    if (code === "payment_busy") return t("payments.messages.inProgress");
+
+    return t("payments.messages.failed");
+  };
+
   const handleUnlock = async (planType: PlanType) => {
     if (!report || !session?.user.id) {
       toast.error(t("payments.messages.selectReportFirst"));
@@ -85,8 +96,15 @@ const Index = () => {
 
     if (result.ok) {
       await refreshUnlocks();
-      setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
-      toast.success(t("payments.messages.success"));
+
+      const palmUnlocked = Boolean(result.unlocks?.palmistry || result.unlocks?.combo);
+      if (palmUnlocked) {
+        setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
+        toast.success(t("payments.messages.success"));
+      } else {
+        toast.success(t("payments.messages.successOtherPlan"));
+      }
+
       return;
     }
 
@@ -95,7 +113,7 @@ const Index = () => {
       return;
     }
 
-    toast.error(result.error ?? t("payments.messages.failed"));
+    toast.error(resolvePaymentErrorMessage(result.error));
   };
 
   if (loadingSession) {
