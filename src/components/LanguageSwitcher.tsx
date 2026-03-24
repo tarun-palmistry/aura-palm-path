@@ -1,8 +1,23 @@
 import { Languages, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trackEvent } from "@/lib/analytics";
 
 export const LanguageSwitcher = () => {
   const { language, setLanguage, t } = useLanguage();
+
+  const handleLanguageChange = (nextLanguage: "en" | "hi") => {
+    if (nextLanguage === language) return;
+
+    void trackEvent({
+      eventName: "language_toggle",
+      metadata: {
+        from: language,
+        to: nextLanguage,
+      },
+    });
+
+    setLanguage(nextLanguage);
+  };
 
   return (
     <div className="fixed bottom-5 right-4 z-50 md:bottom-auto md:right-6 md:top-20">
@@ -12,7 +27,7 @@ export const LanguageSwitcher = () => {
 
         <button
           type="button"
-          onClick={() => setLanguage("en")}
+          onClick={() => handleLanguageChange("en")}
           className="relative z-10 inline-flex h-8 min-w-16 items-center justify-center rounded-full px-3 text-xs font-semibold transition-colors"
         >
           {language === "en" && <span className="absolute inset-0 rounded-full bg-primary/20 ring-1 ring-primary/50" />}
@@ -21,7 +36,7 @@ export const LanguageSwitcher = () => {
 
         <button
           type="button"
-          onClick={() => setLanguage("hi")}
+          onClick={() => handleLanguageChange("hi")}
           className="relative z-10 inline-flex h-8 min-w-16 items-center justify-center rounded-full px-3 text-xs font-semibold transition-colors"
         >
           {language === "hi" && <span className="absolute inset-0 rounded-full bg-primary/20 ring-1 ring-primary/50" />}

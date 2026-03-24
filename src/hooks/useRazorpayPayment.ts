@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { loadRazorpayScript } from "@/lib/loadRazorpay";
 import type { PaymentStage, PlanType } from "@/lib/paymentPlans";
+import { trackEvent } from "@/lib/analytics";
 
 type StartPaymentArgs = {
   planType: PlanType;
@@ -126,6 +127,19 @@ export const useRazorpayPayment = () => {
 
       if (verifyError) throw new Error(verifyError.message);
       if (verifyData?.error) throw new Error(verifyData.error);
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      void trackEvent({
+        eventName: "payment_success",
+        userId: sessionData.session?.user.id,
+        metadata: {
+          planType,
+          readingId: readingId ?? null,
+          horoscopeRequestId: horoscopeRequestId ?? null,
+          orderId: paymentPayload.razorpay_order_id,
+          paymentId: paymentPayload.razorpay_payment_id,
+        },
+      });
 
       setStage("idle");
       setActivePlan(null);
