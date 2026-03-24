@@ -1,7 +1,10 @@
 {
   "common": {
     "brand": "AstraPalm",
-    "language": { "english": "EN", "hindi": "हिंदी" },
+    "language": {
+      "english": "EN",
+      "hindi": "हिंदी"
+    },
     "actions": {
       "startReading": "अपनी रीडिंग शुरू करें",
       "scanPalm": "अपनी हथेली स्कैन करें",
@@ -32,7 +35,8 @@
       "admin": "एडमिन एक्सेस जांचा जा रहा है...",
       "submissions": "सबमिशन लोड हो रहे हैं...",
       "analyzingPalm": "आपकी हथेली का विश्लेषण हो रहा है...",
-      "generatingReport": "ज्योतिष रिपोर्ट बनाई जा रही है..."
+      "generatingReport": "ज्योतिष रिपोर्ट बनाई जा रही है...",
+      "processingPayment": "पेमेंट प्रोसेस हो रहा है..."
     }
   },
   "auth": {
@@ -57,12 +61,30 @@
   },
   "homepage": {
     "navLinks": [
-      { "label": "होम", "href": "#home" },
-      { "label": "पामिस्ट्री", "href": "#features" },
-      { "label": "राशिफल", "href": "#services" },
-      { "label": "दैनिक राशिफल", "href": "#daily-whatsapp" },
-      { "label": "ब्लॉग", "href": "#blog" },
-      { "label": "FAQ", "href": "#faq" }
+      {
+        "label": "होम",
+        "href": "#home"
+      },
+      {
+        "label": "पामिस्ट्री",
+        "href": "#features"
+      },
+      {
+        "label": "राशिफल",
+        "href": "#services"
+      },
+      {
+        "label": "दैनिक राशिफल",
+        "href": "#daily-whatsapp"
+      },
+      {
+        "label": "ब्लॉग",
+        "href": "#blog"
+      },
+      {
+        "label": "FAQ",
+        "href": "#faq"
+      }
     ],
     "badge": "प्रीमियम AI गाइडेंस प्लेटफ़ॉर्म",
     "title": "पामिस्ट्री और ज्योतिष से अपना भविष्य जानें",
@@ -75,13 +97,22 @@
         "label": "पामिस्ट्री प्रीव्यू",
         "title": "छवि से AI पाम रीडिंग",
         "description": "पहले हथेली के फीचर्स का संरचित विश्लेषण, फिर रिश्तों, करियर और जीवन दिशा पर व्यक्तिगत अंतर्दृष्टि।",
-        "chips": ["जीवन रेखा: मजबूत", "हृदय रेखा: गहरी", "मस्तिष्क रेखा: स्पष्ट", "हथेली आकार: पृथ्वी"]
+        "chips": [
+          "जीवन रेखा: मजबूत",
+          "हृदय रेखा: गहरी",
+          "मस्तिष्क रेखा: स्पष्ट",
+          "हथेली आकार: पृथ्वी"
+        ]
       },
       "horoscope": {
         "label": "राशिफल प्रीव्यू",
         "title": "व्यक्तिगत जन्म कुंडली",
         "description": "राशि, चंद्र राशि, लग्न और कुंडली संकेतों को प्रीमियम, व्यावहारिक मार्गदर्शन में बदला जाता है।",
-        "chips": ["सूर्य: सिंह", "चंद्र: वृषभ", "लग्न: तुला"]
+        "chips": [
+          "सूर्य: सिंह",
+          "चंद्र: वृषभ",
+          "लग्न: तुला"
+        ]
       }
     },
     "featureSection": {
@@ -310,7 +341,8 @@
     "title": "आपकी पाम रीडिंग",
     "subtitle": "आपकी स्कैन की गई हथेली के आकार, रेखाओं और पर्वतों के आधार पर।",
     "freePreview": "मुफ़्त प्रीव्यू",
-    "fullReading": "पूर्ण रीडिंग"
+    "fullReading": "पूर्ण रीडिंग",
+    "locked": "प्रीमियम सेक्शन लॉक हैं"
   },
   "astrology": {
     "badge": "राशिफल और ज्योतिष",
@@ -351,18 +383,54 @@
       "yearly": "वार्षिक भविष्यफल"
     },
     "zodiacOptions": [
-      { "value": "Aries", "label": "मेष" },
-      { "value": "Taurus", "label": "वृषभ" },
-      { "value": "Gemini", "label": "मिथुन" },
-      { "value": "Cancer", "label": "कर्क" },
-      { "value": "Leo", "label": "सिंह" },
-      { "value": "Virgo", "label": "कन्या" },
-      { "value": "Libra", "label": "तुला" },
-      { "value": "Scorpio", "label": "वृश्चिक" },
-      { "value": "Sagittarius", "label": "धनु" },
-      { "value": "Capricorn", "label": "मकर" },
-      { "value": "Aquarius", "label": "कुंभ" },
-      { "value": "Pisces", "label": "मीन" }
+      {
+        "value": "Aries",
+        "label": "मेष"
+      },
+      {
+        "value": "Taurus",
+        "label": "वृषभ"
+      },
+      {
+        "value": "Gemini",
+        "label": "मिथुन"
+      },
+      {
+        "value": "Cancer",
+        "label": "कर्क"
+      },
+      {
+        "value": "Leo",
+        "label": "सिंह"
+      },
+      {
+        "value": "Virgo",
+        "label": "कन्या"
+      },
+      {
+        "value": "Libra",
+        "label": "तुला"
+      },
+      {
+        "value": "Scorpio",
+        "label": "वृश्चिक"
+      },
+      {
+        "value": "Sagittarius",
+        "label": "धनु"
+      },
+      {
+        "value": "Capricorn",
+        "label": "मकर"
+      },
+      {
+        "value": "Aquarius",
+        "label": "कुंभ"
+      },
+      {
+        "value": "Pisces",
+        "label": "मीन"
+      }
     ],
     "validation": {
       "fullNameRequired": "पूरा नाम आवश्यक है",
@@ -381,7 +449,8 @@
       "dailyFailed": "दैनिक राशिफल प्राप्त नहीं हो सका।",
       "noReport": "कोई रिपोर्ट प्राप्त नहीं हुई।",
       "noHoroscope": "कोई राशिफल प्राप्त नहीं हुआ।"
-    }
+    },
+    "fullReport": "पूर्ण रिपोर्ट"
   },
   "admin": {
     "title": "एडमिन पैनल",
@@ -405,5 +474,65 @@
   },
   "notFound": {
     "oops": "ओह! पेज नहीं मिला"
+  },
+  "payments": {
+    "unlockBadge": "प्रीमियम अनलॉक",
+    "payAndUnlock": "पे करें और अनलॉक करें",
+    "oneTime": "केवल एक बार का भुगतान",
+    "instantAccess": "सफल भुगतान के बाद तुरंत एक्सेस",
+    "secure": "Razorpay के साथ सुरक्षित भुगतान",
+    "testMode": "Razorpay टेस्ट मोड चालू है",
+    "locked": "लॉक",
+    "unlocked": "अनलॉक",
+    "lockedNote": "यह प्रीमियम सेक्शन देखने के लिए अनलॉक करें।",
+    "status": {
+      "creatingOrder": "सुरक्षित चेकआउट तैयार हो रहा है...",
+      "openingCheckout": "Razorpay चेकआउट खुल रहा है...",
+      "verifyingPayment": "पेमेंट सत्यापित हो रहा है..."
+    },
+    "messages": {
+      "success": "पेमेंट सफल रहा। आपकी पूरी रिपोर्ट अब अनलॉक है।",
+      "cancelled": "पेमेंट पूरा नहीं हुआ। आपकी रिपोर्ट अभी भी लॉक है।",
+      "failed": "पेमेंट असफल रहा। कृपया फिर से प्रयास करें।",
+      "selectReportFirst": "पहले अनलॉक करने के लिए रिपोर्ट खोलें।"
+    },
+    "palmistry": {
+      "title": "अपनी पामिस्ट्री प्रीमियम रिपोर्ट अनलॉक करें",
+      "description": "गहरे पाम इनसाइट्स अनलॉक करने के लिए एक प्लान चुनें।"
+    },
+    "horoscope": {
+      "title": "अपनी राशिफल प्रीमियम रिपोर्ट अनलॉक करें",
+      "description": "पूर्ण ज्योतिष व्याख्या अनलॉक करने के लिए एक प्लान चुनें।"
+    },
+    "plans": {
+      "palmistry": {
+        "title": "पामिस्ट्री रिपोर्ट",
+        "price": "₹99",
+        "description": "पूर्ण पामिस्ट्री व्याख्या अनलॉक करें।"
+      },
+      "horoscope": {
+        "title": "राशिफल रिपोर्ट",
+        "price": "₹99",
+        "description": "पूरी जन्म कुंडली इनसाइट्स अनलॉक करें।"
+      },
+      "combo": {
+        "title": "पाम + राशिफल कॉम्बो",
+        "price": "₹149",
+        "description": "बेहतर वैल्यू में दोनों रिपोर्ट्स अनलॉक करें।",
+        "badge": "सबसे लोकप्रिय"
+      }
+    },
+    "lockedPalmSections": {
+      "love": "प्रेम और रिश्ते",
+      "career": "करियर और ताकत",
+      "future": "भविष्य मार्गदर्शन",
+      "advice": "मुख्य सलाह"
+    },
+    "lockedHoroscopeSections": {
+      "love": "लव कम्पैटिबिलिटी",
+      "career": "करियर दिशा",
+      "yearly": "वार्षिक दृष्टिकोण",
+      "deep": "गहरी व्याख्या"
+    }
   }
 }
