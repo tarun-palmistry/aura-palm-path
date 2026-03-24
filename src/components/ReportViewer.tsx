@@ -1,4 +1,5 @@
 import { Download } from "lucide-react";
+import { useMemo } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { UnlockPlansCard } from "@/components/UnlockPlansCard";
@@ -29,24 +30,81 @@ const parseReportSections = (fullReport: string) => {
     .filter((item) => item.heading && item.body);
 };
 
+const detectSectionBody = (
+  sections: Array<{ heading: string; body: string }>,
+  keywords: string[],
+) => {
+  const match = sections.find((section) => {
+    const heading = section.heading.toLowerCase();
+    return keywords.some((keyword) => heading.includes(keyword));
+  });
+
+  return match?.body?.trim() ?? "";
+};
+
+const deriveKeyAdvice = (futureGuidance: string) => {
+  const fragments = futureGuidance
+    .split(/(?<=[.!?।])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .slice(0, 2);
+
+  return fragments.join(" ");
+};
+
 export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onUnlock }: ReportViewerProps) => {
   const { t } = useLanguage();
-  const sections = parseReportSections(report.full_report);
-  const freeSection = sections.find((section) => {
-    const heading = section.heading.toLowerCase();
-    return heading.includes("personality") || heading.includes("व्यक्तित्व");
-  });
-  const lockedSectionLabels = [
-    t("payments.lockedPalmSections.love"),
-    t("payments.lockedPalmSections.career"),
-    t("payments.lockedPalmSections.future"),
-    t("payments.lockedPalmSections.advice"),
-  ];
+  const sections = useMemo(() => parseReportSections(report.full_report), [report.full_report]);
+
+  const personalityOverview =
+    detectSectionBody(sections, ["personality", "व्यक्तित्व"]) || report.free_preview;
+  const loveAndRelationships = detectSectionBody(sections, ["love", "relationship", "प्रेम", "रिश्त"]) || report.free_preview;
+  const careerInsights = detectSectionBody(sections, ["career", "profession", "करियर", "पेशा"]);
+  const strengths = detectSectionBody(sections, ["strength", "weakness", "ताकत", "कमजोर"]);
+  const futureGuidance = detectSectionBody(sections, ["future", "guidance", "भविष्य", "मार्गदर्शन"]);
+  const keyAdvice =
+    detectSectionBody(sections, ["advice", "key advice", "सलाह"]) || deriveKeyAdvice(futureGuidance || report.free_preview);
+
+  const premiumSections = [
+    {
+      id: "personality",
+      title: t("report.sections.personalityOverview"),
+      body: personalityOverview,
+      alwaysVisible: true,
+    },
+    {
+      id: "love",
+      title: t("report.sections.loveRelationships"),
+      body: loveAndRelationships,
+    },
+    {
+      id: "career",
+      title: t("report.sections.careerStrengths"),
+      body: [careerInsights, strengths].filter(Boolean).join("\n\n"),
+    },
+    {
+      id: "future",
+      title: t("report.sections.futureGuidance"),
+      body: futureGuidance,
+    },
+    {
+      id: "advice",
+      title: t("report.sections.keyAdvice"),
+      body: keyAdvice,
+    },
+  ].filter((section) => section.body.trim());
+
+  const featureHighlights = [
+    { label: t("report.highlights.palmShape"), value: String((report.generated_from_features as Record<string, unknown>)?.palm_shape ?? "") },
+    { label: t("report.highlights.lifeLine"), value: String((report.generated_from_features as Record<string, unknown>)?.life_line_clarity ?? "") },
+    { label: t("report.highlights.heartLine"), value: String((report.generated_from_features as Record<string, unknown>)?.heart_line ?? "") },
+    { label: t("report.highlights.headLine"), value: String((report.generated_from_features as Record<string, unknown>)?.head_line ?? "") },
+  ].filter((item) => item.value && item.value !== "null" && item.value !== "undefined");
 
   const handleDownloadPdf = () => {
     const pdfSections = [
       { heading: t("report.freePreview"), body: report.free_preview },
-      ...sections.map((section) => ({ heading: section.heading, body: section.body })),
+      ...premiumSections.map((section) => ({ heading: section.title, body: section.body })),
     ];
 
     downloadReportPdf({
@@ -72,11 +130,15 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
         <p className="leading-relaxed text-muted-foreground">{report.free_preview}</p>
       </article>
 
-      {freeSection && (
-        <article className="space-y-4 rounded-lg border border-border/80 bg-background/30 p-4">
-          <h3 className="text-xl font-semibold">{freeSection.heading}</h3>
-          <p className="whitespace-pre-line leading-relaxed text-muted-foreground">{freeSection.body}</p>
-        </article>
+      {featureHighlights.length > 0 && (
+        <div className="grid gap-3 md:grid-cols-2">
+          {featureHighlights.map((highlight) => (
+            <article key={highlight.label} className="rounded-lg border border-border/70 bg-background/20 p-4">
+              <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">{highlight.label}</p>
+              <p className="mt-1 text-sm text-foreground/90">{highlight.value}</p>
+            </article>
+          ))}
+        </div>
       )}
 
       {isUnlocked ? (
@@ -88,23 +150,42 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
               {t("common.actions.downloadPdf")}
             </Button>
           </div>
-          <p className="whitespace-pre-line leading-relaxed text-foreground/95">{report.full_report}</p>
+          <div className="space-y-3">
+            {premiumSections.map((section) => (
+              <article key={section.id} className="rounded-lg border border-border/70 bg-background/20 p-4">
+                <h4 className="text-base font-semibold">{section.title}</h4>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/95">{section.body}</p>
+              </article>
+            ))}
+          </div>
         </article>
       ) : (
         <>
+          {premiumSections
+            .filter((section) => section.alwaysVisible)
+            .map((section) => (
+              <article key={section.id} className="space-y-2 rounded-lg border border-border/80 bg-background/30 p-4">
+                <h3 className="text-lg font-semibold">{section.title}</h3>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+              </article>
+            ))}
+
           <UnlockPlansCard
             context="palmistry"
             activePlan={activePlan}
             stage={paymentStage}
             onPay={onUnlock}
           />
+
           <div className="grid gap-3 md:grid-cols-2">
-            {lockedSectionLabels.map((label) => (
+            {premiumSections
+              .filter((section) => !section.alwaysVisible)
+              .map((section) => (
               <article key={label} className="relative overflow-hidden rounded-lg border border-border/70 bg-background/20 p-4">
                 <div className="pointer-events-none absolute inset-0 bg-background/60 backdrop-blur-sm" />
                 <div className="relative space-y-2">
-                  <h3 className="text-base font-semibold text-foreground/80">{label}</h3>
-                  <p className="text-sm text-muted-foreground">{t("payments.lockedNote")}</p>
+                  <h3 className="text-base font-semibold text-foreground/80">{section.title}</h3>
+                  <p className="text-sm text-muted-foreground">{t("report.lockedSectionNote")}</p>
                 </div>
               </article>
             ))}
