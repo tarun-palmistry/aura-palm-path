@@ -9,7 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthPanel } from "@/components/AuthPanel";
+import { UnlockPlansCard } from "@/components/UnlockPlansCard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
+import { useReportUnlocks } from "@/hooks/useReportUnlocks";
+import type { PlanType } from "@/lib/paymentPlans";
 
 type HoroscopeRequestRow = {
   id: string;
@@ -20,6 +24,7 @@ type HoroscopeRequestRow = {
   full_report: string;
   interpretation: Record<string, string>;
   created_at: string;
+  is_unlocked: boolean;
 };
 
 type DailyHoroscopeRow = {
@@ -51,6 +56,8 @@ const Astrology = () => {
   const [dailySign, setDailySign] = useState("Aries");
 
   const db = supabase as any;
+  const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
+  const { activePlan, stage, startPayment } = useRazorpayPayment();
 
   const zodiacSigns = tm<Array<{ value: string; label: string }>>("astrology.zodiacOptions");
 
@@ -82,6 +89,18 @@ const Astrology = () => {
       { title: t("astrology.sections.yearly"), body: value.yearly_prediction },
     ].filter((item) => item.body);
   }, [report, t]);
+
+  const lockedHoroscopeSections = useMemo(
+    () => [
+      t("payments.lockedHoroscopeSections.love"),
+      t("payments.lockedHoroscopeSections.career"),
+      t("payments.lockedHoroscopeSections.yearly"),
+      t("payments.lockedHoroscopeSections.deep"),
+    ],
+    [t],
+  );
+
+  const isCurrentReportUnlocked = Boolean(report && (report.is_unlocked || unlocks.horoscopeUnlocked));
 
   const loadHistory = async (userId: string) => {
     const [reportsResp, dailyResp] = await Promise.all([
@@ -187,6 +206,36 @@ const Astrology = () => {
     }
   };
 
+  const handleUnlock = async (planType: PlanType) => {
+    if (!report || !session?.user.id) {
+      toast.error(t("payments.messages.selectReportFirst"));
+      return;
+    }
+
+    const result = await startPayment({
+      planType,
+      horoscopeRequestId: report.id,
+      prefill: {
+        name: report ? report.zodiac_sign : undefined,
+        email: session.user.email,
+      },
+    });
+
+    if (result.ok) {
+      await refreshUnlocks();
+      setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
+      toast.success(t("payments.messages.success"));
+      return;
+    }
+
+    if (result.cancelled) {
+      toast.error(t("payments.messages.cancelled"));
+      return;
+    }
+
+    toast.error(result.error ?? t("payments.messages.failed"));
+  };
+
   if (loadingSession) {
     return <main className="container py-16">{t("common.loading.astrology")}</main>;
   }
@@ -288,14 +337,37 @@ const Astrology = () => {
                       <p className="text-sm leading-relaxed text-muted-foreground">{report.free_summary}</p>
                     </article>
 
-                    <div className="grid gap-3 md:grid-cols-2">
-                      {interpretationCards.map((card) => (
-                        <article key={card.title} className="space-y-2 rounded-lg border border-border/70 bg-background/30 p-4">
-                          <h3 className="text-lg font-semibold">{card.title}</h3>
-                          <p className="text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                    {isCurrentReportUnlocked ? (
+                      <>
+                        <div className="grid gap-3 md:grid-cols-2">
+                          {interpretationCards.map((card) => (
+                            <article key={card.title} className="space-y-2 rounded-lg border border-border/70 bg-background/30 p-4">
+                              <h3 className="text-lg font-semibold">{card.title}</h3>
+                              <p className="text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+                            </article>
+                          ))}
+                        </div>
+                        <article className="space-y-2 rounded-lg border border-border/70 bg-background/30 p-4">
+                          <h3 className="text-lg font-semibold">{t("astrology.fullReport")}</h3>
+                          <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{report.full_report}</p>
                         </article>
-                      ))}
-                    </div>
+                      </>
+                    ) : (
+                      <>
+                        <UnlockPlansCard context="horoscope" activePlan={activePlan} stage={stage} onPay={handleUnlock} />
+                        <div className="grid gap-3 md:grid-cols-2">
+                          {lockedHoroscopeSections.map((section) => (
+                            <article key={section} className="relative overflow-hidden rounded-lg border border-border/70 bg-background/20 p-4">
+                              <div className="pointer-events-none absolute inset-0 bg-background/60 backdrop-blur-sm" />
+                              <div className="relative space-y-2">
+                                <h3 className="text-base font-semibold text-foreground/80">{section}</h3>
+                                <p className="text-sm text-muted-foreground">{t("payments.lockedNote")}</p>
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </>
                 ) : (
                   <p className="text-sm text-muted-foreground">{t("astrology.empty")}</p>
@@ -303,7 +375,7 @@ const Astrology = () => {
               </div>
 
               <div className="space-y-6">
-                <section className="mystic-glass space-y-4 rounded-xl p-6">
+                <section id="daily" className="mystic-glass space-y-4 rounded-xl p-6">
                   <div className="flex items-center gap-2 text-primary">
                     <Stars className="h-5 w-5" aria-hidden="true" />
                     <h2 className="text-2xl font-semibold">{t("astrology.dailyTitle")}</h2>
@@ -365,6 +437,9 @@ const Astrology = () => {
                         >
                           <p className="text-sm font-semibold">
                             {item.zodiac_sign} • {item.moon_sign} • {item.rising_sign}
+                          </p>
+                          <p className="text-xs text-primary">
+                            {item.is_unlocked || unlocks.horoscopeUnlocked ? t("payments.unlocked") : t("payments.locked")}
                           </p>
                           <p className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString()}</p>
                         </button>
