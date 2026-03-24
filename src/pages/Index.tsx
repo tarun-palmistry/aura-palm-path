@@ -19,6 +19,7 @@ const Index = () => {
   const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
+  const [loadingSavedPalmReport, setLoadingSavedPalmReport] = useState(false);
   const [report, setReport] = useState<ReportRow | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
@@ -55,6 +56,44 @@ const Index = () => {
     };
 
     fetchAdminStatus();
+  }, [session?.user.id]);
+
+  useEffect(() => {
+    const fetchLatestPalmReport = async () => {
+      if (!session?.user.id) {
+        setReport(null);
+        return;
+      }
+
+      setLoadingSavedPalmReport(true);
+
+      const { data: latestReading, error: readingError } = await supabase
+        .from("palm_readings")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (readingError || !latestReading) {
+        setLoadingSavedPalmReport(false);
+        return;
+      }
+
+      const { data: latestReport } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("reading_id", latestReading.id)
+        .maybeSingle();
+
+      if (latestReport) {
+        setReport(latestReport);
+      }
+
+      setLoadingSavedPalmReport(false);
+    };
+
+    fetchLatestPalmReport();
   }, [session?.user.id]);
 
   const signOut = async () => {
@@ -142,6 +181,17 @@ const Index = () => {
               <AuthPanel onAuthenticated={() => undefined} />
             ) : (
               <div className="space-y-8" id="scan-section">
+                {loadingSavedPalmReport && (
+                  <div className="mystic-glass rounded-xl p-4">
+                    <CosmicLoader
+                      variant="section"
+                      size="medium"
+                      label={t("common.loading.fetchingSavedReports")}
+                      sublabel={t("common.loading.savedPalmHint")}
+                    />
+                  </div>
+                )}
+
                 <PalmScanner
                   userId={session.user.id}
                   onReportReady={(_nextReadingId, nextReport) => {
