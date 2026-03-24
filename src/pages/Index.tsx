@@ -108,6 +108,11 @@ const Index = () => {
                   </Button>
                 )}
                 {session && (
+                  <Button asChild variant="mystic">
+                    <Link to="/astrology">Astrology Module</Link>
+                  </Button>
+                )}
+                {session && (
                   <Button variant="mystic" onClick={signOut}>
                     Sign out
                   </Button>
@@ -146,6 +151,7 @@ const Index = () => {
               <div className="rounded-xl border border-border/70 bg-background/40 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">Instant flow</p>
                 <p className="mt-2 text-sm text-muted-foreground">Scan → Analyze → Read your full report for free.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Now also includes astrology birth charts and daily horoscope.</p>
               </div>
             </div>
           </div>
