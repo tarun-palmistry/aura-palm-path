@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -95,7 +96,7 @@ export const AdminPanel = () => {
 
       <div className="mystic-glass overflow-x-auto rounded-xl p-4">
         {loading ? (
-          <p className="text-muted-foreground">{t("common.loading.submissions")}</p>
+          <CosmicLoader variant="section" size="medium" label={t("common.loading.submissions")} />
         ) : (
           <table className="w-full min-w-[840px] text-sm">
             <thead>

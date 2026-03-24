@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AuthPanel } from "@/components/AuthPanel";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { PalmScanner } from "@/components/PalmScanner";
 import { ReportViewer } from "@/components/ReportViewer";
 import { MarketingHomepage } from "@/components/home/MarketingHomepage";
@@ -117,7 +118,11 @@ const Index = () => {
   };
 
   if (loadingSession) {
-    return <main className="container py-16">{t("common.loading.oracle")}</main>;
+    return (
+      <main className="container py-16">
+        <CosmicLoader variant="fullPage" size="large" label={t("common.loading.oracle")} />
+      </main>
+    );
   }
 
   return (

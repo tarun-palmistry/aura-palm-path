@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminPanel } from "@/components/AdminPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -34,7 +35,11 @@ const Admin = () => {
   }, []);
 
   if (checking) {
-    return <main className="container py-16">{t("common.loading.admin")}</main>;
+    return (
+      <main className="container py-16">
+        <CosmicLoader variant="fullPage" size="large" label={t("common.loading.admin")} />
+      </main>
+    );
   }
 
   if (!isAdmin) {

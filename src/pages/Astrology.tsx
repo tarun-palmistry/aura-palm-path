@@ -6,6 +6,7 @@ import { Stars, Sun, Sparkles, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthPanel } from "@/components/AuthPanel";
@@ -256,7 +257,11 @@ const Astrology = () => {
   };
 
   if (loadingSession) {
-    return <main className="container py-16">{t("common.loading.astrology")}</main>;
+    return (
+      <main className="container py-16">
+        <CosmicLoader variant="fullPage" size="large" label={t("common.loading.astrology")} />
+      </main>
+    );
   }
 
   return (
@@ -321,8 +326,17 @@ const Astrology = () => {
                 </div>
 
                 <Button type="submit" variant="hero" className="w-full gap-2" disabled={isSubmitting}>
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  {isSubmitting ? t("common.loading.generatingReport") : t("common.actions.createBirthChart")}
+                  {isSubmitting ? (
+                    <>
+                      <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
+                      {t("common.loading.generatingReport")}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" aria-hidden="true" />
+                      {t("common.actions.createBirthChart")}
+                    </>
+                  )}
                 </Button>
               </form>
             </section>
@@ -415,8 +429,15 @@ const Astrology = () => {
                       ))}
                     </select>
 
-                    <Button type="submit" variant="hero" className="w-full" disabled={isDailyLoading}>
-                      {isDailyLoading ? t("astrology.todaysGuidance") : t("common.actions.viewDailyHoroscope")}
+                    <Button type="submit" variant="hero" className="w-full gap-2" disabled={isDailyLoading}>
+                      {isDailyLoading ? (
+                        <>
+                          <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
+                          {t("astrology.todaysGuidance")}
+                        </>
+                      ) : (
+                        t("common.actions.viewDailyHoroscope")
+                      )}
                     </Button>
                   </form>
 

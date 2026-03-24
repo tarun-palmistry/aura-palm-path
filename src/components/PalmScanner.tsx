@@ -3,6 +3,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Camera, Upload, Sparkles, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
@@ -298,8 +299,17 @@ export const PalmScanner = ({ userId, onReportReady }: PalmScannerProps) => {
         )}
 
         <Button type="submit" variant="hero" disabled={isLoading} className="w-full gap-2">
-          <Sparkles className="h-4 w-4" aria-hidden="true" />
-          {isLoading ? t("common.loading.analyzingPalm") : t("common.actions.submitForReading")}
+          {isLoading ? (
+            <>
+              <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
+              {t("common.loading.analyzingPalm")}
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              {t("common.actions.submitForReading")}
+            </>
+          )}
         </Button>
       </form>
     </section>
