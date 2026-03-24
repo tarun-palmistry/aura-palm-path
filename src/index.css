@@ -172,7 +172,6 @@ All colors MUST be HSL.
     --planet-opacity: 0.95;
     --planet-size: 14%;
     --planet-shadow-extra: none;
-    transform: scale(var(--orbit-scale-x), var(--orbit-scale-y));
   }
 
   .cosmic-loader-orbit:nth-of-type(4) {
@@ -301,10 +300,10 @@ All colors MUST be HSL.
 
 @keyframes cosmic-orbit-spin {
   0% {
-    transform: rotate(0deg);
+    transform: rotate(0deg) scale(var(--orbit-scale-x), var(--orbit-scale-y));
   }
   100% {
-    transform: rotate(360deg);
+    transform: rotate(360deg) scale(var(--orbit-scale-x), var(--orbit-scale-y));
   }
 }
 
