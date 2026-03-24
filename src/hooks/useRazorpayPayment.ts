@@ -35,7 +35,9 @@ export const useRazorpayPayment = () => {
 
     try {
       const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded || !window.Razorpay) {
+      const RazorpayCtor = (window as Window & { Razorpay?: any }).Razorpay;
+
+      if (!scriptLoaded || !RazorpayCtor) {
         throw new Error("razorpay_unavailable");
       }
 
@@ -58,7 +60,7 @@ export const useRazorpayPayment = () => {
       setStage("checkout");
 
       const paymentPayload = await new Promise<RazorpaySuccessPayload>((resolve, reject) => {
-        const checkout = new window.Razorpay({
+        const checkout = new RazorpayCtor({
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency,
