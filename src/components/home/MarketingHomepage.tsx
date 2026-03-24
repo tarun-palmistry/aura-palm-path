@@ -435,44 +435,6 @@ export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onSta
           </div>
         </section>
 
-        <section id="daily-whatsapp" className="scroll-mt-28 border-b border-border/70 py-16">
-          <div className="container">
-            <article className="mystic-glass rounded-3xl p-8 md:p-10">
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">Daily conversion offer</p>
-              <h2 className="mt-3 text-3xl font-semibold md:text-4xl">Receive Daily Horoscope Updates on WhatsApp</h2>
-              <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
-                Subscribe to receive concise zodiac guidance on WhatsApp, including your daily energy forecast, lucky number, lucky color,
-                and short spiritual advice—delivered in a format you can read in seconds.
-              </p>
-              <ul className="mt-6 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Zodiac-based daily guidance
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Lucky number and lucky color
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Daily spiritual advice
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Optional premium deep-dive updates
-                </li>
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild variant="hero">
-                  <Link to="/astrology#daily">
-                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                    Join WhatsApp Updates
-                  </Link>
-                </Button>
-                <Button asChild variant="mystic">
-                  <Link to="/astrology">View Daily Horoscope</Link>
-                </Button>
-              </div>
-            </article>
-          </div>
-        </section>
-
         <section id="trust" className="scroll-mt-28 border-b border-border/70 py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
