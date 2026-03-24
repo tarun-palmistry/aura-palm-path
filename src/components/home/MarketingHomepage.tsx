@@ -19,11 +19,13 @@ import {
   Zap,
 } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 type MarketingHomepageProps = {
+  conversionSection: ReactNode;
   isAdmin: boolean;
   onSignOut: () => void;
   onStartPalm: () => void;
@@ -43,22 +45,22 @@ const featureEntries = [
   {
     title: "Palmistry Reading",
     description:
-      "Upload or capture your palm image to receive a premium AI palm reading with clear insights on personality, relationships, career direction, and life patterns.",
-    cta: "Start Palm Reading",
+      "Upload or scan your palm to get insights about your personality, relationships, and future direction.",
+    cta: "Scan My Palm",
     icon: Camera,
   },
   {
     title: "Horoscope & Astrology",
     description:
-      "Enter your birth details to generate an astrology birth chart with zodiac, moon, and rising insights translated into practical personal guidance.",
-    cta: "Create My Birth Chart",
+      "Enter your birth details to generate your complete astrology profile and life insights.",
+    cta: "Create Birth Chart",
     icon: MoonStar,
   },
   {
     title: "Daily Horoscope",
     description:
-      "Check your daily horoscope for focused zodiac guidance, lucky color, lucky number, and daily energy direction you can actually use.",
-    cta: "Get Today’s Horoscope",
+      "Get your daily zodiac guidance with lucky numbers, colors, and personalized advice.",
+    cta: "View Horoscope",
     icon: Sun,
   },
 ];
@@ -120,27 +122,27 @@ const testimonials = [
 const blogPosts = [
   {
     category: "Palmistry",
-    title: "How AI Palm Reading Works From a Single Hand Image",
+    title: "How Palm Reading Works From an Uploaded Image",
     excerpt:
-      "Learn how AI palm reading transforms a clear hand photo into structured palm features and a personalized interpretation.",
+      "See how a clear hand photo becomes structured palm data and a premium palmistry reading online in minutes.",
   },
   {
     category: "Astrology",
-    title: "Birth Chart Essentials: Sun, Moon, and Rising Explained",
+    title: "Birth Chart Basics: Sun, Moon, and Rising Signs",
     excerpt:
-      "Understand the three core pillars of an astrology birth chart and how they shape personality and emotional style.",
+      "Understand the core pillars behind horoscope reading and astrology birth chart interpretation.",
   },
   {
     category: "Palm Insights",
-    title: "Left Palm vs Right Palm: What Changes in a Reading",
+    title: "Left Palm vs Right Palm in Palmistry",
     excerpt:
-      "Explore what left and right hand analysis may indicate about potential, expression, and life direction.",
+      "Learn what each hand may reveal in AI palm reading and how analysts interpret line differences.",
   },
   {
     category: "Daily Guidance",
-    title: "Daily Horoscope Guide: Reading Your Zodiac Energy Clearly",
+    title: "Daily Horoscope: What Your Zodiac Energy Means Today",
     excerpt:
-      "Decode daily zodiac guidance and turn short predictions into practical choices for work, relationships, and wellbeing.",
+      "Turn your daily horoscope into clear, practical choices for relationships, focus, and personal momentum.",
   },
 ];
 
@@ -182,7 +184,7 @@ const faqs = [
   },
 ];
 
-export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: MarketingHomepageProps) => {
+export const MarketingHomepage = ({ conversionSection, isAdmin, onSignOut, onStartPalm, session }: MarketingHomepageProps) => {
   return (
     <>
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
@@ -243,12 +245,12 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
                 <div className="mt-4 grid gap-2 border-t border-border/70 pt-4">
                   <SheetClose asChild>
                     <Button variant="hero" onClick={onStartPalm}>
-                      Start Your Reading
+                      Scan My Palm
                     </Button>
                   </SheetClose>
                   <SheetClose asChild>
                     <Button asChild variant="mystic">
-                      <Link to="/astrology">Get Horoscope Reading</Link>
+                      <Link to="/astrology">Generate My Horoscope</Link>
                     </Button>
                   </SheetClose>
                 </div>
@@ -266,38 +268,36 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
                 Premium AI Guidance Platform
               </p>
               <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] md:text-6xl">
-                Reveal Your Path Through Palmistry, Astrology &amp; Daily Horoscope
+                Unlock Your Future with Palmistry &amp; Astrology
               </h1>
               <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-                Upload your palm image or enter your birth details to receive premium, structured guidance in minutes.
-                Private by default, easy to use, and designed for people who value clarity over noise.
+                Scan your palm or generate your birth chart to discover personalized insights into your love life, career,
+                and future — all in one place.
               </p>
 
               <div className="flex flex-wrap gap-3">
                 <Button variant="hero" size="lg" onClick={onStartPalm}>
-                  Start Palm Reading
+                  Scan My Palm
                 </Button>
                 <Button asChild variant="mystic" size="lg">
-                  <Link to="/astrology">Create My Birth Chart</Link>
+                  <Link to="/astrology">Get Horoscope Reading</Link>
                 </Button>
                 <Button asChild variant="link" className="text-primary">
-                  <Link to="/astrology#daily">Get Daily Guidance on WhatsApp</Link>
+                  <Link to="/astrology#daily">Get Daily Horoscope on WhatsApp</Link>
                 </Button>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="mystic-glass rounded-lg p-3 text-sm">Structured insights first</div>
-                <div className="mystic-glass rounded-lg p-3 text-sm">Private by default</div>
-                <div className="mystic-glass rounded-lg p-3 text-sm">Reports saved to your account</div>
-              </div>
+              <p className="text-sm text-muted-foreground">Takes less than 60 seconds</p>
+
+              <p className="text-sm text-muted-foreground">Private. Instant. Saved to your account.</p>
             </div>
 
             <div className="grid gap-4">
               <article className="mystic-glass rounded-2xl p-5 transition-transform duration-300 hover:-translate-y-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">Palmistry Preview</p>
-                  <h2 className="mt-2 text-2xl font-semibold">AI palm reading from image</h2>
+                <h2 className="mt-2 text-2xl font-semibold">AI palm reading from image</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Line clarity, palm shape, and mount visibility extracted into structured insight before interpretation.
+                  Structured palm features first, then personalized insight for relationships, career, and life direction.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
                   <span className="rounded-md border border-border/70 bg-background/40 px-2 py-1">Life line: strong</span>
@@ -309,9 +309,9 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
 
               <article className="mystic-glass rounded-2xl p-5 transition-transform duration-300 hover:-translate-y-1">
                 <p className="text-xs uppercase tracking-[0.2em] text-primary">Horoscope Preview</p>
-                  <h2 className="mt-2 text-2xl font-semibold">Personal astrology birth chart</h2>
+                <h2 className="mt-2 text-2xl font-semibold">Personal astrology birth chart</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Sun, moon, rising, and planetary positions translated into premium love, career, and yearly direction.
+                  Zodiac sign, moon sign, rising sign, and chart patterns translated into premium practical guidance.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
                   <span className="rounded-md border border-border/70 bg-background/40 px-2 py-1">Sun: Leo</span>
@@ -327,7 +327,7 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">Choose your starting point</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">Choose the Guidance You Need Right Now</h2>
+              <h2 className="text-3xl font-semibold md:text-4xl">Start With Palmistry, Horoscope, or Daily Guidance</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {featureEntries.map((entry) => (
@@ -342,15 +342,23 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
                     <Button className="mt-5" variant="hero" onClick={onStartPalm}>
                       {entry.cta}
                     </Button>
-                  ) : (
+                  ) : entry.title === "Horoscope & Astrology" ? (
                     <Button asChild className="mt-5" variant="mystic">
                       <Link to="/astrology">{entry.cta}</Link>
+                    </Button>
+                  ) : (
+                    <Button asChild className="mt-5" variant="mystic">
+                      <Link to="/astrology#daily">{entry.cta}</Link>
                     </Button>
                   )}
                 </article>
               ))}
             </div>
           </div>
+        </section>
+
+        <section id="auth-section" className="scroll-mt-28 border-b border-border/70 py-14">
+          {conversionSection}
         </section>
 
         <section id="how-it-works" className="scroll-mt-28 border-b border-border/70 py-16">
@@ -427,44 +435,6 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
           </div>
         </section>
 
-        <section id="daily-whatsapp" className="scroll-mt-28 border-b border-border/70 py-16">
-          <div className="container">
-            <article className="mystic-glass rounded-3xl p-8 md:p-10">
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">Daily conversion offer</p>
-              <h2 className="mt-3 text-3xl font-semibold md:text-4xl">Receive Daily Horoscope Updates on WhatsApp</h2>
-              <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
-                Subscribe to receive concise zodiac guidance on WhatsApp, including your daily energy forecast, lucky number, lucky color,
-                and short spiritual advice—delivered in a format you can read in seconds.
-              </p>
-              <ul className="mt-6 grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Zodiac-based daily guidance
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Lucky number and lucky color
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Daily spiritual advice
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" aria-hidden="true" /> Optional premium deep-dive updates
-                </li>
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild variant="hero">
-                  <Link to="/astrology#daily">
-                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                    Join WhatsApp Updates
-                  </Link>
-                </Button>
-                <Button asChild variant="mystic">
-                  <Link to="/astrology">View Daily Horoscope</Link>
-                </Button>
-              </div>
-            </article>
-          </div>
-        </section>
-
         <section id="trust" className="scroll-mt-28 border-b border-border/70 py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
@@ -480,6 +450,29 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section id="daily-whatsapp" className="scroll-mt-28 border-b border-border/70 py-16">
+          <div className="container">
+            <article className="mystic-glass rounded-3xl p-8 md:p-10">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary">Daily conversion offer</p>
+              <h2 className="mt-3 text-3xl font-semibold md:text-4xl">Get Your Daily Horoscope on WhatsApp</h2>
+              <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
+                Receive your daily zodiac insights, lucky numbers, and guidance directly on WhatsApp.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button asChild variant="hero">
+                  <Link to="/astrology#daily">
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                    Join WhatsApp Updates
+                  </Link>
+                </Button>
+                <Button asChild variant="mystic">
+                  <Link to="/astrology#daily">View Daily Horoscope</Link>
+                </Button>
+              </div>
+            </article>
           </div>
         </section>
 
@@ -574,12 +567,25 @@ export const MarketingHomepage = ({ isAdmin, onSignOut, onStartPalm, session }: 
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Button variant="hero" size="lg" onClick={onStartPalm}>
-                  Start Palm Reading
+                  Scan My Palm
                 </Button>
                 <Button asChild variant="mystic" size="lg">
-                  <Link to="/astrology">Create My Birth Chart</Link>
+                  <Link to="/astrology">Generate My Horoscope</Link>
                 </Button>
               </div>
+            </article>
+          </div>
+        </section>
+
+        <section aria-label="SEO summary" className="pb-8">
+          <div className="container">
+            <article className="mystic-glass rounded-2xl p-6">
+              <h2 className="text-2xl font-semibold">Palmistry and Astrology, Together in One Platform</h2>
+              <p className="mt-3 text-sm text-muted-foreground md:text-base">
+                Our platform combines AI palm reading and astrology insights to deliver personalized guidance. Upload your palm
+                image or generate your birth chart to explore insights about love, career, and life direction. Get daily
+                horoscope updates and stay aligned with your zodiac energy.
+              </p>
             </article>
           </div>
         </section>
