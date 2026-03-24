@@ -63,6 +63,16 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        display: ["Cormorant Garamond", "serif"],
+        body: ["Manrope", "sans-serif"],
+      },
+      backgroundImage: {
+        "gradient-cosmos": "var(--gradient-cosmos)",
+      },
+      boxShadow: {
+        mystic: "var(--shadow-mystic)",
+      },
       keyframes: {
         "accordion-down": {
           from: {
@@ -80,10 +90,15 @@ export default {
             height: "0",
           },
         },
+        "nebula-drift": {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "50%": { transform: "translate3d(0, -12px, 0) scale(1.03)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "nebula-drift": "nebula-drift 8s ease-in-out infinite",
       },
     },
   },
