@@ -181,7 +181,7 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
             {premiumSections
               .filter((section) => !section.alwaysVisible)
               .map((section) => (
-              <article key={label} className="relative overflow-hidden rounded-lg border border-border/70 bg-background/20 p-4">
+              <article key={section.id} className="relative overflow-hidden rounded-lg border border-border/70 bg-background/20 p-4">
                 <div className="pointer-events-none absolute inset-0 bg-background/60 backdrop-blur-sm" />
                 <div className="relative space-y-2">
                   <h3 className="text-base font-semibold text-foreground/80">{section.title}</h3>
