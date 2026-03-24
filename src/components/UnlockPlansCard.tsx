@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, LockKeyhole } from "lucide-react";
+import { CheckCircle2, Loader2, LockKeyhole } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PAYMENT_PLAN_ORDER, type PaymentStage, type PlanType } from "@/lib/paymentPlans";
@@ -49,19 +49,27 @@ export const UnlockPlansCard = ({ context, activePlan, stage, onPay }: UnlockPla
         <p className="text-sm text-muted-foreground">{t(`payments.${context}.description`)}</p>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-3" aria-busy={isBusy}>
         {planCards.map((item) => {
           const selected = selectedPlan === item.plan;
+          const isActive = activePlan === item.plan;
 
           return (
             <button
               type="button"
               key={item.plan}
               onClick={() => setSelectedPlan(item.plan)}
+              disabled={isBusy}
               className={`relative rounded-xl border p-4 text-left transition-all ${
                 selected ? "border-primary bg-primary/10 shadow-mystic" : "border-border/70 bg-background/30 hover:border-primary/40"
               }`}
             >
+              {isBusy && isActive && (
+                <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full border border-primary/40 bg-primary/20 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-primary">
+                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden="true" />
+                  {t("payments.status.processing")}
+                </span>
+              )}
               {item.badge && (
                 <span className="absolute right-3 top-3 rounded-full border border-primary/30 bg-primary/20 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-primary">
                   {item.badge}
@@ -77,8 +85,19 @@ export const UnlockPlansCard = ({ context, activePlan, stage, onPay }: UnlockPla
 
       <div className="space-y-3">
         <Button type="button" variant="hero" className="w-full" onClick={() => onPay(selectedPlan)} disabled={isBusy}>
-          {isBusy && activePlan === selectedPlan ? stageLabel ?? t("common.loading.processingPayment") : t("payments.payAndUnlock")}
+          {isBusy
+            ? activePlan === selectedPlan
+              ? stageLabel ?? t("common.loading.processingPayment")
+              : t("payments.status.processingAnother")
+            : t("payments.payAndUnlock")}
         </Button>
+
+        {isBusy && (
+          <p className="inline-flex items-center gap-2 text-xs text-primary/90">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            {stageLabel ?? t("common.loading.processingPayment")}
+          </p>
+        )}
 
         <div className="grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
           <p className="inline-flex items-center gap-1.5">
