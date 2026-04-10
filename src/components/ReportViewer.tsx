@@ -1,10 +1,9 @@
 import { Download } from "lucide-react";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { UnlockPlansCard } from "@/components/UnlockPlansCard";
 import { Button } from "@/components/ui/button";
-import { downloadReportPdf } from "@/lib/pdf";
 import type { PaymentStage, PlanType } from "@/lib/paymentPlans";
 import { trackEvent } from "@/lib/analytics";
 
@@ -58,50 +57,62 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
   const trackedReadingRef = useRef<string | null>(null);
   const sections = useMemo(() => parseReportSections(report.full_report), [report.full_report]);
 
-  const personalityOverview =
-    detectSectionBody(sections, ["personality", "व्यक्तित्व"]) || report.free_preview;
-  const loveAndRelationships = detectSectionBody(sections, ["love", "relationship", "प्रेम", "रिश्त"]) || report.free_preview;
-  const careerInsights = detectSectionBody(sections, ["career", "profession", "करियर", "पेशा"]);
-  const strengths = detectSectionBody(sections, ["strength", "weakness", "ताकत", "कमजोर"]);
-  const futureGuidance = detectSectionBody(sections, ["future", "guidance", "भविष्य", "मार्गदर्शन"]);
-  const keyAdvice =
-    detectSectionBody(sections, ["advice", "key advice", "सलाह"]) || deriveKeyAdvice(futureGuidance || report.free_preview);
+  const { premiumSections, featureHighlights } = useMemo(() => {
+    const personalityOverview =
+      detectSectionBody(sections, ["personality", "व्यक्तित्व"]) || report.free_preview;
+    const loveAndRelationships =
+      detectSectionBody(sections, ["love", "relationship", "प्रेम", "रिश्त"]) || report.free_preview;
+    const careerInsights = detectSectionBody(sections, ["career", "profession", "करियर", "पेशा"]);
+    const strengths = detectSectionBody(sections, ["strength", "weakness", "ताकत", "कमजोर"]);
+    const futureGuidance = detectSectionBody(sections, ["future", "guidance", "भविष्य", "मार्गदर्शन"]);
+    const keyAdvice =
+      detectSectionBody(sections, ["advice", "key advice", "सलाह"]) ||
+      deriveKeyAdvice(futureGuidance || report.free_preview);
 
-  const premiumSections = [
-    {
-      id: "personality",
-      title: t("report.sections.personalityOverview"),
-      body: personalityOverview,
-      alwaysVisible: true,
-    },
-    {
-      id: "love",
-      title: t("report.sections.loveRelationships"),
-      body: loveAndRelationships,
-    },
-    {
-      id: "career",
-      title: t("report.sections.careerStrengths"),
-      body: [careerInsights, strengths].filter(Boolean).join("\n\n"),
-    },
-    {
-      id: "future",
-      title: t("report.sections.futureGuidance"),
-      body: futureGuidance,
-    },
-    {
-      id: "advice",
-      title: t("report.sections.keyAdvice"),
-      body: keyAdvice,
-    },
-  ].filter((section) => section.body.trim());
+    const feats = report.generated_from_features as Record<string, unknown>;
 
-  const featureHighlights = [
-    { label: t("report.highlights.palmShape"), value: String((report.generated_from_features as Record<string, unknown>)?.palm_shape ?? "") },
-    { label: t("report.highlights.lifeLine"), value: String((report.generated_from_features as Record<string, unknown>)?.life_line_clarity ?? "") },
-    { label: t("report.highlights.heartLine"), value: String((report.generated_from_features as Record<string, unknown>)?.heart_line ?? "") },
-    { label: t("report.highlights.headLine"), value: String((report.generated_from_features as Record<string, unknown>)?.head_line ?? "") },
-  ].filter((item) => item.value && item.value !== "null" && item.value !== "undefined");
+    const premium = [
+      {
+        id: "personality",
+        title: t("report.sections.personalityOverview"),
+        body: personalityOverview,
+        alwaysVisible: true as const,
+      },
+      {
+        id: "love",
+        title: t("report.sections.loveRelationships"),
+        body: loveAndRelationships,
+        alwaysVisible: false as const,
+      },
+      {
+        id: "career",
+        title: t("report.sections.careerStrengths"),
+        body: [careerInsights, strengths].filter(Boolean).join("\n\n"),
+        alwaysVisible: false as const,
+      },
+      {
+        id: "future",
+        title: t("report.sections.futureGuidance"),
+        body: futureGuidance,
+        alwaysVisible: false as const,
+      },
+      {
+        id: "advice",
+        title: t("report.sections.keyAdvice"),
+        body: keyAdvice,
+        alwaysVisible: false as const,
+      },
+    ].filter((section) => section.body.trim());
+
+    const highlights = [
+      { label: t("report.highlights.palmShape"), value: String(feats?.palm_shape ?? "") },
+      { label: t("report.highlights.lifeLine"), value: String(feats?.life_line_clarity ?? "") },
+      { label: t("report.highlights.heartLine"), value: String(feats?.heart_line ?? "") },
+      { label: t("report.highlights.headLine"), value: String(feats?.head_line ?? "") },
+    ].filter((item) => item.value && item.value !== "null" && item.value !== "undefined");
+
+    return { premiumSections: premium, featureHighlights: highlights };
+  }, [sections, t, report.free_preview, report.generated_from_features]);
 
   useEffect(() => {
     if (!report.reading_id || trackedReadingRef.current === report.reading_id) return;
@@ -116,19 +127,21 @@ export const ReportViewer = ({ report, isUnlocked, activePlan, paymentStage, onU
     });
   }, [report.reading_id, isUnlocked]);
 
-  const handleDownloadPdf = () => {
-    const pdfSections = [
-      { heading: t("report.freePreview"), body: report.free_preview },
-      ...premiumSections.map((section) => ({ heading: section.title, body: section.body })),
-    ];
-
-    downloadReportPdf({
-      title: t("report.title"),
-      subtitle: t("report.subtitle"),
-      fileName: `palm-reading-${report.reading_id}`,
-      sections: pdfSections,
-    });
-  };
+  const handleDownloadPdf = useCallback(() => {
+    void (async () => {
+      const { downloadReportPdf } = await import("@/lib/pdf");
+      const pdfSections = [
+        { heading: t("report.freePreview"), body: report.free_preview },
+        ...premiumSections.map((section) => ({ heading: section.title, body: section.body })),
+      ];
+      downloadReportPdf({
+        title: t("report.title"),
+        subtitle: t("report.subtitle"),
+        fileName: `palm-reading-${report.reading_id}`,
+        sections: pdfSections,
+      });
+    })();
+  }, [t, report.free_preview, report.reading_id, premiumSections]);
 
   return (
     <section className="mystic-glass space-y-4 rounded-xl p-6">

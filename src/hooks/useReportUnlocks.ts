@@ -18,7 +18,16 @@ export const useReportUnlocks = (userId?: string) => {
 
   const refreshUnlocks = useCallback(async () => {
     if (!userId) {
-      setUnlocks(defaultUnlockState);
+      setUnlocks((prev) => {
+        if (
+          !prev.palmistryUnlocked &&
+          !prev.horoscopeUnlocked &&
+          !prev.unlockedViaCombo
+        ) {
+          return prev;
+        }
+        return defaultUnlockState;
+      });
       return defaultUnlockState;
     }
 
@@ -30,9 +39,18 @@ export const useReportUnlocks = (userId?: string) => {
       .maybeSingle();
 
     if (error || !data) {
-      const fallback = defaultUnlockState;
-      setUnlocks(fallback);
-      return fallback;
+      let cleared = defaultUnlockState;
+      setUnlocks((prev) => {
+        if (
+          prev.palmistryUnlocked === cleared.palmistryUnlocked &&
+          prev.horoscopeUnlocked === cleared.horoscopeUnlocked &&
+          prev.unlockedViaCombo === cleared.unlockedViaCombo
+        ) {
+          return prev;
+        }
+        return cleared;
+      });
+      return cleared;
     }
 
     const next: ReportUnlockState = {
@@ -41,7 +59,16 @@ export const useReportUnlocks = (userId?: string) => {
       unlockedViaCombo: Boolean(data.unlocked_via_combo),
     };
 
-    setUnlocks(next);
+    setUnlocks((prev) => {
+      if (
+        prev.palmistryUnlocked === next.palmistryUnlocked &&
+        prev.horoscopeUnlocked === next.horoscopeUnlocked &&
+        prev.unlockedViaCombo === next.unlockedViaCombo
+      ) {
+        return prev;
+      }
+      return next;
+    });
     return next;
   }, [userId]);
 

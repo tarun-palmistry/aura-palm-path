@@ -116,6 +116,11 @@ All colors MUST be HSL.
   h4 {
     @apply font-display;
   }
+
+  h2 {
+    @apply tracking-tight;
+    font-family: "Cormorant Garamond", serif !important;
+  }
 }
 
 @layer components {
@@ -198,7 +203,8 @@ All colors MUST be HSL.
     position: absolute;
     left: 50%;
     top: -2px;
-    transform: translateX(-50%);
+    /* Orbit is scaled into an ellipse; counter-scale the planet back to a circle. */
+    transform: translateX(-50%) scale(calc(1 / var(--orbit-scale-x)), calc(1 / var(--orbit-scale-y)));
     width: var(--planet-size);
     height: var(--planet-size);
     border-radius: 9999px;
@@ -319,9 +325,350 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes language-veil {
+  0% {
+    opacity: 0;
+    transform: translateZ(0);
+    filter: blur(0px) saturate(1);
+  }
+  18% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    filter: blur(0px) saturate(1);
+  }
+}
+
+@keyframes language-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.78);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes language-pulse-2 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.84);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.26);
+    opacity: 0;
+  }
+}
+
+@keyframes language-glint {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  30% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes palm-scanline {
+  0% {
+    transform: translateY(-35%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(135%);
+    opacity: 0;
+  }
+}
+
+@keyframes palm-grid-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(0.8%, -0.6%, 0);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+}
+
+.palm-scan-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.palm-scan-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, hsl(var(--primary) / 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--primary) / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mix-blend-mode: screen;
+  opacity: 0.65;
+  animation: palm-grid-shift 2.6s ease-in-out infinite;
+}
+
+.palm-scan-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 55%, transparent 0%, hsl(var(--background) / 0.35) 55%, hsl(var(--background) / 0.65) 100%);
+}
+
+.palm-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--primary) / 0.12) 20%,
+    hsl(var(--primary) / 0.42) 50%,
+    hsl(var(--primary) / 0.12) 80%,
+    transparent 100%
+  );
+  filter: blur(0.2px);
+  mix-blend-mode: screen;
+  animation: palm-scanline 1.85s ease-in-out infinite;
+}
+
+.cosmic-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  filter: saturate(0.95);
+}
+
+.cosmic-planet-gold {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 30%, hsl(46 90% 85% / 0.98) 0%, hsl(var(--primary) / 0.9) 52%, hsl(30 80% 45% / 0.15) 100%);
+  box-shadow:
+    0 0 14px hsl(var(--primary) / 0.32),
+    0 0 34px hsl(var(--primary) / 0.18);
+}
+
+.cosmic-planet-violet {
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 30%, hsl(290 70% 85% / 0.9) 0%, hsl(var(--accent) / 0.82) 58%, transparent 100%);
+  box-shadow:
+    0 0 14px hsl(var(--accent) / 0.26),
+    0 0 30px hsl(var(--accent) / 0.14);
+  opacity: 0.9;
+}
+
+.cosmic-planet-ice {
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle at 30% 30%, hsl(var(--foreground) / 0.95) 0%, hsl(240 20% 85% / 0.35) 65%, transparent 100%);
+  box-shadow:
+    0 0 16px hsl(var(--foreground) / 0.18),
+    0 0 34px hsl(var(--primary) / 0.12);
+  opacity: 0.75;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 3%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(-3%, -2%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+}
+
+@keyframes orbit-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-rotate-rev {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes starlight-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(0, -18px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes planet-orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(46vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(46vmax);
+  }
+}
+
+@keyframes planet-orbit-2 {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(36vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg) translateX(36vmax);
+  }
+}
+
+@keyframes planet-orbit-3 {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(26vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(26vmax);
+  }
+}
+
+.animate-aurora-drift {
+  animation: aurora-drift 18s ease-in-out infinite;
+}
+
+.animate-aurora-drift2 {
+  animation: aurora-drift-2 22s ease-in-out infinite;
+}
+
+.animate-orbit-rotate {
+  animation: orbit-rotate 64s linear infinite;
+}
+
+.animate-orbit-rotate-rev {
+  animation: orbit-rotate-rev 86s linear infinite;
+}
+
+.animate-orbit-rotate-slow {
+  animation: orbit-rotate 118s linear infinite;
+}
+
+.animate-starlight-float {
+  animation: starlight-float 8.5s ease-in-out infinite;
+}
+
+.animate-planet-orbit {
+  animation: planet-orbit 34s linear infinite;
+}
+
+.animate-planet-orbit2 {
+  animation: planet-orbit-2 46s linear infinite;
+}
+
+.animate-planet-orbit3 {
+  animation: planet-orbit-3 58s linear infinite;
+}
+
+.animate-languageveil {
+  animation: language-veil 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languagepulse {
+  animation: language-pulse 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languagepulse2 {
+  animation: language-pulse-2 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languageglint {
+  animation: language-glint 1100ms ease-out both;
+  will-change: opacity, transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cosmic-loader-core,
   .cosmic-loader-orbit {
+    animation: none !important;
+  }
+  .animate-languageveil,
+  .animate-languagepulse,
+  .animate-languagepulse2,
+  .animate-languageglint {
+    animation: none !important;
+  }
+  .animate-aurora-drift,
+  .animate-aurora-drift2,
+  .animate-orbit-rotate,
+  .animate-orbit-rotate-rev,
+  .animate-orbit-rotate-slow,
+  .animate-starlight-float,
+  .animate-planet-orbit,
+  .animate-planet-orbit2,
+  .animate-planet-orbit3 {
     animation: none !important;
   }
 }

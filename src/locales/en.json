@@ -26,6 +26,9 @@
       "submitForReading": "Submit for Reading",
       "backToPalmReading": "← Back to Palm Reading",
       "backToHome": "← Back to Home",
+      "backToAstrology": "← Birth chart & daily",
+      "matchKundali": "Match now",
+      "tryKundaliMatching": "Try Kundali matching",
       "readMore": "Read More",
       "downloadPdf": "Download PDF",
       "save": "Save",
@@ -35,6 +38,7 @@
     "loading": {
       "oracle": "Loading oracle chamber...",
       "astrology": "Opening astrology chamber...",
+      "kundali": "Aligning Ashta Koota charts...",
       "admin": "Checking admin access...",
       "submissions": "Loading submissions...",
       "analyzingPalm": "Analyzing your palm...",
@@ -76,16 +80,20 @@
         "href": "#home"
       },
       {
-        "label": "Palmistry",
-        "href": "#features"
+        "label": "Palm Reading",
+        "href": "/palm"
       },
       {
-        "label": "Horoscope",
-        "href": "#services"
+        "label": "Kundali",
+        "href": "/kundali"
+      },
+      {
+        "label": "Kundali Matching",
+        "href": "/kundali-matching"
       },
       {
         "label": "Daily Horoscope",
-        "href": "#daily-whatsapp"
+        "href": "/horoscope"
       },
       {
         "label": "Blog",
@@ -97,8 +105,8 @@
       }
     ],
     "badge": "Premium AI Guidance Platform",
-    "title": "Unlock Your Future with Palmistry & Astrology",
-    "subtitle": "Scan your palm or generate your birth chart to discover personalized insights into your love life, career, and future — all in one place.",
+    "title": "Palmistry, Horoscope & Kundali Matching — In One Place",
+    "subtitle": "Scan your palm, generate your birth chart, or run traditional Ashta Koota compatibility for two people — personalized guidance for love, career, and life direction.",
     "dailyWhatsappLink": "Get Daily Horoscope on WhatsApp",
     "quickLine": "Takes less than 60 seconds",
     "trustLine": "Private. Instant. Saved to your account.",
@@ -123,11 +131,21 @@
           "Moon: Taurus",
           "Rising: Libra"
         ]
+      },
+      "kundali": {
+        "label": "Kundali matching preview",
+        "title": "Ashta Koota compatibility (36 gunas)",
+        "description": "Enter birth details for two people and receive a structured eight-parameter match score with clear strengths and caveats.",
+        "chips": [
+          "Varna · Vashya · Tara",
+          "Yoni · Graha Maitri",
+          "Gana · Bhakoot · Nadi"
+        ]
       }
     },
     "featureSection": {
       "label": "Choose your starting point",
-      "title": "Start With Palmistry, Horoscope, or Daily Guidance",
+      "title": "Palmistry, Horoscope, Kundali Matching, or Daily Guidance",
       "cards": {
         "palm": {
           "title": "Palmistry Reading",
@@ -143,12 +161,17 @@
           "title": "Daily Horoscope",
           "description": "Get your daily zodiac guidance with lucky numbers, colors, and personalized advice.",
           "cta": "View Horoscope"
+        },
+        "kundali": {
+          "title": "Kundali matching",
+          "description": "Traditional Ashta Koota analysis across eight kootas — total score out of 36 with relationship-focused interpretation.",
+          "cta": "Open matching"
         }
       }
     },
     "howItWorks": {
       "label": "How it works",
-      "title": "Two Clear Paths, One Premium Experience",
+      "title": "Three Paths, One Premium Experience",
       "palmTitle": "Palmistry Flow",
       "palmSteps": [
         "Upload or capture your palm image.",
@@ -160,6 +183,12 @@
         "Enter your date, time, and place of birth.",
         "Generate zodiac profile, moon/rising signals, and chart structure.",
         "Unlock daily and long-form guidance for love, career, and yearly direction."
+      ],
+      "kundaliTitle": "Kundali matching flow",
+      "kundaliSteps": [
+        "Sign in and enter full birth data for both people — name, date, time, and place.",
+        "We compute Ashta Koota alignment across all eight kootas up to 36 gunas.",
+        "Review your score, koota-by-koota breakdown, and practical relationship guidance."
       ]
     },
     "services": {
@@ -170,15 +199,19 @@
       "astroLabel": "Astrology pillar",
       "astroTitle": "Personal Horoscope & Birth Chart",
       "astroDescription": "Decode your zodiac sign, moon sign, rising sign, and chart tendencies to get focused guidance for love, career, finances, and yearly movement.",
-      "astroCta": "Explore Horoscope"
+      "astroCta": "Explore Horoscope",
+      "kundaliLabel": "Compatibility pillar",
+      "kundaliTitle": "Vedic Kundali matching",
+      "kundaliDescription": "Classical Ashta Koota matching for marriage and long-term harmony — eight parameters, total gunas, and a clear verdict you can discuss together.",
+      "kundaliCta": "Run Kundali match"
     },
     "trust": {
       "label": "Why users trust this platform",
       "title": "Trusted for Clarity, Privacy, and Consistency",
       "items": [
         {
-          "title": "Palmistry + Astrology in one place",
-          "detail": "One refined platform for AI palm reading, astrology birth chart insights, and daily zodiac guidance."
+          "title": "Palmistry, astrology & Kundali in one place",
+          "detail": "One refined platform for AI palm reading, birth chart insights, traditional Kundali matching, and daily zodiac guidance."
         },
         {
           "title": "Structured analysis before interpretation",
@@ -235,7 +268,7 @@
     },
     "blog": {
       "label": "SEO blog preview",
-      "title": "Explore Practical Guides on Palmistry and Astrology",
+      "title": "Explore Practical Guides on Palmistry, Astrology & Matching",
       "posts": [
         {
           "category": "Palmistry",
@@ -256,6 +289,11 @@
           "category": "Daily Guidance",
           "title": "Daily Horoscope: What Your Zodiac Energy Means Today",
           "excerpt": "Turn your daily horoscope into clear, practical choices for relationships, focus, and personal momentum."
+        },
+        {
+          "category": "Kundali",
+          "title": "Ashta Koota: What the 36 Guna Score Really Signals",
+          "excerpt": "Understand the eight kootas, how points add up, and how to read a compatibility report without superstition or fear."
         }
       ]
     },
@@ -280,6 +318,10 @@
           "answer": "Absolutely. Many users combine palmistry and astrology to get a fuller view of personality, patterns, and timing."
         },
         {
+          "question": "What is Kundali matching and do I need an account?",
+          "answer": "Kundali matching uses the traditional Ashta Koota framework (36 gunas). You need to be signed in so we can run the match securely and keep your session private."
+        },
+        {
           "question": "Are my palm images and birth details private?",
           "answer": "Yes. Your data is private by default and scoped to your account, so your images, birth details, and reports stay protected."
         },
@@ -296,18 +338,19 @@
     "finalCta": {
       "label": "Final invitation",
       "title": "Begin Your Reading Today",
-      "description": "Choose palmistry, horoscope, or daily guidance and discover a more personal way to explore your path."
+      "description": "Choose palmistry, horoscope, Kundali matching, or daily guidance — each path is designed to feel clear, private, and genuinely useful."
     },
     "seo": {
-      "title": "Palmistry and Astrology, Together in One Platform",
-      "description": "Our platform combines AI palm reading and astrology insights to deliver personalized guidance. Upload your palm image or generate your birth chart to explore insights about love, career, and life direction. Get daily horoscope updates and stay aligned with your zodiac energy."
+      "title": "Palmistry, Astrology & Kundali Matching in One Platform",
+      "description": "Our platform combines AI palm reading, birth chart astrology, and Vedic Ashta Koota Kundali matching. Upload your palm, generate your chart, or compare two birth profiles for structured compatibility guidance — plus daily horoscope updates to stay aligned with your zodiac energy."
     },
     "footer": {
-      "description": "Premium AI palmistry and astrology guidance for users who want clarity, privacy, and meaningful daily direction.",
+      "description": "Premium AI palmistry, astrology, and Kundali matching for users who want clarity, privacy, and meaningful daily direction.",
       "rights": "All rights reserved.",
       "links": {
         "palmistry": "Palmistry",
         "horoscope": "Horoscope",
+        "kundali": "Kundali matching",
         "daily": "Daily Horoscope",
         "blog": "Blog",
         "faq": "FAQ",
@@ -475,7 +518,73 @@
       "noReport": "No report returned.",
       "noHoroscope": "No horoscope returned."
     },
-    "fullReport": "Full Report"
+    "fullReport": "Full Report",
+    "clientEphemeris": {
+      "title": "Browser birth-chart check (astronomy-engine)",
+      "subtitle": "Tropical Sun, Moon, rising (if we can place your city), and major planets — computed in your browser. Compare with the saved report from our server.",
+      "timezone": "Birth timezone",
+      "geocodeHint": "We use your place of birth (Open-Meteo search) only to estimate latitude/longitude for the rising sign.",
+      "geoLoading": "Looking up place on the map…",
+      "geoMiss": "Could not find that place — Sun/Moon still work; rising needs coordinates.",
+      "needDobTob": "Enter date, time, and timezone to see the client-side chart.",
+      "invalidInstant": "Could not parse that birth instant — check date and time.",
+      "ascNeedsPlace": "Add a clearer place name so we can find latitude/longitude for rising.",
+      "planets": "Geocentric planets (tropical)",
+      "savedReport": "Saved report",
+      "compareNote": "✓ means the saved report sign matches this browser calculation. Small differences are normal if the server uses a different ephemeris, ayanamsa, or house system."
+    }
+  },
+  "kundaliMatching": {
+    "badge": "Vedic compatibility",
+    "title": "Kundali matching",
+    "subtitle": "Traditional 36-point Ashta Koota (Guna Milan) from both partners’ birth details. Interpretations are for reflection, not deterministic fate.",
+    "person1": "Person 1",
+    "person2": "Person 2",
+    "fullName": "Full name",
+    "namePlaceholder": "Enter name",
+    "dateOfBirth": "Birth date",
+    "timeOfBirth": "Birth time",
+    "placeOfBirth": "Birth place",
+    "placePlaceholder": "City, state or country",
+    "matchCta": "Match now",
+    "matching": "Matching charts…",
+    "disclaimer": "Guidance only. Not a substitute for counselling or legal advice.",
+    "featureAshtaTitle": "Ashtakoota analysis",
+    "featureAshtaBody": "Eight parameters—Varna through Nadi—weighted up to 36 gunas, the classical framework for match strength.",
+    "featureManglikTitle": "Manglik & balance",
+    "featureManglikBody": "We surface Mars-related tensions where relevant so you can discuss stability and timing openly.",
+    "featureKarmaTitle": "Relationship texture",
+    "featureKarmaBody": "Emotional rhythm, communication habits, and long-term pace—beyond the score alone.",
+    "resultsTitle": "Compatibility report",
+    "gunaTotal": "Guna score",
+    "outOf36": "out of 36",
+    "level": "Match level",
+    "levels": {
+      "low": "Below 18 — challenging",
+      "average": "18–24 — average",
+      "good": "24–30 — good",
+      "excellent": "Above 30 — excellent"
+    },
+    "kootaTable": "Koota breakdown",
+    "score": "Score",
+    "max": "Max",
+    "status": "Status",
+    "summaryTitle": "Relationship summary",
+    "overall": "Overall",
+    "emotional": "Emotional bond",
+    "communication": "Communication",
+    "longTerm": "Long-term potential",
+    "strengths": "Strengths",
+    "challenges": "Challenges",
+    "advice": "Advice",
+    "verdict": "Verdict",
+    "statusFavorable": "Favorable",
+    "statusNeutral": "Neutral",
+    "statusUnfavorable": "Unfavorable",
+    "authRequired": "Sign in to run Kundali matching.",
+    "toastSuccess": "Your compatibility report is ready.",
+    "toastFail": "Could not generate the report. Try again.",
+    "validation": "Please complete all fields for both people."
   },
   "admin": {
     "title": "Admin Panel",
@@ -559,7 +668,10 @@
       "authRequired": "Please sign in again to continue payment.",
       "ownershipError": "This report does not belong to your account.",
       "inProgress": "A payment is already in progress.",
-      "selectReportFirst": "Please open a report first to unlock it."
+      "selectReportFirst": "Please open a report first to unlock it.",
+      "comboNeedsBoth": "Combo unlock needs both a saved palm reading and a birth chart. Create both first, then try again.",
+      "orderExhausted": "This checkout session can no longer be verified. Start a new payment from the unlock button.",
+      "verificationConflict": "We could not confirm payment immediately. Check if your report unlocked; if not, try again or contact support."
     },
     "palmistry": {
       "title": "Unlock Your Palmistry Premium Report",

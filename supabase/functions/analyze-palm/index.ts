@@ -8,11 +8,6 @@ const corsHeaders = {
 
 const jsonHeaders = { ...corsHeaders, "Content-Type": "application/json" };
 
-const parseJsonResponse = <T>(value: string): T => {
-  const cleaned = value.replace(/```json/g, "").replace(/```/g, "").trim();
-  return JSON.parse(cleaned) as T;
-};
-
 const buildPreview = (text: string) => {
   const limit = Math.max(180, Math.floor(text.length * 0.2));
   return text.slice(0, limit);
@@ -20,6 +15,164 @@ const buildPreview = (text: string) => {
 
 const normalizeLanguage = (value: unknown): "en" | "hi" => {
   return value === "hi" ? "hi" : "en";
+};
+
+const asText = (value: unknown) => {
+  if (typeof value === "string") return value.trim();
+  if (value === null || value === undefined) return "";
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+};
+
+const pickFirstString = (obj: unknown, keys: string[]) => {
+  if (!obj || typeof obj !== "object") return "";
+  const record = obj as Record<string, unknown>;
+  for (const key of keys) {
+    const v = record[key];
+    if (typeof v === "string" && v.trim()) return v.trim();
+  }
+  return "";
+};
+
+const pickStringArray = (obj: unknown, keys: string[]) => {
+  if (!obj || typeof obj !== "object") return [];
+  const record = obj as Record<string, unknown>;
+  for (const key of keys) {
+    const v = record[key];
+    if (Array.isArray(v)) {
+      const items = v
+        .filter((x) => typeof x === "string")
+        .map((x) => (x as string).trim())
+        .filter(Boolean);
+      if (items.length) return items;
+    }
+  }
+  return [];
+};
+
+const extractApiError = (rapid: unknown) => {
+  if (!rapid || typeof rapid !== "object") return "";
+  const root = rapid as Record<string, unknown>;
+  const data = (root.data && typeof root.data === "object" ? (root.data as Record<string, unknown>) : null) ?? root;
+
+  // Only treat explicit error signals as failures.
+  const explicitError = pickFirstString(data, ["error"]) || pickFirstString(root, ["error"]);
+  if (explicitError) return explicitError;
+
+  const status = (data as any)?.status ?? (root as any)?.status;
+  const ok = (data as any)?.ok ?? (root as any)?.ok;
+  const success = (data as any)?.success ?? (root as any)?.success;
+
+  const statusString = typeof status === "string" ? status.toLowerCase() : "";
+  const isErrorStatus =
+    statusString === "error" ||
+    statusString === "failed" ||
+    statusString === "failure" ||
+    statusString === "false";
+
+  const isNotOk = ok === false || success === false;
+
+  if (isErrorStatus || isNotOk) {
+    // If the API marks failure, use message if present.
+    const msg = pickFirstString(data, ["message"]) || pickFirstString(root, ["message"]);
+    return msg || "Palm reading API returned an error status.";
+  }
+
+  return "";
+};
+
+const buildSectionedReport = (language: "en" | "hi", rapid: unknown) => {
+  // Try best-effort mapping from any reasonable RapidAPI payload.
+  const root = rapid && typeof rapid === "object" ? (rapid as Record<string, unknown>) : {};
+  const data = (root.data && typeof root.data === "object" ? root.data : null) ?? root;
+
+  const apiError = extractApiError(rapid);
+
+  if (apiError) {
+    return language === "hi"
+      ? `त्रुटि\n${apiError}`
+      : `Error\n${apiError}`;
+  }
+
+  // Some APIs only return a success message; keep it as content if no sections are found.
+  const successMessage = pickFirstString(data, ["message"]) || pickFirstString(root, ["message"]);
+
+  // Handle payloads shaped like:
+  // { message: "...", palmReadingResult: { message: [ "..." , "..." ] } }
+  const palmReadingResult =
+    (data as any)?.palmReadingResult && typeof (data as any).palmReadingResult === "object"
+      ? ((data as any).palmReadingResult as Record<string, unknown>)
+      : null;
+  const palmMessages = palmReadingResult ? pickStringArray(palmReadingResult, ["message", "messages", "insights"]) : [];
+
+  const personality = pickFirstString(data, [
+    "personality_overview",
+    "personality",
+    "personalityTraits",
+    "personality_traits",
+    "overview",
+    "reading",
+    "result",
+    "prediction",
+  ]);
+  const love = pickFirstString(data, ["love_relationships", "love", "relationships", "relationship", "loveLife", "love_life"]);
+  const career = pickFirstString(data, ["career_strengths", "career", "careerInsights", "career_insights", "profession"]);
+  const future = pickFirstString(data, ["future_guidance", "future", "futurePrediction", "future_prediction", "guidance"]);
+  const advice = pickFirstString(data, ["key_advice", "advice", "tips", "recommendations"]);
+
+  const headings =
+    language === "hi"
+      ? {
+          personality: "व्यक्तित्व अवलोकन",
+          love: "प्रेम और रिश्ते",
+          career: "करियर और ताकत",
+          future: "भविष्य मार्गदर्शन",
+          advice: "मुख्य सलाह",
+        }
+      : {
+          personality: "Personality Overview",
+          love: "Love & Relationships",
+          career: "Career & Strengths",
+          future: "Future Guidance",
+          advice: "Key Advice",
+        };
+
+  const blocks: Array<{ h: string; b: string }> = [];
+  if (personality) blocks.push({ h: headings.personality, b: personality });
+  if (love) blocks.push({ h: headings.love, b: love });
+  if (career) blocks.push({ h: headings.career, b: career });
+  if (future) blocks.push({ h: headings.future, b: future });
+  if (advice) blocks.push({ h: headings.advice, b: advice });
+
+  if (blocks.length === 0 && successMessage) {
+    blocks.push({ h: language === "hi" ? "स्थिति" : "Status", b: successMessage });
+  }
+
+  if (palmMessages.length) {
+    blocks.push({
+      h: language === "hi" ? "मुख्य इनसाइट्स" : "Key Insights",
+      b: palmMessages.map((m) => `- ${m}`).join("\n"),
+    });
+  }
+
+  if (blocks.length === 0) {
+    // Fallback: store the full payload as text so the UI still shows something.
+    blocks.push({ h: language === "hi" ? "रीडिंग" : "Reading", b: asText(rapid) });
+  }
+
+  return blocks.map((b) => `${b.h}\n${b.b}`).join("\n\n");
+};
+
+const toBase64 = (bytes: Uint8Array) => {
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 };
 
 Deno.serve(async (req) => {
@@ -30,7 +183,7 @@ Deno.serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const RAPIDAPI_PALM_KEY = Deno.env.get("PALM_RAPIDAPI_KEY");
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_PUBLISHABLE_KEY) {
     return new Response(JSON.stringify({ error: "Supabase environment variables are missing." }), {
@@ -39,40 +192,28 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (!LOVABLE_API_KEY) {
-    return new Response(JSON.stringify({ error: "LOVABLE_API_KEY is not configured." }), {
+  if (!RAPIDAPI_PALM_KEY) {
+    return new Response(JSON.stringify({ error: "PALM_RAPIDAPI_KEY is not configured." }), {
       status: 500,
       headers: jsonHeaders,
     });
   }
 
   const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Missing authorization token." }), {
-      status: 401,
-      headers: jsonHeaders,
-    });
-  }
-
-  const token = authHeader.replace("Bearer ", "");
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : null;
 
   const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
+    global: token ? { headers: { Authorization: `Bearer ${token}` } } : {},
   });
   const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
-    const { data: authData, error: authError } = await supabaseAuth.auth.getUser();
-    if (authError || !authData.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized request." }), {
-        status: 401,
-        headers: jsonHeaders,
-      });
-    }
+    const { data: authData } = token ? await supabaseAuth.auth.getUser() : { data: { user: null as any } };
 
     const payload = await req.json();
     const readingId = payload?.readingId as string | undefined;
     const language = normalizeLanguage(payload?.language);
+    const guestToken = payload?.guestToken as string | null | undefined;
     if (!readingId || typeof readingId !== "string") {
       return new Response(JSON.stringify({ error: "readingId is required." }), {
         status: 400,
@@ -84,11 +225,15 @@ Deno.serve(async (req) => {
 
     const { data: reading, error: readingError } = await supabaseAdmin
       .from("palm_readings")
-      .select("id, user_id")
+      .select("id, user_id, guest_token, age, gender, hand_side, dominant_hand, created_at")
       .eq("id", readingId)
       .single();
 
-    if (readingError || !reading || reading.user_id !== authData.user.id) {
+    const authedUserId = (authData as any)?.user?.id as string | undefined;
+    const isAuthedOwner = Boolean(authedUserId && reading?.user_id && reading.user_id === authedUserId);
+    const isGuestOwner = Boolean(!authedUserId && guestToken && reading?.guest_token && String(reading.guest_token) === String(guestToken));
+
+    if (readingError || !reading || (!isAuthedOwner && !isGuestOwner)) {
       return new Response(JSON.stringify({ error: "Reading not found for this user." }), {
         status: 404,
         headers: jsonHeaders,
@@ -99,7 +244,6 @@ Deno.serve(async (req) => {
       .from("images")
       .select("storage_path")
       .eq("reading_id", readingId)
-      .eq("user_id", authData.user.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
@@ -122,157 +266,115 @@ Deno.serve(async (req) => {
       });
     }
 
-    const extractionResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a palm image analyzer. Return only JSON with keys: is_palm_detected(boolean), image_quality(one of: good|poor), palm_shape, life_line_clarity, heart_line, head_line, major_mounts(array), confidence(0-1), notes. If unclear, set is_palm_detected false.",
-          },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: "Analyze this palm image and extract palmistry features as strict JSON." },
-              { type: "image_url", image_url: { url: signedData.signedUrl } },
-            ],
-          },
-        ],
-        temperature: 0.2,
-      }),
-    });
-
-    if (!extractionResponse.ok) {
-      const text = await extractionResponse.text();
-      return new Response(JSON.stringify({ error: `AI extraction failed: ${extractionResponse.status} ${text}` }), {
-        status: extractionResponse.status,
+    const imageResp = await fetch(signedData.signedUrl);
+    if (!imageResp.ok) {
+      return new Response(JSON.stringify({ error: `Could not fetch palm image bytes: ${imageResp.status}` }), {
+        status: 502,
         headers: jsonHeaders,
       });
     }
 
-    const extractionPayload = await extractionResponse.json();
-    const extractionText = extractionPayload?.choices?.[0]?.message?.content as string | undefined;
-    if (!extractionText) {
-      throw new Error("AI extraction did not return structured content.");
+    const contentType = imageResp.headers.get("content-type") || "image/jpeg";
+    const imageBytes = new Uint8Array(await imageResp.arrayBuffer());
+
+    const rapidUrl = "https://ai-astrologer.p.rapidapi.com/palmreading";
+    const rapidHeaders = {
+      "x-rapidapi-host": "ai-astrologer.p.rapidapi.com",
+      "x-rapidapi-key": RAPIDAPI_PALM_KEY,
+    };
+
+    const imageBase64WithPrefix = `data:${contentType};base64,${toBase64(imageBytes)}`;
+    const imageBase64Raw = imageBase64WithPrefix.split("base64,")[1] ?? imageBase64WithPrefix;
+
+    const tryRapid = async (
+      label: string,
+      init: RequestInit,
+    ): Promise<{ ok: true; rapidPalm: unknown } | { ok: false; status: number; body: unknown; label: string }> => {
+      const resp = await fetch(rapidUrl, { ...init, headers: { ...rapidHeaders, ...(init.headers ?? {}) } });
+      const text = await resp.text();
+      let body: unknown = null;
+      try {
+        body = JSON.parse(text);
+      } catch {
+        body = text;
+      }
+      if (resp.ok) return { ok: true, rapidPalm: body };
+      return { ok: false, status: resp.status, body, label };
+    };
+
+    const attempts: Array<() => Promise<any>> = [
+      // 1) Multipart with only `image` file.
+      async () => {
+        const form = new FormData();
+        form.append("image", new Blob([imageBytes], { type: contentType }), "palm.jpg");
+        return await tryRapid("multipart:image", { method: "POST", body: form });
+      },
+      // 2) Multipart with only `file` file.
+      async () => {
+        const form = new FormData();
+        form.append("file", new Blob([imageBytes], { type: contentType }), "palm.jpg");
+        return await tryRapid("multipart:file", { method: "POST", body: form });
+      },
+      // 3) URL encoded base64 with data: prefix.
+      async () => {
+        const body = new URLSearchParams({ image: imageBase64WithPrefix }).toString();
+        return await tryRapid("urlencoded:image_with_prefix", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+      },
+      // 4) URL encoded raw base64 (no prefix).
+      async () => {
+        const body = new URLSearchParams({ image: imageBase64Raw }).toString();
+        return await tryRapid("urlencoded:image_raw_base64", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body,
+        });
+      },
+    ];
+
+    let lastFailure: { status: number; body: unknown; label: string } | null = null;
+    let rapidPalm: unknown = null;
+    for (const attempt of attempts) {
+      const res = await attempt();
+      if (res.ok) {
+        rapidPalm = res.rapidPalm;
+        lastFailure = null;
+        break;
+      }
+      lastFailure = { status: res.status, body: res.body, label: res.label };
     }
 
-    const features = parseJsonResponse<{
-      is_palm_detected: boolean;
-      image_quality: "good" | "poor";
-      palm_shape: string;
-      life_line_clarity: string;
-      heart_line: string;
-      head_line: string;
-      major_mounts: string[];
-      confidence: number;
-      notes?: string;
-    }>(extractionText);
-
-    if (!features.is_palm_detected || features.image_quality === "poor") {
+    if (lastFailure) {
       await supabaseAdmin.from("palm_readings").update({ analysis_status: "failed" }).eq("id", readingId);
       return new Response(
-        JSON.stringify({ error: "Bad image quality. Please retake with clear lighting and full palm in frame." }),
-        { status: 400, headers: jsonHeaders },
+        JSON.stringify({
+          error: `RapidAPI palmreading failed: ${lastFailure.status} ${asText(lastFailure.body)}`,
+          attempt: lastFailure.label,
+        }),
+        { status: 502, headers: jsonHeaders },
       );
     }
 
-    const reportResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content:
-              `You are an AI palmistry interpreter. Use ONLY provided extracted features. Return strict JSON: personality_overview, love_relationships, career_strengths, future_guidance, key_advice. Write all values in ${responseLanguage}. Keep key_advice concise and practical.`,
-          },
-          {
-            role: "user",
-            content: `Generate reading text from this extracted data only: ${JSON.stringify(features)}`,
-          },
-        ],
-        temperature: 0.5,
-      }),
-    });
-
-    if (!reportResponse.ok) {
-      const text = await reportResponse.text();
-      return new Response(JSON.stringify({ error: `AI report generation failed: ${reportResponse.status} ${text}` }), {
-        status: reportResponse.status,
-        headers: jsonHeaders,
-      });
+    const apiError = extractApiError(rapidPalm);
+    if (apiError) {
+      await supabaseAdmin.from("palm_readings").update({ analysis_status: "failed" }).eq("id", readingId);
+      return new Response(JSON.stringify({ error: apiError }), { status: 400, headers: jsonHeaders });
     }
 
-    const reportPayload = await reportResponse.json();
-    const reportText = reportPayload?.choices?.[0]?.message?.content as string | undefined;
-    if (!reportText) {
-      throw new Error("AI report generation returned empty content.");
-    }
-
-    const reportJson = parseJsonResponse<{
-      personality_overview?: string;
-      personality_traits?: string;
-      love_relationships?: string;
-      career_strengths?: string;
-      career_insights?: string;
-      strengths_weaknesses?: string;
-      future_guidance?: string;
-      key_advice?: string;
-    }>(reportText);
-
-    const personalityOverview = reportJson.personality_overview ?? reportJson.personality_traits ?? "";
-    const loveRelationships = reportJson.love_relationships ?? "";
-    const careerStrengths =
-      reportJson.career_strengths ??
-      [reportJson.career_insights, reportJson.strengths_weaknesses].filter(Boolean).join("\n\n");
-    const futureGuidance = reportJson.future_guidance ?? "";
-    const keyAdvice = reportJson.key_advice ?? futureGuidance;
-
-    const headings =
-      language === "hi"
-        ? {
-            personality: "व्यक्तित्व अवलोकन",
-            love: "प्रेम और रिश्ते",
-            career: "करियर और ताकत",
-            future: "भविष्य मार्गदर्शन",
-            advice: "मुख्य सलाह",
-          }
-        : {
-            personality: "Personality Overview",
-            love: "Love & Relationships",
-            career: "Career & Strengths",
-            future: "Future Guidance",
-            advice: "Key Advice",
-          };
-
-    const fullReport = [
-      `${headings.personality}\n${personalityOverview}`,
-      `${headings.love}\n${loveRelationships}`,
-      `${headings.career}\n${careerStrengths}`,
-      `${headings.future}\n${futureGuidance}`,
-      `${headings.advice}\n${keyAdvice}`,
-    ].join("\n\n");
-
+    const fullReport = buildSectionedReport(language, rapidPalm);
     const freePreview = buildPreview(fullReport);
 
     const { error: featuresError } = await supabaseAdmin.from("palm_features").upsert({
       reading_id: readingId,
-      palm_shape: features.palm_shape,
-      life_line_clarity: features.life_line_clarity,
-      heart_line: features.heart_line,
-      head_line: features.head_line,
-      major_mounts: features.major_mounts,
-      extracted_features: features,
+      palm_shape: pickFirstString(rapidPalm, ["palm_shape", "palmShape", "handShape", "hand_shape"]) || null,
+      life_line_clarity: pickFirstString(rapidPalm, ["life_line_clarity", "lifeLine", "life_line"]) || null,
+      heart_line: pickFirstString(rapidPalm, ["heart_line", "heartLine"]) || null,
+      head_line: pickFirstString(rapidPalm, ["head_line", "headLine"]) || null,
+      major_mounts: null,
+      extracted_features: { rapid_palm: rapidPalm },
     });
 
     if (featuresError) throw featuresError;
@@ -281,7 +383,7 @@ Deno.serve(async (req) => {
       reading_id: readingId,
       free_preview: freePreview,
       full_report: fullReport,
-      generated_from_features: features,
+      generated_from_features: { rapid_palm: rapidPalm },
       is_unlocked: false,
     });
 
