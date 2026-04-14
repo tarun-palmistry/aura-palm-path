@@ -33,8 +33,7 @@ const cleanMetadata = (metadata?: AnalyticsMetadata) => {
 
 export const trackEvent = async ({ eventName, userId = null, pagePath, metadata }: TrackEventArgs) => {
   try {
-    const db = supabase as any;
-    await db.from("analytics_events").insert({
+    await supabase.from("analytics_events").insert({
       event_name: eventName,
       user_id: userId,
       page_path: pagePath ?? (typeof window !== "undefined" ? `${window.location.pathname}${window.location.hash || ""}` : null),

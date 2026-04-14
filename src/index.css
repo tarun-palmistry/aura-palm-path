@@ -4,14 +4,78 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Sticky header is h-16 (4rem); offset anchor targets below header + notch */
+  .scroll-anchor {
+    scroll-margin-top: calc(4rem + env(safe-area-inset-top, 0px) + 0.75rem);
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
 
 @layer base {
+  html {
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  /* Light theme (no .dark on <html>) — high-contrast text + twilight sky mesh */
   :root {
+    --background: 42 24% 96%;
+    --foreground: 262 48% 10%;
+    --heading-foreground: 264 52% 8%;
+
+    --card: 40 38% 99%;
+    --card-foreground: 262 46% 11%;
+
+    --popover: 40 38% 99%;
+    --popover-foreground: 262 46% 11%;
+
+    --primary: 40 88% 44%;
+    --primary-foreground: 264 55% 8%;
+
+    --secondary: 268 20% 90%;
+    --secondary-foreground: 262 36% 18%;
+
+    --muted: 42 18% 91%;
+    --muted-foreground: 262 14% 34%;
+
+    --accent: 276 28% 86%;
+    --accent-foreground: 276 48% 20%;
+
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 262 16% 80%;
+    --input: 262 14% 84%;
+    --ring: 40 88% 44%;
+
+    --radius: 0.8rem;
+
+    --gradient-cosmos:
+      radial-gradient(ellipse 130% 90% at 50% 108%, hsl(225 44% 28% / 0.16) 0%, transparent 52%),
+      radial-gradient(circle at 14% 6%, hsl(278 42% 88% / 0.95) 0%, transparent 46%),
+      radial-gradient(circle at 92% 88%, hsl(220 38% 86% / 0.9) 0%, transparent 48%),
+      hsl(42 24% 96%);
+    --shadow-mystic: 0 14px 44px -16px hsl(40 75% 38% / 0.2);
+
+    --sidebar-background: 42 22% 94%;
+    --sidebar-foreground: 262 36% 14%;
+    --sidebar-primary: 40 88% 44%;
+    --sidebar-primary-foreground: 264 55% 8%;
+    --sidebar-accent: 276 22% 88%;
+    --sidebar-accent-foreground: 276 44% 18%;
+    --sidebar-border: 262 16% 82%;
+    --sidebar-ring: 40 88% 44%;
+  }
+
+  /* Cosmic dark (brand) — active when next-themes sets class "dark" on <html> */
+  .dark {
     --background: 257 42% 7%;
     --foreground: 38 66% 92%;
+    --heading-foreground: 40 72% 94%;
 
     --card: 257 34% 11%;
     --card-foreground: 40 70% 93%;
@@ -38,64 +102,17 @@ All colors MUST be HSL.
     --input: 272 39% 24%;
     --ring: 44 79% 58%;
 
-    --radius: 0.8rem;
-
     --gradient-cosmos: radial-gradient(circle at 20% 0%, hsl(278 55% 24%) 0%, hsl(257 42% 7%) 42%, hsl(252 52% 4%) 100%);
     --shadow-mystic: 0 12px 45px -20px hsl(44 79% 58% / 0.55);
 
     --sidebar-background: 257 37% 10%;
-
     --sidebar-foreground: 37 60% 90%;
-
     --sidebar-primary: 44 79% 58%;
-
     --sidebar-primary-foreground: 257 42% 7%;
-
     --sidebar-accent: 271 38% 24%;
-
     --sidebar-accent-foreground: 39 80% 92%;
-
     --sidebar-border: 272 39% 31%;
-
     --sidebar-ring: 44 79% 58%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -108,6 +125,9 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-body;
     background-image: var(--gradient-cosmos);
     min-height: 100vh;
+    min-height: 100dvh;
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   h1,
@@ -115,12 +135,132 @@ All colors MUST be HSL.
   h3,
   h4 {
     @apply font-display;
+    color: hsl(var(--heading-foreground));
   }
+
+  h2 {
+    @apply tracking-tight;
+    font-family: "Cormorant Garamond", serif !important;
+  }
+}
+
+/* Cosmic background: shared structure; [data-cosmic] switches light “twilight orbits” vs deep space */
+[data-cosmic="dark"] .cosmic-aurora-opacity {
+  opacity: 0.72;
+}
+
+[data-cosmic="light"] .cosmic-aurora-opacity {
+  opacity: 0.94;
+}
+
+[data-cosmic="dark"] .cosmic-blob-1 {
+  background: radial-gradient(circle, hsl(var(--primary) / 0.18) 0%, transparent 58%);
+}
+
+[data-cosmic="dark"] .cosmic-blob-2 {
+  background: radial-gradient(circle, hsl(var(--accent) / 0.16) 0%, transparent 60%);
+}
+
+[data-cosmic="light"] .cosmic-blob-1 {
+  background: radial-gradient(circle, hsl(225 46% 38% / 0.14) 0%, hsl(260 40% 70% / 0.06) 45%, transparent 62%);
+}
+
+[data-cosmic="light"] .cosmic-blob-2 {
+  background: radial-gradient(circle, hsl(278 42% 42% / 0.11) 0%, hsl(220 45% 75% / 0.08) 48%, transparent 62%);
+}
+
+[data-cosmic="dark"] .cosmic-orbit-stage {
+  opacity: 0.45;
+}
+
+[data-cosmic="light"] .cosmic-orbit-stage {
+  opacity: 0.62;
+}
+
+[data-cosmic="dark"] .cosmic-orbit-ring {
+  border-color: hsl(var(--border) / 0.38);
+  box-shadow: inset 0 0 40px hsl(var(--primary) / 0.08);
+}
+
+[data-cosmic="dark"] .cosmic-orbit-ring-mid {
+  box-shadow: inset 0 0 48px hsl(var(--accent) / 0.08);
+}
+
+[data-cosmic="dark"] .cosmic-orbit-ring-inner {
+  box-shadow: inset 0 0 38px hsl(var(--primary) / 0.06);
+}
+
+[data-cosmic="light"] .cosmic-orbit-ring {
+  border-color: hsl(var(--primary) / 0.32);
+  box-shadow: inset 0 0 52px hsl(225 42% 36% / 0.09);
+}
+
+[data-cosmic="light"] .cosmic-orbit-ring-mid {
+  border-color: hsl(268 30% 58% / 0.28);
+  box-shadow: inset 0 0 48px hsl(var(--accent) / 0.12);
+}
+
+[data-cosmic="light"] .cosmic-orbit-ring-inner {
+  border-color: hsl(225 35% 52% / 0.22);
+  box-shadow: inset 0 0 36px hsl(var(--primary) / 0.1);
+}
+
+[data-cosmic="dark"] .cosmic-star-dot {
+  background: hsl(var(--foreground) / 0.78);
+  box-shadow: 0 0 14px hsl(var(--primary) / 0.28);
+}
+
+[data-cosmic="light"] .cosmic-star-dot {
+  background: hsl(225 48% 28% / 0.35);
+  box-shadow:
+    0 0 10px hsl(var(--primary) / 0.45),
+    0 0 22px hsl(225 55% 42% / 0.15);
+}
+
+[data-cosmic="light"] .cosmic-planet-gold {
+  box-shadow:
+    0 0 16px hsl(var(--primary) / 0.42),
+    0 0 36px hsl(40 90% 50% / 0.2);
+}
+
+[data-cosmic="light"] .cosmic-planet-violet {
+  box-shadow:
+    0 0 14px hsl(var(--accent) / 0.38),
+    0 0 32px hsl(275 50% 48% / 0.18);
+}
+
+[data-cosmic="light"] .cosmic-planet-ice {
+  background: radial-gradient(circle at 30% 30%, hsl(225 40% 98% / 0.95) 0%, hsl(230 35% 72% / 0.45) 65%, transparent 100%);
+  box-shadow:
+    0 0 14px hsl(225 45% 50% / 0.25),
+    0 0 28px hsl(var(--primary) / 0.15);
+  opacity: 0.88;
 }
 
 @layer components {
   .mystic-glass {
-    @apply border border-border/80 bg-card/70 backdrop-blur-xl;
+    @apply border border-border/80 bg-card/75 backdrop-blur-xl dark:bg-card/70;
+    box-shadow: 0 1px 0 hsl(var(--foreground) / 0.04);
+  }
+
+  .dark .mystic-glass {
+    box-shadow: none;
+  }
+
+  /* Full-width sections that still respect notched devices */
+  .layout-shell {
+    @apply flex min-h-dvh min-w-0 flex-col;
+  }
+
+  .layout-main {
+    @apply flex min-h-0 min-w-0 flex-1 flex-col;
+  }
+
+  .sheet-safe-padding {
+    padding-top: max(1.5rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+    padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
   }
 
   .cosmic-loader-scene {
@@ -198,7 +338,8 @@ All colors MUST be HSL.
     position: absolute;
     left: 50%;
     top: -2px;
-    transform: translateX(-50%);
+    /* Orbit is scaled into an ellipse; counter-scale the planet back to a circle. */
+    transform: translateX(-50%) scale(calc(1 / var(--orbit-scale-x)), calc(1 / var(--orbit-scale-y)));
     width: var(--planet-size);
     height: var(--planet-size);
     border-radius: 9999px;
@@ -319,9 +460,350 @@ All colors MUST be HSL.
   }
 }
 
+@keyframes language-veil {
+  0% {
+    opacity: 0;
+    transform: translateZ(0);
+    filter: blur(0px) saturate(1);
+  }
+  18% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    filter: blur(0px) saturate(1);
+  }
+}
+
+@keyframes language-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.78);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  65% {
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes language-pulse-2 {
+  0% {
+    transform: translate(-50%, -50%) scale(0.84);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.26);
+    opacity: 0;
+  }
+}
+
+@keyframes language-glint {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  30% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+@keyframes palm-scanline {
+  0% {
+    transform: translateY(-35%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translateY(135%);
+    opacity: 0;
+  }
+}
+
+@keyframes palm-grid-shift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(0.8%, -0.6%, 0);
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+}
+
+.palm-scan-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.palm-scan-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, hsl(var(--primary) / 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--primary) / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mix-blend-mode: screen;
+  opacity: 0.65;
+  animation: palm-grid-shift 2.6s ease-in-out infinite;
+}
+
+.palm-scan-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 55%, transparent 0%, hsl(var(--background) / 0.35) 55%, hsl(var(--background) / 0.65) 100%);
+}
+
+.palm-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--primary) / 0.12) 20%,
+    hsl(var(--primary) / 0.42) 50%,
+    hsl(var(--primary) / 0.12) 80%,
+    transparent 100%
+  );
+  filter: blur(0.2px);
+  mix-blend-mode: screen;
+  animation: palm-scanline 1.85s ease-in-out infinite;
+}
+
+.cosmic-planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  filter: saturate(0.95);
+}
+
+.cosmic-planet-gold {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 30%, hsl(46 90% 85% / 0.98) 0%, hsl(var(--primary) / 0.9) 52%, hsl(30 80% 45% / 0.15) 100%);
+  box-shadow:
+    0 0 14px hsl(var(--primary) / 0.32),
+    0 0 34px hsl(var(--primary) / 0.18);
+}
+
+.cosmic-planet-violet {
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 30%, hsl(290 70% 85% / 0.9) 0%, hsl(var(--accent) / 0.82) 58%, transparent 100%);
+  box-shadow:
+    0 0 14px hsl(var(--accent) / 0.26),
+    0 0 30px hsl(var(--accent) / 0.14);
+  opacity: 0.9;
+}
+
+.cosmic-planet-ice {
+  width: 9px;
+  height: 9px;
+  background: radial-gradient(circle at 30% 30%, hsl(var(--foreground) / 0.95) 0%, hsl(240 20% 85% / 0.35) 65%, transparent 100%);
+  box-shadow:
+    0 0 16px hsl(var(--foreground) / 0.18),
+    0 0 34px hsl(var(--primary) / 0.12);
+  opacity: 0.75;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, 3%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+  50% {
+    transform: translate3d(-3%, -2%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.02);
+  }
+}
+
+@keyframes orbit-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbit-rotate-rev {
+  0% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes starlight-float {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(0, -18px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes planet-orbit {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(46vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(46vmax);
+  }
+}
+
+@keyframes planet-orbit-2 {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(36vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg) translateX(36vmax);
+  }
+}
+
+@keyframes planet-orbit-3 {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg) translateX(26vmax);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg) translateX(26vmax);
+  }
+}
+
+.animate-aurora-drift {
+  animation: aurora-drift 18s ease-in-out infinite;
+}
+
+.animate-aurora-drift2 {
+  animation: aurora-drift-2 22s ease-in-out infinite;
+}
+
+.animate-orbit-rotate {
+  animation: orbit-rotate 64s linear infinite;
+}
+
+.animate-orbit-rotate-rev {
+  animation: orbit-rotate-rev 86s linear infinite;
+}
+
+.animate-orbit-rotate-slow {
+  animation: orbit-rotate 118s linear infinite;
+}
+
+.animate-starlight-float {
+  animation: starlight-float 8.5s ease-in-out infinite;
+}
+
+.animate-planet-orbit {
+  animation: planet-orbit 34s linear infinite;
+}
+
+.animate-planet-orbit2 {
+  animation: planet-orbit-2 46s linear infinite;
+}
+
+.animate-planet-orbit3 {
+  animation: planet-orbit-3 58s linear infinite;
+}
+
+.animate-languageveil {
+  animation: language-veil 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languagepulse {
+  animation: language-pulse 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languagepulse2 {
+  animation: language-pulse-2 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.animate-languageglint {
+  animation: language-glint 1100ms ease-out both;
+  will-change: opacity, transform;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cosmic-loader-core,
   .cosmic-loader-orbit {
+    animation: none !important;
+  }
+  .animate-languageveil,
+  .animate-languagepulse,
+  .animate-languagepulse2,
+  .animate-languageglint {
+    animation: none !important;
+  }
+  .animate-aurora-drift,
+  .animate-aurora-drift2,
+  .animate-orbit-rotate,
+  .animate-orbit-rotate-rev,
+  .animate-orbit-rotate-slow,
+  .animate-starlight-float,
+  .animate-planet-orbit,
+  .animate-planet-orbit2,
+  .animate-planet-orbit3 {
     animation: none !important;
   }
 }

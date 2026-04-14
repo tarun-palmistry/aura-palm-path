@@ -1,29 +1,18 @@
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { AuthPanel } from "@/components/AuthPanel";
-import { CosmicLoader } from "@/components/loaders/CosmicLoader";
-import { PalmScanner } from "@/components/PalmScanner";
-import { ReportViewer } from "@/components/ReportViewer";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import { MarketingHomepage } from "@/components/home/MarketingHomepage";
+import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
-import type { Tables } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
-import { useReportUnlocks } from "@/hooks/useReportUnlocks";
-import type { PlanType } from "@/lib/paymentPlans";
-
-type ReportRow = Tables<"reports">;
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
-  const [loadingSavedPalmReport, setLoadingSavedPalmReport] = useState(false);
-  const [report, setReport] = useState<ReportRow | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
-  const { activePlan, stage, startPayment } = useRazorpayPayment();
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -58,107 +47,42 @@ const Index = () => {
     fetchAdminStatus();
   }, [session?.user.id]);
 
-  useEffect(() => {
-    const fetchLatestPalmReport = async () => {
-      if (!session?.user.id) {
-        setReport(null);
-        return;
-      }
-
-      setLoadingSavedPalmReport(true);
-
-      const { data: latestReading, error: readingError } = await supabase
-        .from("palm_readings")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (readingError || !latestReading) {
-        setLoadingSavedPalmReport(false);
-        return;
-      }
-
-      const { data: latestReport } = await supabase
-        .from("reports")
-        .select("*")
-        .eq("reading_id", latestReading.id)
-        .maybeSingle();
-
-      if (latestReport) {
-        setReport(latestReport);
-      }
-
-      setLoadingSavedPalmReport(false);
-    };
-
-    fetchLatestPalmReport();
-  }, [session?.user.id]);
-
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-    setReport(null);
-  };
+  }, []);
 
-  const scrollToSection = (targetId: string) => {
-    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const startPalmFlow = () => {
-    scrollToSection(session ? "scan-section" : "auth-section");
-  };
-
-  const resolvePaymentErrorMessage = (code?: string) => {
-    if (!code) return t("payments.messages.failed");
-
-    if (code === "verification_failed") return t("payments.messages.verificationFailed");
-    if (code === "auth_required") return t("payments.messages.authRequired");
-    if (code === "ownership_error") return t("payments.messages.ownershipError");
-    if (code === "payment_busy") return t("payments.messages.inProgress");
-
-    return t("payments.messages.failed");
-  };
-
-  const handleUnlock = async (planType: PlanType) => {
-    if (!report || !session?.user.id) {
-      toast.error(t("payments.messages.selectReportFirst"));
-      return;
-    }
-
-    const result = await startPayment({
-      planType,
-      readingId: report.reading_id,
-      prefill: {
-        email: session.user.email,
-      },
-    });
-
-    if (result.ok) {
-      await refreshUnlocks();
-
-      const palmUnlocked = Boolean(result.unlocks?.palmistry || result.unlocks?.combo);
-      if (palmUnlocked) {
-        setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
-        toast.success(t("payments.messages.success"));
-      } else {
-        toast.success(t("payments.messages.successOtherPlan"));
-      }
-
-      return;
-    }
-
-    if (result.cancelled) {
-      toast.error(t("payments.messages.cancelled"));
-      return;
-    }
-
-    toast.error(resolvePaymentErrorMessage(result.error));
-  };
+  const conversionSection = useMemo(
+    () => (
+      <div className="container min-w-0 space-y-8">
+        <div className="space-y-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("common.actions.startReading")}</p>
+          <h2 className="text-3xl font-semibold md:text-4xl">{t("homepage.quickLine")}</h2>
+          <p className="max-w-2xl text-sm text-muted-foreground md:text-base">{t("homepage.subtitle")}</p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Button asChild variant="hero" size="lg" className="w-full sm:w-auto">
+            <Link to="/palm">{t("common.actions.scanPalm")}</Link>
+          </Button>
+          <Button asChild variant="mystic" size="lg" className="w-full sm:w-auto">
+            <Link to="/kundali">{t("common.actions.createBirthChart")}</Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full border-primary/40 text-primary hover:bg-primary/10 sm:w-auto"
+          >
+            <Link to="/kundali-matching">{t("common.actions.tryKundaliMatching")}</Link>
+          </Button>
+        </div>
+      </div>
+    ),
+    [t],
+  );
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.oracle")} />
       </main>
     );
@@ -166,55 +90,32 @@ const Index = () => {
 
   return (
     <>
+      <Helmet>
+        <title>AstraPalm | AI Palm Reading, Astrology & Kundali Matching</title>
+        <meta
+          name="description"
+          content="Scan your palm, generate your birth chart, run 36 guna Kundali matching and get daily horoscope — one AI-powered platform for practical, private guidance."
+        />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "AstraPalm",
+            url: "https://astrapalm.com",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://astrapalm.com/?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          })}
+        </script>
+      </Helmet>
+
       <MarketingHomepage
-        conversionSection={
-          <div className="container space-y-8">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("common.actions.startReading")}</p>
-              <h2 className="text-3xl font-semibold md:text-4xl">{t("homepage.quickLine")}</h2>
-              <p className="max-w-2xl text-sm text-muted-foreground md:text-base">
-                {t("homepage.subtitle")}
-              </p>
-            </div>
-
-            {!session ? (
-              <AuthPanel onAuthenticated={() => undefined} />
-            ) : (
-              <div className="space-y-8" id="scan-section">
-                {loadingSavedPalmReport && (
-                  <div className="mystic-glass rounded-xl p-4">
-                    <CosmicLoader
-                      variant="section"
-                      size="medium"
-                      label={t("common.loading.fetchingSavedReports")}
-                      sublabel={t("common.loading.savedPalmHint")}
-                    />
-                  </div>
-                )}
-
-                <PalmScanner
-                  userId={session.user.id}
-                  onReportReady={(_nextReadingId, nextReport) => {
-                    setReport(nextReport);
-                  }}
-                />
-
-                {report && (
-                  <ReportViewer
-                    report={report}
-                    isUnlocked={Boolean(report.is_unlocked || unlocks.palmistryUnlocked)}
-                    activePlan={activePlan}
-                    paymentStage={stage}
-                    onUnlock={handleUnlock}
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        }
+        conversionSection={conversionSection}
         isAdmin={isAdmin}
         onSignOut={signOut}
-        onStartPalm={startPalmFlow}
+        onStartPalm={() => undefined}
         session={session}
       />
     </>

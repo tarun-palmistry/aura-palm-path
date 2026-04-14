@@ -3,7 +3,7 @@ import { TrustPageLayout } from "@/components/legal/TrustPageLayout";
 
 const TermsOfService = () => {
   useEffect(() => {
-    document.title = "Terms of Service | AstroPalm";
+    document.title = "Terms of Service | AstraPalm";
   }, []);
 
   return (

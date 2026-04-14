@@ -1,24 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Stars, Sun, Sparkles, CalendarDays, Download } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { CalendarDays, Download, Sparkles, Sun } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CosmicLoader } from "@/components/loaders/CosmicLoader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AuthPanel } from "@/components/AuthPanel";
 import { UnlockPlansCard } from "@/components/UnlockPlansCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useRazorpayPayment } from "@/hooks/useRazorpayPayment";
 import { useReportUnlocks } from "@/hooks/useReportUnlocks";
-import { downloadReportPdf } from "@/lib/pdf";
 import type { PlanType } from "@/lib/paymentPlans";
 import { trackEvent } from "@/lib/analytics";
+import { BirthChartEnginePanel } from "@/components/kundali/BirthChartEnginePanel";
 
-type HoroscopeRequestRow = {
+type KundaliReportRow = {
   id: string;
   full_name: string;
   zodiac_sign: string;
@@ -31,40 +31,24 @@ type HoroscopeRequestRow = {
   is_unlocked: boolean;
 };
 
-type DailyHoroscopeRow = {
-  id: string;
-  zodiac_sign: string;
-  horoscope_date: string;
-  today_prediction: string;
-  lucky_number: string;
-  lucky_color: string;
-  advice: string;
-};
-
-const Astrology = () => {
-  const { language, t, tm } = useLanguage();
+const Kundali = () => {
+  const { language, t } = useLanguage();
   const [session, setSession] = useState<Session | null>(null);
   const [loadingSession, setLoadingSession] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDailyLoading, setIsDailyLoading] = useState(false);
-  const [report, setReport] = useState<HoroscopeRequestRow | null>(null);
-  const [history, setHistory] = useState<HoroscopeRequestRow[]>([]);
-  const [dailyHistory, setDailyHistory] = useState<DailyHoroscopeRow[]>([]);
-  const [dailyResult, setDailyResult] = useState<DailyHoroscopeRow | null>(null);
+  const [report, setReport] = useState<KundaliReportRow | null>(null);
+  const [history, setHistory] = useState<KundaliReportRow[]>([]);
 
   const [fullName, setFullName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [timeOfBirth, setTimeOfBirth] = useState("");
   const [placeOfBirth, setPlaceOfBirth] = useState("");
   const [gender, setGender] = useState("");
-  const [dailySign, setDailySign] = useState("Aries");
-  const trackedReportIdRef = useRef<string | null>(null);
+  const [birthTimeZone, setBirthTimeZone] = useState("Asia/Kolkata");
 
-  const db = supabase as any;
+  const trackedReportIdRef = useRef<string | null>(null);
   const { unlocks, refreshUnlocks } = useReportUnlocks(session?.user.id);
   const { activePlan, stage, startPayment } = useRazorpayPayment();
-
-  const zodiacSigns = tm<Array<{ value: string; label: string }>>("astrology.zodiacOptions");
 
   const birthChartSchema = useMemo(
     () =>
@@ -95,7 +79,7 @@ const Astrology = () => {
     ].filter((item) => item.body);
   }, [report, t]);
 
-  const lockedHoroscopeSections = useMemo(
+  const lockedSections = useMemo(
     () => [
       t("payments.lockedHoroscopeSections.love"),
       t("payments.lockedHoroscopeSections.career"),
@@ -109,64 +93,49 @@ const Astrology = () => {
 
   const resolvePaymentErrorMessage = (code?: string) => {
     if (!code) return t("payments.messages.failed");
-
+    if (code.startsWith("raw::")) return code.replace(/^raw::/, "").trim() || t("payments.messages.failed");
     if (code === "verification_failed") return t("payments.messages.verificationFailed");
     if (code === "auth_required") return t("payments.messages.authRequired");
     if (code === "ownership_error") return t("payments.messages.ownershipError");
     if (code === "payment_busy") return t("payments.messages.inProgress");
-
+    if (code === "payment_order_exhausted") return t("payments.messages.orderExhausted");
+    if (code === "verification_conflict") return t("payments.messages.verificationConflict");
+    if (code === "combo_requires_both") return t("payments.messages.comboNeedsBoth");
     return t("payments.messages.failed");
   };
 
-  const loadHistory = async (userId: string) => {
-    const [reportsResp, dailyResp] = await Promise.all([
-      db.from("horoscope_requests").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(6),
-      db.from("daily_horoscopes").select("*").eq("user_id", userId).order("horoscope_date", { ascending: false }).limit(6),
-    ]);
-
-    if (reportsResp.error) {
-      toast.error(reportsResp.error.message);
-    } else {
-      setHistory((reportsResp.data ?? []) as HoroscopeRequestRow[]);
+  const loadHistory = useCallback(async (userId: string) => {
+    const { data, error } = await supabase.from("horoscope_requests").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(8);
+    if (error) {
+      toast.error(error.message);
+      return;
     }
-
-    if (dailyResp.error) {
-      toast.error(dailyResp.error.message);
-    } else {
-      setDailyHistory((dailyResp.data ?? []) as DailyHoroscopeRow[]);
-    }
-  };
+    setHistory((data ?? []) as KundaliReportRow[]);
+  }, []);
 
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      if (nextSession?.user.id) {
-        void loadHistory(nextSession.user.id);
-      }
+      if (nextSession?.user.id) void loadHistory(nextSession.user.id);
     });
 
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
-      if (data.session?.user.id) {
-        void loadHistory(data.session.user.id);
-      }
+      if (data.session?.user.id) void loadHistory(data.session.user.id);
       setLoadingSession(false);
     });
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [loadHistory]);
 
   useEffect(() => {
     if (!report?.id || trackedReportIdRef.current === report.id) return;
-
     trackedReportIdRef.current = report.id;
+
     void trackEvent({
       eventName: "horoscope_report_view",
       userId: session?.user.id,
-      metadata: {
-        reportId: report.id,
-        unlocked: Boolean(report.is_unlocked || unlocks.horoscopeUnlocked),
-      },
+      metadata: { reportId: report.id, unlocked: Boolean(report.is_unlocked || unlocks.horoscopeUnlocked) },
     });
   }, [report?.id, report?.is_unlocked, session?.user.id, unlocks.horoscopeUnlocked]);
 
@@ -182,10 +151,7 @@ const Astrology = () => {
     void trackEvent({
       eventName: "horoscope_submit_click",
       userId: session?.user.id,
-      metadata: {
-        hasGender: Boolean(parsed.data.gender),
-        zodiacSelected: dailySign,
-      },
+      metadata: { hasGender: Boolean(parsed.data.gender) },
     });
 
     setIsSubmitting(true);
@@ -195,19 +161,36 @@ const Astrology = () => {
         body: { ...parsed.data, language },
       });
 
-      if (error) throw new Error(error.message);
+      if (error) {
+        let serverError = "";
+        if (import.meta.env.DEV) {
+          try {
+            const fnUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-astrology-report`;
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData.session?.access_token;
+            const res = await fetch(fnUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                apikey: String(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? ""),
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+              },
+              body: JSON.stringify({ ...parsed.data, language }),
+            });
+            serverError = await res.text();
+          } catch {
+            // ignore debug fetch failure
+          }
+        }
+        throw new Error(serverError || error.message);
+      }
       if (data?.error) throw new Error(data.error);
 
-      const nextReport = data?.report as HoroscopeRequestRow | undefined;
+      const nextReport = data?.report as KundaliReportRow | undefined;
       if (!nextReport) throw new Error(t("astrology.toasts.noReport"));
 
       setReport(nextReport);
-      setDailySign(nextReport.zodiac_sign || "Aries");
-
-      if (session?.user.id) {
-        await loadHistory(session.user.id);
-      }
-
+      if (session?.user.id) await loadHistory(session.user.id);
       toast.success(t("astrology.toasts.saved"));
     } catch (error) {
       const message = error instanceof Error ? error.message : t("astrology.toasts.failedReport");
@@ -217,52 +200,43 @@ const Astrology = () => {
     }
   };
 
-  const getDailyHoroscope = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsDailyLoading(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke("generate-daily-horoscope", {
-        body: { zodiacSign: dailySign, language },
-      });
-
-      if (error) throw new Error(error.message);
-      if (data?.error) throw new Error(data.error);
-
-      const result = data?.horoscope as DailyHoroscopeRow | undefined;
-      if (!result) throw new Error(t("astrology.toasts.noHoroscope"));
-
-      setDailyResult(result);
-      if (session?.user.id) {
-        await loadHistory(session.user.id);
-      }
-      toast.success(t("astrology.toasts.dailyReady"));
-    } catch (error) {
-      const message = error instanceof Error ? error.message : t("astrology.toasts.dailyFailed");
-      toast.error(message);
-    } finally {
-      setIsDailyLoading(false);
-    }
-  };
-
   const handleUnlock = async (planType: PlanType) => {
-    if (!report || !session?.user.id) {
+    if (!report) {
       toast.error(t("payments.messages.selectReportFirst"));
       return;
     }
 
+    if (!session?.user.id) {
+      toast.error(t("payments.messages.authRequired"));
+      return;
+    }
+
+    let readingId: string | undefined;
+    if (planType === "combo") {
+      const { data: latestPalm } = await supabase
+        .from("palm_readings")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!latestPalm?.id) {
+        toast.error(t("payments.messages.comboNeedsBoth"));
+        return;
+      }
+      readingId = latestPalm.id;
+    }
+
     const result = await startPayment({
       planType,
+      readingId,
       horoscopeRequestId: report.id,
-      prefill: {
-        name: report?.full_name,
-        email: session.user.email,
-      },
+      prefill: { name: report.full_name, email: session.user.email },
     });
 
     if (result.ok) {
       await refreshUnlocks();
-
       const horoscopeUnlocked = Boolean(result.unlocks?.horoscope || result.unlocks?.combo);
       if (horoscopeUnlocked) {
         setReport((prev) => (prev ? { ...prev, is_unlocked: true } : prev));
@@ -270,7 +244,6 @@ const Astrology = () => {
       } else {
         toast.success(t("payments.messages.successOtherPlan"));
       }
-
       return;
     }
 
@@ -282,56 +255,76 @@ const Astrology = () => {
     toast.error(resolvePaymentErrorMessage(result.error));
   };
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = useCallback(() => {
     if (!report) return;
-
-    const pdfSections = [
-      { heading: t("astrology.summary"), body: report.free_summary },
-      ...interpretationCards.map((card) => ({ heading: card.title, body: card.body ?? "" })),
-      { heading: t("astrology.fullReport"), body: report.full_report },
-    ];
-
-    downloadReportPdf({
-      title: t("astrology.title"),
-      subtitle: `${report.full_name} • ${report.zodiac_sign} / ${report.moon_sign} / ${report.rising_sign}`,
-      fileName: `astrology-report-${report.full_name}-${report.id.slice(0, 8)}`,
-      sections: pdfSections,
-    });
-  };
+    if (!session?.user.id) {
+      toast.error(t("payments.messages.authRequired"));
+      return;
+    }
+    void (async () => {
+      const { downloadReportPdf } = await import("@/lib/pdf");
+      const pdfSections = [
+        { heading: t("astrology.summary"), body: report.free_summary },
+        ...interpretationCards.map((card) => ({ heading: card.title, body: card.body ?? "" })),
+        { heading: t("astrology.fullReport"), body: report.full_report },
+      ];
+      downloadReportPdf({
+        title: t("astrology.title"),
+        subtitle: `${report.full_name} • ${report.zodiac_sign} / ${report.moon_sign} / ${report.rising_sign}`,
+        fileName: `kundali-report-${report.full_name}-${report.id.slice(0, 8)}`,
+        sections: pdfSections,
+      });
+    })();
+  }, [interpretationCards, report, session?.user.id, t]);
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.astrology")} />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen pb-16">
-      <section className="starlight-field border-b border-border/70">
-        <div className="container py-12">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="space-y-3">
-              <p className="inline-flex rounded-full border border-border/80 bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
-                {t("astrology.badge")}
-              </p>
-              <h1 className="text-5xl font-semibold leading-[1.05] md:text-6xl">{t("astrology.title")}</h1>
-              <p className="max-w-2xl text-base text-muted-foreground md:text-lg">
-                {t("astrology.subtitle")}
-              </p>
-            </div>
-            <Button asChild variant="mystic">
-              <Link to="/">{t("common.actions.backToPalmReading")}</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+    <>
+      <Helmet>
+        <title>Birth Chart Astrology & Horoscope Report | AstraPalm</title>
+        <meta
+          name="description"
+          content="Enter your birth details to generate a full astrology birth chart with zodiac, moon and rising signs plus premium horoscope interpretation."
+        />
+        <meta property="og:title" content="Birth Chart Astrology & Horoscope Report | AstraPalm" />
+        <meta
+          property="og:description"
+          content="Create and save your personal birth chart, then unlock deeper horoscope insights for love, career, finances and yearly outlook."
+        />
+        <meta property="og:url" content="https://astrapalm.com/kundali" />
+      </Helmet>
 
-      <div className="container space-y-8 py-10">
-        {!session ? (
-          <AuthPanel onAuthenticated={() => undefined} />
-        ) : (
+      <main className="flex min-h-0 min-w-0 flex-1 flex-col pb-[max(4rem,env(safe-area-inset-bottom,0px))]">
+        <section className="starlight-field border-b border-border/70">
+          <div className="container py-8 sm:py-12">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+              <div className="min-w-0 space-y-3">
+                <p className="inline-flex rounded-full border border-border/80 bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
+                  {t("astrology.badge")}
+                </p>
+                <h1 className="text-3xl font-semibold leading-[1.08] sm:text-4xl md:text-5xl md:leading-[1.05] lg:text-6xl">{t("astrology.title")}</h1>
+                <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("astrology.subtitle")}</p>
+              </div>
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
+                  <Link to="/horoscope">{t("common.actions.viewDailyHoroscope")}</Link>
+                </Button>
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
+                  <Link to="/palm">{t("common.actions.backToPalmReading")}</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="container min-w-0 space-y-8 py-8 sm:py-10">
           <>
             <section className="mystic-glass space-y-5 rounded-xl p-6">
               <div className="space-y-2">
@@ -384,6 +377,23 @@ const Astrology = () => {
               </form>
             </section>
 
+            <BirthChartEnginePanel
+              dateOfBirth={dateOfBirth}
+              timeOfBirth={timeOfBirth}
+              placeOfBirth={placeOfBirth}
+              timeZone={birthTimeZone}
+              onTimeZoneChange={setBirthTimeZone}
+              report={
+                report
+                  ? {
+                      zodiac_sign: report.zodiac_sign,
+                      moon_sign: report.moon_sign,
+                      rising_sign: report.rising_sign,
+                    }
+                  : null
+              }
+            />
+
             <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="mystic-glass space-y-4 rounded-xl p-6">
                 <div className="flex items-center gap-2 text-primary">
@@ -413,7 +423,7 @@ const Astrology = () => {
                       <p className="text-sm leading-relaxed text-muted-foreground">{report.free_summary}</p>
                     </article>
 
-                    {isCurrentReportUnlocked ? (
+                    {isCurrentReportUnlocked || !session?.user.id ? (
                       <>
                         <div className="flex justify-end">
                           <Button type="button" variant="mystic" size="sm" className="gap-2" onClick={handleDownloadPdf}>
@@ -433,12 +443,17 @@ const Astrology = () => {
                           <h3 className="text-lg font-semibold">{t("astrology.fullReport")}</h3>
                           <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{report.full_report}</p>
                         </article>
+                        {!session?.user.id && (
+                          <p className="text-xs text-muted-foreground">
+                            Sign in to save this report to your account and download as PDF.
+                          </p>
+                        )}
                       </>
                     ) : (
                       <>
                         <UnlockPlansCard context="horoscope" activePlan={activePlan} stage={stage} onPay={handleUnlock} />
                         <div className="grid gap-3 md:grid-cols-2">
-                          {lockedHoroscopeSections.map((section) => (
+                          {lockedSections.map((section) => (
                             <article key={section} className="relative overflow-hidden rounded-lg border border-border/70 bg-background/20 p-4">
                               <div className="pointer-events-none absolute inset-0 bg-background/60 backdrop-blur-sm" />
                               <div className="relative space-y-2">
@@ -456,107 +471,41 @@ const Astrology = () => {
                 )}
               </div>
 
-              <div className="space-y-6">
-                <section id="daily" className="mystic-glass space-y-4 rounded-xl p-6">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Stars className="h-5 w-5" aria-hidden="true" />
-                    <h2 className="text-2xl font-semibold">{t("astrology.dailyTitle")}</h2>
-                  </div>
-
-                  <form onSubmit={getDailyHoroscope} className="space-y-3">
-                    <Label htmlFor="daily-sign">{t("astrology.zodiacSign")}</Label>
-                    <select
-                      id="daily-sign"
-                      className="focus-mystic flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                      value={dailySign}
-                      onChange={(e) => setDailySign(e.target.value)}
-                    >
-                      {zodiacSigns.map((sign) => (
-                        <option key={sign.value} value={sign.value}>
-                          {sign.label}
-                        </option>
-                      ))}
-                    </select>
-
-                    <Button type="submit" variant="hero" className="w-full gap-2" disabled={isDailyLoading}>
-                      {isDailyLoading ? (
-                        <>
-                          <CosmicLoader size="small" variant="button" className="scale-[0.62]" />
-                          {t("astrology.todaysGuidance")}
-                        </>
-                      ) : (
-                        t("common.actions.viewDailyHoroscope")
-                      )}
-                    </Button>
-                  </form>
-
-                  {dailyResult && (
-                    <article className="space-y-3 rounded-lg border border-border/70 bg-background/30 p-4">
-                      <p className="text-sm leading-relaxed text-muted-foreground">{dailyResult.today_prediction}</p>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <p>
-                          <span className="text-muted-foreground">{t("astrology.luckyNumber")}: </span>
-                          <span className="font-semibold">{dailyResult.lucky_number}</span>
+              <section className="mystic-glass space-y-4 rounded-xl p-6">
+                <div className="flex items-center gap-2 text-primary">
+                  <CalendarDays className="h-5 w-5" aria-hidden="true" />
+                  <h2 className="text-2xl font-semibold">{t("astrology.savedReports")}</h2>
+                </div>
+                <div className="space-y-3">
+                  {!session?.user.id ? (
+                    <p className="text-sm text-muted-foreground">Sign in to see your saved reports.</p>
+                  ) : history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">{t("astrology.noSaved")}</p>
+                  ) : (
+                    history.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className="w-full rounded-lg border border-border/70 bg-background/30 p-3 text-left"
+                        onClick={() => setReport(item)}
+                      >
+                        <p className="text-sm font-semibold">
+                          {item.zodiac_sign} • {item.moon_sign} • {item.rising_sign}
                         </p>
-                        <p>
-                          <span className="text-muted-foreground">{t("astrology.luckyColor")}: </span>
-                          <span className="font-semibold">{dailyResult.lucky_color}</span>
-                        </p>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{t("astrology.advice")}: {dailyResult.advice}</p>
-                    </article>
+                        <p className="text-xs text-primary">{item.is_unlocked || unlocks.horoscopeUnlocked ? t("payments.unlocked") : t("payments.locked")}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString()}</p>
+                      </button>
+                    ))
                   )}
-                </section>
-
-                <section className="mystic-glass space-y-4 rounded-xl p-6">
-                  <div className="flex items-center gap-2 text-primary">
-                    <CalendarDays className="h-5 w-5" aria-hidden="true" />
-                    <h2 className="text-2xl font-semibold">{t("astrology.savedReports")}</h2>
-                  </div>
-                  <div className="space-y-3">
-                    {history.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">{t("astrology.noSaved")}</p>
-                    ) : (
-                      history.map((item) => (
-                        <button
-                          key={item.id}
-                          type="button"
-                          className="w-full rounded-lg border border-border/70 bg-background/30 p-3 text-left"
-                          onClick={() => setReport(item)}
-                        >
-                          <p className="text-sm font-semibold">
-                            {item.zodiac_sign} • {item.moon_sign} • {item.rising_sign}
-                          </p>
-                          <p className="text-xs text-primary">
-                            {item.is_unlocked || unlocks.horoscopeUnlocked ? t("payments.unlocked") : t("payments.locked")}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{new Date(item.created_at).toLocaleString()}</p>
-                        </button>
-                      ))
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold">{t("astrology.recentDaily")}</h3>
-                    {dailyHistory.length === 0 ? (
-                      <p className="text-xs text-muted-foreground">{t("astrology.noDaily")}</p>
-                    ) : (
-                      dailyHistory.map((item) => (
-                        <div key={item.id} className="rounded-lg border border-border/70 bg-background/30 p-3 text-xs">
-                          <p className="font-semibold">{item.zodiac_sign} • {item.horoscope_date}</p>
-                          <p className="text-muted-foreground">{item.advice}</p>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </section>
-              </div>
+                </div>
+              </section>
             </section>
           </>
-        )}
-      </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 };
 
-export default Astrology;
+export default Kundali;
+

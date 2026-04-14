@@ -3,7 +3,7 @@ import { TrustPageLayout } from "@/components/legal/TrustPageLayout";
 
 const GuidanceDisclaimer = () => {
   useEffect(() => {
-    document.title = "Guidance Disclaimer | AstroPalm";
+    document.title = "Guidance Disclaimer | AstraPalm";
   }, []);
 
   return (

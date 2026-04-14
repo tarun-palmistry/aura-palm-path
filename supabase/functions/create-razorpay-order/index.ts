@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const jsonHeaders = { ...corsHeaders, "Content-Type": "application/json" };
 
-const planSchema = z.enum(["palmistry", "horoscope", "combo"]);
+const planSchema = z.enum(["palmistry", "horoscope", "combo", "whatsapp_monthly"]);
 
 const requestSchema = z.object({
   planType: planSchema,
@@ -21,12 +21,14 @@ const PLAN_PRICES: Record<z.infer<typeof planSchema>, number> = {
   palmistry: 99,
   horoscope: 99,
   combo: 149,
+  whatsapp_monthly: 99,
 };
 
 const PLAN_LABELS: Record<z.infer<typeof planSchema>, string> = {
   palmistry: "Palmistry Full Report",
   horoscope: "Horoscope Full Report",
   combo: "Palmistry + Horoscope Combo",
+  whatsapp_monthly: "WhatsApp Horoscope Subscription (Monthly)",
 };
 
 Deno.serve(async (req) => {
@@ -82,6 +84,27 @@ Deno.serve(async (req) => {
 
     const { planType, readingId, horoscopeRequestId } = parsed.data;
 
+    if (planType === "whatsapp_monthly") {
+      // Paid entitlement for WhatsApp delivery; no report IDs required.
+      const { data: ent } = await supabaseAdmin
+        .from("whatsapp_entitlements")
+        .select("active, expires_at")
+        .eq("user_id", authData.user.id)
+        .maybeSingle();
+      const active = Boolean(ent?.active) && !!ent?.expires_at && new Date(String(ent.expires_at)).getTime() > Date.now();
+      if (active) {
+        return new Response(
+          JSON.stringify({
+            alreadyUnlocked: true,
+            message: "WhatsApp delivery is already active.",
+            unlocks: { palmistry: false, horoscope: false, combo: false },
+            whatsapp: { active: true, expires_at: ent?.expires_at },
+          }),
+          { status: 200, headers: jsonHeaders },
+        );
+      }
+    }
+
     if (planType === "palmistry" && !readingId) {
       return new Response(JSON.stringify({ error: "readingId is required for palmistry plan." }), {
         status: 400,
@@ -94,6 +117,17 @@ Deno.serve(async (req) => {
         status: 400,
         headers: jsonHeaders,
       });
+    }
+
+    if (planType === "combo" && (!readingId || !horoscopeRequestId)) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "Combo plan requires both readingId (palm) and horoscopeRequestId (birth chart). Save both reports first, then try again.",
+          code: "COMBO_REQUIRES_BOTH_TARGETS",
+        }),
+        { status: 400, headers: jsonHeaders },
+      );
     }
 
     if (readingId) {
@@ -128,12 +162,13 @@ Deno.serve(async (req) => {
 
     const { data: unlockRow } = await supabaseAdmin
       .from("report_unlocks")
-      .select("palmistry_unlocked, horoscope_unlocked")
+      .select("palmistry_unlocked, horoscope_unlocked, unlocked_via_combo")
       .eq("user_id", authData.user.id)
       .maybeSingle();
 
     const palmUnlocked = Boolean(unlockRow?.palmistry_unlocked);
     const horoscopeUnlocked = Boolean(unlockRow?.horoscope_unlocked);
+    const comboUnlocked = Boolean(unlockRow?.unlocked_via_combo) || (palmUnlocked && horoscopeUnlocked);
 
     const alreadyUnlocked =
       planType === "palmistry"
@@ -147,6 +182,11 @@ Deno.serve(async (req) => {
         JSON.stringify({
           alreadyUnlocked: true,
           message: "Selected report is already unlocked.",
+          unlocks: {
+            palmistry: palmUnlocked,
+            horoscope: horoscopeUnlocked,
+            combo: comboUnlocked,
+          },
         }),
         {
           status: 200,

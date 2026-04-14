@@ -20,7 +20,7 @@ export const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="fixed bottom-5 right-4 z-50 md:bottom-auto md:right-6 md:top-20">
+    <div className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom,0px))] right-[max(1rem,env(safe-area-inset-right,0px))] z-50 md:bottom-auto md:right-[max(1.5rem,env(safe-area-inset-right,0px))] md:top-[max(5rem,env(safe-area-inset-top,0px))]">
       <div className="mystic-glass group relative flex items-center gap-1 rounded-full border border-primary/50 p-1 shadow-mystic">
         <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 opacity-60" />
         <span className="sr-only">Toggle language</span>

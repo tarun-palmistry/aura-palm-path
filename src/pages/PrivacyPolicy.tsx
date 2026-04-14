@@ -3,7 +3,7 @@ import { TrustPageLayout } from "@/components/legal/TrustPageLayout";
 
 const PrivacyPolicy = () => {
   useEffect(() => {
-    document.title = "Privacy Policy | AstroPalm";
+    document.title = "Privacy Policy | AstraPalm";
   }, []);
 
   return (

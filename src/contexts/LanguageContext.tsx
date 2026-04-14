@@ -10,6 +10,7 @@ type LanguageContextValue = {
   language: Language;
   setLanguage: (language: Language) => void;
   toggleLanguage: () => void;
+  isSwitchingLanguage: boolean;
   t: (key: string) => string;
   tm: <T>(key: string) => T;
 };
@@ -33,6 +34,7 @@ const fallbackContext: LanguageContextValue = {
   language: "en",
   setLanguage: () => undefined,
   toggleLanguage: () => undefined,
+  isSwitchingLanguage: false,
   t: (key: string) => {
     const value = getByPath(dictionaries.en, key);
     return typeof value === "string" ? value : key;
@@ -45,13 +47,29 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return saved === "hi" ? "hi" : "en";
   });
+  const [isSwitchingLanguage, setIsSwitchingLanguage] = useState(false);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, language);
   }, [language]);
 
-  const setLanguage = useCallback((next: Language) => setLanguageState(next), []);
-  const toggleLanguage = useCallback(() => setLanguageState((prev) => (prev === "en" ? "hi" : "en")), []);
+  const switchWithAnimation = useCallback((next: Language) => {
+    setIsSwitchingLanguage(true);
+
+    window.setTimeout(() => {
+      setLanguageState(next);
+    }, 220);
+
+    window.setTimeout(() => {
+      setIsSwitchingLanguage(false);
+    }, 1100);
+  }, []);
+
+  const setLanguage = useCallback((next: Language) => switchWithAnimation(next), [switchWithAnimation]);
+  const toggleLanguage = useCallback(
+    () => switchWithAnimation(language === "en" ? "hi" : "en"),
+    [language, switchWithAnimation],
+  );
 
   const dictionary = useMemo(() => dictionaries[language], [language]);
 
@@ -71,8 +89,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const value = useMemo(
-    () => ({ language, setLanguage, toggleLanguage, t, tm }),
-    [language, setLanguage, toggleLanguage, t, tm],
+    () => ({ language, setLanguage, toggleLanguage, isSwitchingLanguage, t, tm }),
+    [language, setLanguage, toggleLanguage, isSwitchingLanguage, t, tm],
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

@@ -1,22 +1,53 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        try {
+          var k = "astrapalm-theme";
+          var t = localStorage.getItem(k);
+          var d = document.documentElement;
+          var darkMq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (t === "light") d.classList.remove("dark");
+          else if (t === "dark") d.classList.add("dark");
+          else {
+            if (darkMq) d.classList.add("dark");
+            else d.classList.remove("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AstraPalm | AI Palm Reading, Astrology & Kundali Matching</title>
+    <meta
+      name="description"
+      content="AI palm reading from image, Vedic Kundali astrology, 36 guna Kundali matching and daily horoscope — fast, private and saved securely to your account."
+    />
+    <meta name="author" content="AstraPalm" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0d071a" />
+
+    <meta property="og:title" content="AstraPalm | AI Palm Reading, Astrology & Kundali Matching" />
+    <meta
+      property="og:description"
+      content="AI palm reading from image, Vedic Kundali astrology, 36 guna Kundali matching and daily horoscope — fast, private and saved securely to your account."
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:image" content="https://astrapalm.com/og-default.jpg" />
+    <meta property="og:url" content="https://astrapalm.com" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:title" content="AstraPalm | AI Palm Reading, Astrology & Kundali Matching" />
+    <meta
+      name="twitter:description"
+      content="AI palm reading from image, Vedic Kundali astrology, 36 guna Kundali matching and daily horoscope — fast, private and saved securely to your account."
+    />
+    <meta name="twitter:image" content="https://astrapalm.com/og-default.jpg" />
   </head>
 
   <body>
