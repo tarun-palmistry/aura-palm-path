@@ -337,7 +337,7 @@ const Horoscope = () => {
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.astrology")} />
       </main>
     );
@@ -359,23 +359,25 @@ const Horoscope = () => {
         <meta property="og:url" content="https://astrapalm.com/horoscope" />
       </Helmet>
 
-      <main className="min-h-screen pb-16">
+      <main className="flex min-h-0 min-w-0 flex-1 flex-col pb-[max(4rem,env(safe-area-inset-bottom,0px))]">
         <section className="starlight-field border-b border-border/70">
-          <div className="container py-12">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="space-y-3">
+          <div className="container py-8 sm:py-12">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+              <div className="min-w-0 space-y-3">
                 <p className="inline-flex rounded-full border border-border/80 bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
                   {t("astrology.badge")}
                 </p>
-                <h1 className="text-5xl font-semibold leading-[1.05] md:text-6xl">{t("astrology.dailyTitle")}</h1>
+                <h1 className="text-3xl font-semibold leading-[1.08] sm:text-4xl md:text-5xl md:leading-[1.05] lg:text-6xl">
+                  {t("astrology.dailyTitle")}
+                </h1>
                 <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("homepage.whatsapp.description")}</p>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button asChild variant="mystic">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
                   <Link to="/kundali">{t("common.actions.createBirthChart")}</Link>
                 </Button>
-                <Button asChild variant="mystic">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
                   <Link to="/kundali-matching">{t("common.actions.matchKundali")}</Link>
                 </Button>
               </div>
@@ -383,7 +385,7 @@ const Horoscope = () => {
           </div>
         </section>
 
-        <div className="container space-y-8 py-10">
+        <div className="container min-w-0 space-y-8 py-8 sm:py-10">
           <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
             <section className="mystic-glass space-y-4 rounded-xl p-6">
               <div className="flex items-center gap-2 text-primary">
@@ -411,7 +413,9 @@ const Horoscope = () => {
                   id="horoscope-period"
                   className="focus-mystic flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                   value={period}
-                  onChange={(e) => setPeriod(e.target.value as any)}
+                  onChange={(e) =>
+                    setPeriod(e.target.value as "today" | "weekly" | "monthly" | "yearly")
+                  }
                 >
                   <option value="today">Today</option>
                   <option value="weekly">Weekly</option>

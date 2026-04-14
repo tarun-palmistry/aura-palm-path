@@ -70,27 +70,34 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
 
   return (
     <>
-      <main id="home" className="pb-20">
+      <main id="home" className="min-w-0 pb-16 sm:pb-20">
         <section className="starlight-field border-b border-border/70">
-          <div className="container grid gap-10 py-16 lg:grid-cols-[1.15fr_1fr] lg:items-center">
-            <div className="space-y-6">
+          <div className="container grid gap-8 py-12 sm:gap-10 sm:py-16 lg:grid-cols-[1.15fr_1fr] lg:items-center">
+            <div className="min-w-0 space-y-5 sm:space-y-6">
               <p className="inline-flex rounded-full border border-border/80 bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
                 {t("homepage.badge")}
               </p>
-              <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] md:text-6xl">{t("homepage.title")}</h1>
+              <h1 className="max-w-3xl text-3xl font-semibold leading-[1.1] sm:text-4xl md:text-5xl md:leading-[1.08] lg:text-6xl">
+                {t("homepage.title")}
+              </h1>
               <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("homepage.subtitle")}</p>
 
-              <div className="flex flex-wrap gap-3">
-                <Button asChild variant="hero" size="lg">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button asChild variant="hero" size="lg" className="w-full sm:w-auto">
                   <Link to="/palm" onClick={() => handleHeroCta("hero_scan_palm")}>{t("common.actions.scanPalm")}</Link>
                 </Button>
-                <Button asChild variant="mystic" size="lg">
+                <Button asChild variant="mystic" size="lg" className="w-full sm:w-auto">
                   <Link to="/kundali" onClick={() => handleHeroCta("hero_kundali")}>{t("common.actions.getHoroscopeReading")}</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary/40 text-primary hover:bg-primary/10">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full border-primary/40 text-primary hover:bg-primary/10 sm:w-auto"
+                >
                   <Link to="/kundali-matching" onClick={() => handleHeroCta("hero_kundali_matching")}>{t("common.actions.tryKundaliMatching")}</Link>
                 </Button>
-                <Button asChild variant="link" className="text-primary">
+                <Button asChild variant="link" className="text-primary sm:w-auto">
                   <Link to="/horoscope">{t("homepage.dailyWhatsappLink")}</Link>
                 </Button>
               </div>
@@ -142,7 +149,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="features" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="features" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.featureSection.label")}</p>
@@ -188,11 +195,11 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="auth-section" className="scroll-mt-28 border-b border-border/70 py-14">
+        <section id="auth-section" className="scroll-anchor border-b border-border/70 py-12 sm:py-14">
           {conversionSection}
         </section>
 
-        <section id="how-it-works" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="how-it-works" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.howItWorks.label")}</p>
@@ -256,7 +263,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="services" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="services" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container grid gap-4 lg:grid-cols-3">
             <article className="mystic-glass rounded-2xl p-7">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.services.palmLabel")}</p>
@@ -287,7 +294,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="trust" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="trust" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.trust.label")}</p>
@@ -308,20 +315,20 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="daily-whatsapp" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="daily-whatsapp" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container">
-            <article className="mystic-glass rounded-3xl p-8 md:p-10">
+            <article className="mystic-glass rounded-3xl p-5 sm:p-8 md:p-10">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.whatsapp.label")}</p>
               <h2 className="mt-3 text-3xl font-semibold font-display tracking-tight md:text-4xl">{t("homepage.whatsapp.title")}</h2>
               <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">{t("homepage.whatsapp.description")}</p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild variant="hero">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button asChild variant="hero" className="w-full sm:w-auto">
                   <Link to="/horoscope" onClick={handleWhatsappCta}>
                     <MessageCircle className="h-4 w-4" aria-hidden="true" />
                     {t("common.actions.joinWhatsappUpdates")}
                   </Link>
                 </Button>
-                <Button asChild variant="mystic">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
                   <Link to="/horoscope">{t("common.actions.viewDailyHoroscope")}</Link>
                 </Button>
               </div>
@@ -329,7 +336,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="reviews" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="reviews" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.reviews.label")}</p>
@@ -363,7 +370,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="blog" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="blog" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container space-y-8">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.blog.label")}</p>
@@ -387,7 +394,7 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="faq" className="scroll-mt-28 border-b border-border/70 py-16">
+        <section id="faq" className="scroll-anchor border-b border-border/70 py-12 sm:py-16">
           <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.faq.label")}</p>
@@ -406,20 +413,25 @@ function MarketingHomepageComponent({ conversionSection, isAdmin, onSignOut, onS
           </div>
         </section>
 
-        <section id="final-cta" className="py-16">
+        <section id="final-cta" className="py-12 sm:py-16">
           <div className="container">
-            <article className="mystic-glass rounded-3xl p-8 text-center md:p-12">
+            <article className="mystic-glass rounded-3xl p-6 text-center sm:p-8 md:p-12">
               <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("homepage.finalCta.label")}</p>
               <h2 className="mt-3 text-3xl font-semibold font-display tracking-tight md:text-5xl">{t("homepage.finalCta.title")}</h2>
               <p className="mx-auto mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">{t("homepage.finalCta.description")}</p>
-              <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Button variant="hero" size="lg" onClick={onStartPalm}>
+              <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                <Button variant="hero" size="lg" className="w-full sm:w-auto" onClick={onStartPalm}>
                   {t("common.actions.scanPalm")}
                 </Button>
-                <Button asChild variant="mystic" size="lg">
+                <Button asChild variant="mystic" size="lg" className="w-full sm:w-auto">
                   <Link to="/kundali">{t("common.actions.generateHoroscope")}</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="border-primary/40 text-primary hover:bg-primary/10">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  className="w-full border-primary/40 text-primary hover:bg-primary/10 sm:w-auto"
+                >
                   <Link to="/kundali-matching" onClick={() => handleHeroCta("final_cta_kundali")}>{t("common.actions.tryKundaliMatching")}</Link>
                 </Button>
               </div>

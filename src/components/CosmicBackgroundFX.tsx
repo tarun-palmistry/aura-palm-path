@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 type OrbitDot = { top: number; left: number; size: number; opacity: number; delayMs: number };
@@ -17,36 +18,54 @@ function createDots(count: number): OrbitDot[] {
   return dots;
 }
 
+function readDomIsLight() {
+  if (typeof document === "undefined") return false;
+  return !document.documentElement.classList.contains("dark");
+}
+
 export function CosmicBackgroundFX() {
-  // Memoized so we don't re-randomize on re-renders.
-  const dots = useMemo(() => createDots(16), []);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const dots = useMemo(() => createDots(18), []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isLight = mounted ? resolvedTheme === "light" : readDomIsLight();
+  const cosmic = isLight ? "light" : "dark";
 
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden [contain:paint]">
-      {/* slow drifting aurora */}
-      <div className="absolute inset-0 opacity-70">
-        <div className="absolute -left-[20%] -top-[25%] h-[70vmax] w-[70vmax] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.18)_0%,transparent_58%)] animate-aurora-drift" />
-        <div className="absolute -right-[25%] -bottom-[30%] h-[78vmax] w-[78vmax] rounded-full bg-[radial-gradient(circle,hsl(var(--accent)/0.16)_0%,transparent_60%)] animate-aurora-drift2" />
+    <div
+      aria-hidden
+      data-cosmic={cosmic}
+      className={cn(
+        "cosmic-fx-root pointer-events-none fixed inset-0 -z-10 overflow-hidden [contain:paint]",
+        isLight && "cosmic-fx-light",
+      )}
+    >
+      {/* Twilight / nebula wash — stronger navy & violet in light mode for “solar system” depth */}
+      <div className="cosmic-sky-aurora absolute inset-0 cosmic-aurora-opacity">
+        <div className="cosmic-blob-1 absolute -left-[20%] -top-[25%] h-[70vmax] w-[70vmax] rounded-full animate-aurora-drift" />
+        <div className="cosmic-blob-2 absolute -right-[25%] -bottom-[30%] h-[78vmax] w-[78vmax] rounded-full animate-aurora-drift2" />
       </div>
 
-      {/* orbit rings */}
-      <div className="absolute left-1/2 top-[44%] h-[92vmax] w-[92vmax] -translate-x-1/2 -translate-y-1/2 opacity-45">
-        <div className="absolute inset-0 rounded-full border border-border/35 shadow-[0_0_40px_hsl(var(--primary)/0.08)_inset] animate-orbit-rotate" />
-        <div className="absolute inset-[10%] rounded-full border border-border/25 shadow-[0_0_48px_hsl(var(--accent)/0.08)_inset] animate-orbit-rotate-rev" />
-        <div className="absolute inset-[22%] rounded-full border border-border/20 shadow-[0_0_38px_hsl(var(--primary)/0.06)_inset] animate-orbit-rotate-slow" />
+      {/* Orbital rings + planets */}
+      <div className="cosmic-orbit-stage absolute left-1/2 top-[44%] h-[92vmax] w-[92vmax] -translate-x-1/2 -translate-y-1/2">
+        <div className="cosmic-orbit-ring absolute inset-0 rounded-full border animate-orbit-rotate" />
+        <div className="cosmic-orbit-ring cosmic-orbit-ring-mid absolute inset-[10%] rounded-full border animate-orbit-rotate-rev" />
+        <div className="cosmic-orbit-ring cosmic-orbit-ring-inner absolute inset-[22%] rounded-full border animate-orbit-rotate-slow" />
 
-        {/* moving “planets” */}
         <span className={cn("cosmic-planet cosmic-planet-gold animate-planet-orbit")} />
         <span className={cn("cosmic-planet cosmic-planet-violet animate-planet-orbit2")} />
         <span className={cn("cosmic-planet cosmic-planet-ice animate-planet-orbit3")} />
       </div>
 
-      {/* small drifting lights */}
-      <div className="absolute inset-0 opacity-70">
-        {dots.map((d, idx) => (
+      {/* Star glints */}
+      <div className="cosmic-starfield absolute inset-0">
+        {dots.map((d) => (
           <span
-            // eslint-disable-next-line react/no-array-index-key
-            key={idx}
+            key={`${d.top}-${d.left}-${d.delayMs}-${d.size}`}
             style={{
               top: `${d.top}%`,
               left: `${d.left}%`,
@@ -55,11 +74,10 @@ export function CosmicBackgroundFX() {
               opacity: d.opacity,
               animationDelay: `${d.delayMs}ms`,
             }}
-            className="absolute rounded-full bg-foreground/80 shadow-[0_0_14px_hsl(var(--primary)/0.25)] animate-starlight-float"
+            className="cosmic-star-dot absolute rounded-full animate-starlight-float"
           />
         ))}
       </div>
     </div>
   );
 }
-

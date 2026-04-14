@@ -31,15 +31,14 @@ export const useReportUnlocks = (userId?: string) => {
       return defaultUnlockState;
     }
 
-    const db = supabase as any;
-    const { data, error } = await db
+    const { data, error } = await supabase
       .from("report_unlocks")
       .select("palmistry_unlocked, horoscope_unlocked, unlocked_via_combo")
       .eq("user_id", userId)
       .maybeSingle();
 
     if (error || !data) {
-      let cleared = defaultUnlockState;
+      const cleared = defaultUnlockState;
       setUnlocks((prev) => {
         if (
           prev.palmistryUnlocked === cleared.palmistryUnlocked &&

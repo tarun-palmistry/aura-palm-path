@@ -59,7 +59,8 @@ Deno.serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const OPENAI_COMPAT_API_URL = Deno.env.get("OPENAI_COMPAT_API_URL");
+  const OPENAI_COMPAT_API_KEY = Deno.env.get("OPENAI_COMPAT_API_KEY");
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_PUBLISHABLE_KEY) {
     return new Response(JSON.stringify({ error: "Supabase environment variables are missing." }), {
@@ -68,8 +69,8 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (!LOVABLE_API_KEY) {
-    return new Response(JSON.stringify({ error: "LOVABLE_API_KEY is not configured." }), {
+  if (!OPENAI_COMPAT_API_URL || !OPENAI_COMPAT_API_KEY) {
+    return new Response(JSON.stringify({ error: "AI chat API is not configured." }), {
       status: 500,
       headers: jsonHeaders,
     });
@@ -138,10 +139,10 @@ Person 2:
       `{"total_score":number,"compatibility_level":"low"|"average"|"good"|"excellent","koota_breakdown":[{"name":"Varna","score":number,"max_score":1,"status":"favorable"|"neutral"|"unfavorable","description":"..."},...8 items...],"relationship_summary":{"overall_compatibility":"...","emotional_connection":"...","communication":"...","long_term_potential":"..."},"strengths":["..."],"challenges":["..."],"advice":["..."],"final_verdict":"..."}\n\n` +
       `Be specific to the two names and birth data. Avoid vague astrology clichés.`;
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const aiResponse = await fetch(OPENAI_COMPAT_API_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_COMPAT_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

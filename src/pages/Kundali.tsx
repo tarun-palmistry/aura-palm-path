@@ -275,11 +275,11 @@ const Kundali = () => {
         sections: pdfSections,
       });
     })();
-  }, [interpretationCards, report, t]);
+  }, [interpretationCards, report, session?.user.id, t]);
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.astrology")} />
       </main>
     );
@@ -301,22 +301,22 @@ const Kundali = () => {
         <meta property="og:url" content="https://astrapalm.com/kundali" />
       </Helmet>
 
-      <main className="min-h-screen pb-16">
+      <main className="flex min-h-0 min-w-0 flex-1 flex-col pb-[max(4rem,env(safe-area-inset-bottom,0px))]">
         <section className="starlight-field border-b border-border/70">
-          <div className="container py-12">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="space-y-3">
+          <div className="container py-8 sm:py-12">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+              <div className="min-w-0 space-y-3">
                 <p className="inline-flex rounded-full border border-border/80 bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
                   {t("astrology.badge")}
                 </p>
-                <h1 className="text-5xl font-semibold leading-[1.05] md:text-6xl">{t("astrology.title")}</h1>
+                <h1 className="text-3xl font-semibold leading-[1.08] sm:text-4xl md:text-5xl md:leading-[1.05] lg:text-6xl">{t("astrology.title")}</h1>
                 <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("astrology.subtitle")}</p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild variant="mystic">
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
                   <Link to="/horoscope">{t("common.actions.viewDailyHoroscope")}</Link>
                 </Button>
-                <Button asChild variant="mystic">
+                <Button asChild variant="mystic" className="w-full sm:w-auto">
                   <Link to="/palm">{t("common.actions.backToPalmReading")}</Link>
                 </Button>
               </div>
@@ -324,7 +324,7 @@ const Kundali = () => {
           </div>
         </section>
 
-        <div className="container space-y-8 py-10">
+        <div className="container min-w-0 space-y-8 py-8 sm:py-10">
           <>
             <section className="mystic-glass space-y-5 rounded-xl p-6">
               <div className="space-y-2">

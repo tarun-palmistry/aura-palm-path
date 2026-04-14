@@ -3,7 +3,7 @@ import { TrustPageLayout } from "@/components/legal/TrustPageLayout";
 
 const Contact = () => {
   useEffect(() => {
-    document.title = "Contact | AstroPalm";
+    document.title = "Contact | AstraPalm";
   }, []);
 
   return (
@@ -16,7 +16,7 @@ const Contact = () => {
         {
           title: "General Support",
           body: [
-            "Email: support@astropalm.app",
+            "Email: support@astrapalm.com",
             "Typical response time: within 24–48 hours on business days.",
           ],
         },
@@ -30,7 +30,7 @@ const Contact = () => {
         {
           title: "Privacy Requests",
           body: [
-            "For data access, correction, or deletion requests, contact: privacy@astropalm.app.",
+            "For data access, correction, or deletion requests, contact: privacy@astrapalm.com.",
             "Please send requests from your registered email to help us securely verify account ownership.",
           ],
         },

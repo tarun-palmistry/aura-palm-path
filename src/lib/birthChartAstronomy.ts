@@ -61,7 +61,7 @@ export const tropicalAscendantLongitude = (utc: Date, latitudeDeg: number, longi
   const eps = Astronomy.e_tilt(t).tobl * Astronomy.DEG2RAD;
   const y = Math.cos(theta);
   const x = -(Math.sin(eps) * Math.tan(phi) + Math.cos(eps) * Math.sin(theta));
-  let lambda = Math.atan2(y, x) * Astronomy.RAD2DEG;
+  const lambda = Math.atan2(y, x) * Astronomy.RAD2DEG;
   return normLon(lambda);
 };
 

@@ -233,7 +233,9 @@ Deno.serve(async (req) => {
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const SUPABASE_PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY");
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const OPENAI_COMPAT_API_URL = Deno.env.get("OPENAI_COMPAT_API_URL");
+  const OPENAI_COMPAT_API_KEY = Deno.env.get("OPENAI_COMPAT_API_KEY");
+  const useAiChat = Boolean(OPENAI_COMPAT_API_URL && OPENAI_COMPAT_API_KEY);
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_PUBLISHABLE_KEY) {
     return new Response(JSON.stringify({ error: "Supabase environment variables are missing." }), {
@@ -269,12 +271,12 @@ Deno.serve(async (req) => {
     const approxAge = approxAgeFromDob(parsed.data.dateOfBirth);
     const callName = firstNameFromFull(parsed.data.fullName);
 
-    const astrologyData = LOVABLE_API_KEY
+    const astrologyData = useAiChat
       ? await (async () => {
-          const structuredResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          const structuredResponse = await fetch(OPENAI_COMPAT_API_URL!, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              Authorization: `Bearer ${OPENAI_COMPAT_API_KEY!}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -359,12 +361,12 @@ Deno.serve(async (req) => {
       style_instruction: interpretationVoice,
     };
 
-    const interpretation = LOVABLE_API_KEY
+    const interpretation = useAiChat
       ? await (async () => {
-          const interpretationResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          const interpretationResponse = await fetch(OPENAI_COMPAT_API_URL!, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              Authorization: `Bearer ${OPENAI_COMPAT_API_KEY!}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify({

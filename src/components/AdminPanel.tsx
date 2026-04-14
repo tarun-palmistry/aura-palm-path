@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CosmicLoader } from "@/components/loaders/CosmicLoader";
@@ -30,9 +30,8 @@ export const AdminPanel = () => {
   const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEventRow[]>([]);
   const [payments, setPayments] = useState<PaymentRow[]>([]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
-    const db = supabase as any;
     const [
       { data: overview, error: overviewError },
       { data: reportRows, error: reportError },
@@ -41,7 +40,7 @@ export const AdminPanel = () => {
     ] = await Promise.all([
       supabase.from("admin_reading_overview").select("*").order("submitted_at", { ascending: false }),
       supabase.from("reports").select("*").order("created_at", { ascending: false }),
-      db.from("analytics_events").select("*").order("created_at", { ascending: false }).limit(500),
+      supabase.from("analytics_events").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("payments").select("*").order("created_at", { ascending: false }).limit(500),
     ]);
 
@@ -61,11 +60,11 @@ export const AdminPanel = () => {
     setAnalyticsEvents((analyticsRows ?? []) as AnalyticsEventRow[]);
     setPayments((paymentRows ?? []) as PaymentRow[]);
     setLoading(false);
-  };
+  }, [t]);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    void loadData();
+  }, [loadData]);
 
   const openEdit = (reportId: string | null) => {
     if (!reportId || !reports[reportId]) return;

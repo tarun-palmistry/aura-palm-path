@@ -178,32 +178,32 @@ const PalmReading = () => {
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.oracle")} />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen pb-16">
+    <main className="flex min-h-0 min-w-0 flex-1 flex-col pb-[max(4rem,env(safe-area-inset-bottom,0px))]">
       <section className="starlight-field border-b border-border/70">
-        <div className="container py-12">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="space-y-3">
+        <div className="container py-8 sm:py-12">
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+            <div className="min-w-0 space-y-3">
               <p className="inline-flex rounded-full border border-border/80 bg-card/60 px-3 py-1 text-xs uppercase tracking-[0.24em] text-primary">
                 {t("palm.badge")}
               </p>
-              <h1 className="text-5xl font-semibold leading-[1.05] md:text-6xl">{t("palm.title")}</h1>
+              <h1 className="text-3xl font-semibold leading-[1.08] sm:text-4xl md:text-5xl md:leading-[1.05] lg:text-6xl">{t("palm.title")}</h1>
               <p className="max-w-2xl text-base text-muted-foreground md:text-lg">{t("palm.subtitle")}</p>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
               {session && (
-                <Button variant="mystic" onClick={signOut}>
+                <Button variant="mystic" className="w-full sm:w-auto" onClick={signOut}>
                   {t("common.actions.signOut")}
                 </Button>
               )}
-              <Button asChild variant="mystic">
+              <Button asChild variant="mystic" className="w-full sm:w-auto">
                 <Link to="/kundali">{t("common.actions.createBirthChart")}</Link>
               </Button>
             </div>
@@ -211,7 +211,7 @@ const PalmReading = () => {
         </div>
       </section>
 
-      <div className="container space-y-8 py-10">{content}</div>
+      <div className="container min-w-0 space-y-8 py-8 sm:py-10">{content}</div>
     </main>
   );
 };

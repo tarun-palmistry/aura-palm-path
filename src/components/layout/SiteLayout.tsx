@@ -4,11 +4,13 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export function SiteLayout() {
   return (
-    <>
+    <div className="layout-shell">
       <SiteHeader />
-      <Outlet />
+      <div className="layout-main">
+        <Outlet />
+      </div>
       <SiteFooter />
-    </>
+    </div>
   );
 }
 

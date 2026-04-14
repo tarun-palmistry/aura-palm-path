@@ -11,6 +11,7 @@ import { RouteFallback } from "@/components/RouteFallback";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { LanguageSwitchFX } from "@/components/LanguageSwitchFX";
 import { CosmicBackgroundFX } from "@/components/CosmicBackgroundFX";
+import { ThemeColorMeta } from "@/components/ThemeColorMeta";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const PalmReading = lazy(() => import("./pages/PalmReading.tsx"));
@@ -42,6 +43,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <ThemeColorMeta />
             <CosmicBackgroundFX />
             <LanguageSwitcher />
             <LanguageSwitchFX />
@@ -62,7 +64,6 @@ const App = () => (
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/guidance-disclaimer" element={<GuidanceDisclaimer />} />
                   {import.meta.env.DEV && <Route path="/dev/astro-lab" element={<DevAstroLab />} />}
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>

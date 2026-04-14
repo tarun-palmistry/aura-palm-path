@@ -482,6 +482,101 @@ export type Database = {
           },
         ]
       }
+      whatsapp_entitlements: {
+        Row: {
+          active: boolean
+          created_at: string
+          expires_at: string
+          last_payment_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          expires_at: string
+          last_payment_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          expires_at?: string
+          last_payment_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_entitlements_last_payment_id_fkey"
+            columns: ["last_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_horoscope_subscriptions: {
+        Row: {
+          active: boolean
+          consented_at: string
+          created_at: string
+          id: string
+          last_sent_at: string | null
+          last_sent_key: string | null
+          monthly_day: number
+          period: string
+          phone_e164: string
+          send_hour_local: number
+          time_zone: string
+          updated_at: string
+          user_id: string
+          weekly_day: number
+          yearly_day: number
+          yearly_month: number
+          zodiac_sign: string
+        }
+        Insert: {
+          active?: boolean
+          consented_at?: string
+          created_at?: string
+          id?: string
+          last_sent_at?: string | null
+          last_sent_key?: string | null
+          monthly_day?: number
+          period: string
+          phone_e164: string
+          send_hour_local?: number
+          time_zone?: string
+          updated_at?: string
+          user_id: string
+          weekly_day?: number
+          yearly_day?: number
+          yearly_month?: number
+          zodiac_sign: string
+        }
+        Update: {
+          active?: boolean
+          consented_at?: string
+          created_at?: string
+          id?: string
+          last_sent_at?: string | null
+          last_sent_key?: string | null
+          monthly_day?: number
+          period?: string
+          phone_e164?: string
+          send_hour_local?: number
+          time_zone?: string
+          updated_at?: string
+          user_id?: string
+          weekly_day?: number
+          yearly_day?: number
+          yearly_month?: number
+          zodiac_sign?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -546,7 +641,7 @@ export type Database = {
       app_role: "admin" | "user"
       hand_side: "left" | "right"
       payment_status: "pending" | "successful" | "failed"
-      report_type: "palmistry" | "horoscope" | "combo"
+      report_type: "palmistry" | "horoscope" | "combo" | "whatsapp_monthly"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -688,7 +783,7 @@ export const Constants = {
       app_role: ["admin", "user"],
       hand_side: ["left", "right"],
       payment_status: ["pending", "successful", "failed"],
-      report_type: ["palmistry", "horoscope", "combo"],
+      report_type: ["palmistry", "horoscope", "combo", "whatsapp_monthly"],
     },
   },
 } as const

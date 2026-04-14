@@ -34,11 +34,11 @@ AstraPalm is a multilingual (English/Hindi) spiritual guidance platform that com
 
 ### Overall architecture summary
 - **Frontend:** React + Vite SPA with route-based pages and modular feature components
-- **Backend:** Lovable Cloud backend functions (Deno-based serverless handlers)
-- **Data layer:** PostgreSQL via Lovable Cloud database with Row Level Security policies
+- **Backend:** Supabase Edge Functions (Deno-based serverless handlers)
+- **Data layer:** PostgreSQL (Supabase) with Row Level Security policies
 - **Auth:** Email/password auth + session persistence
 - **Storage:** Private bucket for palm images
-- **AI:** Lovable AI Gateway (`google/gemini-3-flash-preview`) for structured extraction + interpretation text generation
+- **AI:** OpenAI-compatible chat HTTP API (`google/gemini-3-flash-preview` or equivalent) for structured extraction + interpretation text generation
 
 ---
 
@@ -69,14 +69,14 @@ AstraPalm is a multilingual (English/Hindi) spiritual guidance platform that com
 ### Database
 | Item | Technology |
 |---|---|
-| Engine | PostgreSQL (Lovable Cloud managed) |
+| Engine | PostgreSQL (Supabase managed) |
 | Client/query layer | `@supabase/supabase-js` in frontend + backend functions |
 | Access control | Row Level Security (RLS) + role helper functions (`has_role`, `is_admin`) |
 
 ### Storage
 | Item | Technology | Details |
 |---|---|---|
-| Palm image storage | Lovable Cloud object storage bucket `palm-images` | Private bucket; user-scoped folder policy |
+| Palm image storage | Supabase Storage bucket `palm-images` | Private bucket; user-scoped folder policy |
 
 ### Integrations
 | Integration | Usage |
@@ -88,7 +88,7 @@ AstraPalm is a multilingual (English/Hindi) spiritual guidance platform that com
 ### AI
 | Item | Details |
 |---|---|
-| Provider gateway | Lovable AI Gateway (`https://ai.gateway.lovable.dev/v1/chat/completions`) |
+| Provider gateway | Configured via `OPENAI_COMPAT_API_URL` (OpenAI-compatible `/v1/chat/completions` endpoint) |
 | Model | `google/gemini-3-flash-preview` |
 | Modalities | Text + image (for palm extraction) |
 | Purposes | Palm feature extraction, palm report composition, astrology structuring, astrology interpretation, daily horoscope generation |
@@ -104,7 +104,8 @@ AstraPalm is a multilingual (English/Hindi) spiritual guidance platform that com
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_PUBLISHABLE_KEY` (fallback to `SUPABASE_ANON_KEY` in code)
-- `LOVABLE_API_KEY` (AI gateway auth)
+- `OPENAI_COMPAT_API_URL` (full URL to chat completions endpoint)
+- `OPENAI_COMPAT_API_KEY` (bearer token for that endpoint)
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
 
@@ -120,7 +121,7 @@ Browser (React SPA)
   ├─ Calls backend functions (HTTP invoke)
   └─ Reads/writes DB + storage via scoped client
 
-Lovable Cloud Backend Functions (Deno)
+Supabase Edge Functions (Deno)
   ├─ Auth token verification
   ├─ Input validation
   ├─ AI gateway orchestration
@@ -868,7 +869,8 @@ All AI calls follow a **System + User** pattern:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `SUPABASE_PUBLISHABLE_KEY` (or `SUPABASE_ANON_KEY` fallback)
-- `LOVABLE_API_KEY`
+- `OPENAI_COMPAT_API_URL`
+- `OPENAI_COMPAT_API_KEY`
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
 

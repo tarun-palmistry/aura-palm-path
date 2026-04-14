@@ -5,6 +5,11 @@
       "english": "EN",
       "hindi": "हिंदी"
     },
+    "theme": {
+      "toggle": "Toggle light or dark theme",
+      "light": "Light mode",
+      "dark": "Dark mode"
+    },
     "actions": {
       "startReading": "Start Your Reading",
       "scanPalm": "Scan My Palm",

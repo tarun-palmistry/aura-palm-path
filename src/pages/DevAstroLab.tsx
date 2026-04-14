@@ -1,56 +1,8 @@
 import { useMemo, useState } from "react";
-import * as Astronomy from "astronomy-engine";
-import { toDate } from "date-fns-tz";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-const SIGNS = [
-  "Aries",
-  "Taurus",
-  "Gemini",
-  "Cancer",
-  "Leo",
-  "Virgo",
-  "Libra",
-  "Scorpio",
-  "Sagittarius",
-  "Capricorn",
-  "Aquarius",
-  "Pisces",
-] as const;
-
-const normLon = (deg: number) => {
-  const x = deg % 360;
-  return x < 0 ? x + 360 : x;
-};
-
-const tropicalFromLongitude = (elon: number) => {
-  const lon = normLon(elon);
-  const idx = Math.min(11, Math.floor(lon / 30));
-  return { sign: SIGNS[idx], degreeInSign: lon - idx * 30, longitude: lon };
-};
-
-const tropicalAscendantLongitude = (utc: Date, latitudeDeg: number, longitudeEastDeg: number): number => {
-  const t = Astronomy.MakeTime(utc);
-  const gst = Astronomy.SiderealTime(t);
-  const ramc = ((gst * 15 + longitudeEastDeg) % 360 + 360) % 360;
-  const theta = ramc * Astronomy.DEG2RAD;
-  const phi = latitudeDeg * Astronomy.DEG2RAD;
-  const eps = Astronomy.e_tilt(t).tobl * Astronomy.DEG2RAD;
-  const y = Math.cos(theta);
-  const x = -(Math.sin(eps) * Math.tan(phi) + Math.cos(eps) * Math.sin(theta));
-  let lambda = Math.atan2(y, x) * Astronomy.RAD2DEG;
-  return normLon(lambda);
-};
-
-const GEO_BODIES: Array<{ name: string; body: Astronomy.Body }> = [
-  { name: "Mercury", body: Astronomy.Body.Mercury },
-  { name: "Venus", body: Astronomy.Body.Venus },
-  { name: "Mars", body: Astronomy.Body.Mars },
-  { name: "Jupiter", body: Astronomy.Body.Jupiter },
-  { name: "Saturn", body: Astronomy.Body.Saturn },
-];
+import { birthWallTimeToUtc, computeClientBirthSnapshot, formatPlacement } from "@/lib/birthChartAstronomy";
 
 const DevAstroLab = () => {
   const [dateOfBirth, setDateOfBirth] = useState("2000-01-01");
@@ -60,10 +12,8 @@ const DevAstroLab = () => {
   const [lng, setLng] = useState("77.2090");
 
   const result = useMemo(() => {
-    const pad = timeOfBirth.length === 5 ? `${timeOfBirth}:00` : timeOfBirth;
-    const iso = `${dateOfBirth}T${pad}`;
-    const utc = toDate(iso, { timeZone });
-    if (Number.isNaN(utc.getTime())) {
+    const utc = birthWallTimeToUtc(dateOfBirth, timeOfBirth, timeZone);
+    if (!utc) {
       return { ok: false as const, message: "Invalid date/time or timezone." };
     }
     const latitudeDeg = Number(lat);
@@ -72,23 +22,10 @@ const DevAstroLab = () => {
       return { ok: false as const, message: "Enter valid observer latitude / longitude (east)." };
     }
 
-    const t = Astronomy.MakeTime(utc);
-    const sun = Astronomy.SunPosition(t);
-    const moonEcl = Astronomy.Ecliptic(Astronomy.GeoMoon(t));
-    const ascLon = tropicalAscendantLongitude(utc, latitudeDeg, longitudeEastDeg);
-    const planets = GEO_BODIES.map(({ name, body }) => {
-      const v = Astronomy.GeoVector(body, t, true);
-      const e = Astronomy.Ecliptic(v);
-      return { name, placement: tropicalFromLongitude(e.elon) };
-    });
-
+    const snap = computeClientBirthSnapshot(utc, latitudeDeg, longitudeEastDeg);
     return {
       ok: true as const,
-      utcIso: utc.toISOString(),
-      sun: tropicalFromLongitude(sun.elon),
-      moon: tropicalFromLongitude(moonEcl.elon),
-      ascendant: tropicalFromLongitude(ascLon),
-      planets,
+      ...snap,
       observer: { lat: latitudeDeg, lng: longitudeEastDeg },
     };
   }, [dateOfBirth, timeOfBirth, timeZone, lat, lng]);
@@ -137,13 +74,13 @@ const DevAstroLab = () => {
           <p>
             Observer: lat {result.observer.lat}, lng E {result.observer.lng}
           </p>
-          <p>Sun: {result.sun.sign} +{result.sun.degreeInSign.toFixed(2)}°</p>
-          <p>Moon: {result.moon.sign} +{result.moon.degreeInSign.toFixed(2)}°</p>
-          <p>Asc: {result.ascendant.sign} +{result.ascendant.degreeInSign.toFixed(2)}°</p>
+          <p>Sun: {formatPlacement(result.sun)}</p>
+          <p>Moon: {formatPlacement(result.moon)}</p>
+          <p>Asc: {result.ascendant ? formatPlacement(result.ascendant) : "— (needs valid lat/lng)"}</p>
           <ul className="space-y-1 border-t border-border pt-2">
             {result.planets.map((p) => (
               <li key={p.name}>
-                {p.name}: {p.placement.sign} +{p.placement.degreeInSign.toFixed(2)}°
+                {p.name}: {formatPlacement(p.placement)}
               </li>
             ))}
           </ul>

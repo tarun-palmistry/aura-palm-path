@@ -53,20 +53,25 @@ const Index = () => {
 
   const conversionSection = useMemo(
     () => (
-      <div className="container space-y-8">
+      <div className="container min-w-0 space-y-8">
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.2em] text-primary">{t("common.actions.startReading")}</p>
           <h2 className="text-3xl font-semibold md:text-4xl">{t("homepage.quickLine")}</h2>
           <p className="max-w-2xl text-sm text-muted-foreground md:text-base">{t("homepage.subtitle")}</p>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <Button asChild variant="hero" size="lg">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Button asChild variant="hero" size="lg" className="w-full sm:w-auto">
             <Link to="/palm">{t("common.actions.scanPalm")}</Link>
           </Button>
-          <Button asChild variant="mystic" size="lg">
+          <Button asChild variant="mystic" size="lg" className="w-full sm:w-auto">
             <Link to="/kundali">{t("common.actions.createBirthChart")}</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="border-primary/40 text-primary hover:bg-primary/10">
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full border-primary/40 text-primary hover:bg-primary/10 sm:w-auto"
+          >
             <Link to="/kundali-matching">{t("common.actions.tryKundaliMatching")}</Link>
           </Button>
         </div>
@@ -77,7 +82,7 @@ const Index = () => {
 
   if (loadingSession) {
     return (
-      <main className="container py-16">
+      <main className="container min-w-0 py-16">
         <CosmicLoader variant="fullPage" size="large" label={t("common.loading.oracle")} />
       </main>
     );

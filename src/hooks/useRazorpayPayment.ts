@@ -33,6 +33,19 @@ type RazorpaySuccessPayload = {
   razorpay_signature: string;
 };
 
+type RazorpayFailureError = {
+  code?: string;
+  description?: string;
+  reason?: string;
+};
+
+type RazorpayCheckout = {
+  open: () => void;
+  on: (event: "payment.failed", handler: (resp: unknown) => void) => void;
+};
+
+type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayCheckout;
+
 export const useRazorpayPayment = () => {
   const [activePlan, setActivePlan] = useState<PlanType | null>(null);
   const [stage, setStage] = useState<PaymentStage>("idle");
@@ -124,7 +137,7 @@ export const useRazorpayPayment = () => {
     try {
       await ensureFreshSession();
       const scriptLoaded = await loadRazorpayScript();
-      const RazorpayCtor = (window as Window & { Razorpay?: any }).Razorpay;
+      const RazorpayCtor = (window as Window & { Razorpay?: RazorpayConstructor }).Razorpay;
 
       if (!scriptLoaded || !RazorpayCtor) {
         throw new Error("razorpay_unavailable");
@@ -160,7 +173,9 @@ export const useRazorpayPayment = () => {
             ? { palmistry: true, horoscope: false, combo: false }
             : planType === "horoscope"
               ? { palmistry: false, horoscope: true, combo: false }
-              : { palmistry: true, horoscope: true, combo: true };
+              : planType === "whatsapp_monthly"
+                ? { palmistry: false, horoscope: false, combo: false }
+                : { palmistry: true, horoscope: true, combo: true };
         return {
           ok: true,
           unlocks: u ?? legacyUnlocks,
@@ -198,11 +213,14 @@ export const useRazorpayPayment = () => {
             once(() => resolve(response)),
         });
 
-        checkout.on("payment.failed", (resp: any) => {
-          const details =
-            resp && typeof resp === "object" && "error" in resp && resp.error
-              ? `${resp.error.code ?? "payment_failed"}: ${resp.error.description ?? resp.error.reason ?? "Payment failed"}`
-              : "payment_failed";
+        checkout.on("payment.failed", (resp: unknown) => {
+          let details = "payment_failed";
+          if (resp && typeof resp === "object" && "error" in resp) {
+            const err = (resp as { error?: RazorpayFailureError }).error;
+            if (err) {
+              details = `${err.code ?? "payment_failed"}: ${err.description ?? err.reason ?? "Payment failed"}`;
+            }
+          }
           once(() => reject(new Error(details)));
         });
         checkout.open();

@@ -16,11 +16,11 @@ type TrustPageLayoutProps = {
 
 export const TrustPageLayout = ({ eyebrow, title, intro, lastUpdated, sections }: TrustPageLayoutProps) => {
   return (
-    <main className="container py-10 md:py-14">
-      <article className="mystic-glass rounded-3xl p-6 md:p-10">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-5">
+    <main className="container flex min-h-0 min-w-0 flex-1 flex-col pb-[max(2.5rem,env(safe-area-inset-bottom,0px))] py-10 md:py-14">
+      <article className="mystic-glass min-w-0 rounded-3xl p-5 sm:p-6 md:p-10">
+        <div className="flex flex-col gap-3 border-b border-border/70 pb-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <p className="text-xs uppercase tracking-[0.2em] text-primary">{eyebrow}</p>
-          <Button asChild variant="mystic" size="sm">
+          <Button asChild variant="mystic" size="sm" className="w-full sm:w-auto">
             <Link to="/">Back to Home</Link>
           </Button>
         </div>

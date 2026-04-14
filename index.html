@@ -1,8 +1,24 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      (function () {
+        try {
+          var k = "astrapalm-theme";
+          var t = localStorage.getItem(k);
+          var d = document.documentElement;
+          var darkMq = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (t === "light") d.classList.remove("dark");
+          else if (t === "dark") d.classList.add("dark");
+          else {
+            if (darkMq) d.classList.add("dark");
+            else d.classList.remove("dark");
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>AstraPalm | AI Palm Reading, Astrology & Kundali Matching</title>
     <meta
       name="description"

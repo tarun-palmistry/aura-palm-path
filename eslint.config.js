@@ -9,6 +9,7 @@ export default tseslint.config(
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
+    ignores: ["supabase/functions/**"],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -20,6 +21,27 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["supabase/functions/**/*.ts"],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        Deno: "readonly",
+        Response: "readonly",
+        Request: "readonly",
+        URL: "readonly",
+        TextEncoder: "readonly",
+        TextDecoder: "readonly",
+        crypto: "readonly",
+        fetch: "readonly",
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
     },
   },

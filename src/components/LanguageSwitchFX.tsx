@@ -46,10 +46,9 @@ export function LanguageSwitchFX() {
       </div>
 
       <div className="absolute inset-0 opacity-80">
-        {stars.map((s, idx) => (
+        {stars.map((s) => (
           <span
-            // eslint-disable-next-line react/no-array-index-key
-            key={idx}
+            key={`${s.top}-${s.left}-${s.delay}-${s.size}`}
             style={{
               top: `${s.top}%`,
               left: `${s.left}%`,
